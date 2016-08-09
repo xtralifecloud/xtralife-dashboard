@@ -12,6 +12,6 @@ COPY . /server
 
 EXPOSE 3000
 
-VOLUME ["/server/config", "/server/logs"]
+VOLUME ["/server/configDashboard", "/server/logs"]
 
 CMD [ "npm", "start" ]
