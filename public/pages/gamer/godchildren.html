@@ -1,0 +1,27 @@
+<div ng-controller="GodChildrenCtrl">
+	<div class="tenpxabove">
+
+		<div ng-show="godfather">
+			<h4>Godfather</h4>
+			<p>
+				<a href="#/gamer/{{godfather.gamer_id}}">{{godfather.gamer_id}}</a>
+				<i class="glyphicon glyphicon-arrow-right"></i>
+				{{godfather.profile.displayName}} ({{godfather.profile.lang}})
+			</p>
+		</div>
+
+		<div>
+			<h4>GodChildren</h4>
+			<div class="table-responsive">
+				<table ng-table="godchildrenTable" class="table ng-table-rowselected">
+					<tr ng-repeat="user in $data">
+						<td data-title="'UserID'"><a href="#/gamer/{{user.gamer_id}}">{{user.gamer_id}}</a></td>
+						<td data-title="'Display Name'">{{user.profile.displayName}}</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+
+	</div>
+</div>
+

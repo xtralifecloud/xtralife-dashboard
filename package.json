@@ -1,0 +1,63 @@
+{
+  "name": "xtralife-dashboard",
+  "version": "3.2.0",
+  "scripts": {
+    "compile": "watchify --debug -t coffeeify src/app.coffee -o ./public/js/bundle.js",
+    "start": "browserify -t coffeeify src/app.coffee > ./public/js/bundle.js; coffee ./server/dashboard.coffee",
+    "test": "mocha test/tests*.coffee"
+  },
+  "keywords": [
+    "backend",
+    "gaming"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xtralifecloud/xtralife-dashboard.git"
+  },
+  "author": "devteam <devteam@xtralife.cloud>",
+  "license": "(C) Xtralife.cloud, 2015",
+  "engines": {
+    "node": ">=6.2.2"
+  },
+  "dependencies": {
+    "JSONStream": "*",
+    "async": "*",
+    "aws-sdk": "*",
+    "bluebird": "*",
+    "body-parser": "*",
+    "browserify": "*",
+    "coffee-script": "*",
+    "coffee-script-mapped": "*",
+    "coffeeify": "*",
+    "connect-redis": "*",
+    "cookie-parser": "*",
+    "cors": "*",
+    "xtralife-env": "<3.3",
+    "xtralife-api": "<3.3",
+    "debug": "*",
+    "ejs": "*",
+    "elasticsearch": "11",
+    "express": "4",
+    "express-limiter": "*",
+    "express-session": "*",
+    "jade": "^1.11.0",
+    "markdown": "^0.5.0",
+    "mongodb": "2.1",
+    "morgan": "*",
+    "nodemailer": "*",
+    "nodemailer-sendgrid-transport": "*",
+    "passport": "*",
+    "passport-http": "*",
+    "passport-local": "*",
+    "redis": "*",
+    "s3-upload-stream": "*",
+    "speakeasy": "^1.0.3",
+    "underscore": "*"
+  },
+  "devDependencies": {
+    "mocha": "*",
+    "should": "*",
+    "supertest": "*",
+    "watchify": "*"
+  }
+}

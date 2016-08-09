@@ -1,0 +1,72 @@
+<div>
+	<div class="well" style="padding-top:5px;">
+		<h3 class="text-center"><i class="fa fa-group fa-2x"></i> Friends for {{pseudo}}</h3>
+		<hr/>
+
+		<div ng-show="godfather">
+			<h4>Godfather</h4>
+			<p>
+				<a href="#/friends/{{godfather.gamer_id}}/{{godfather.profile.displayName}}">{{godfather.gamer_id}}</a>
+				<i class="glyphicon glyphicon-arrow-right"></i>
+				{{godfather.profile.displayName}} ({{godfather.profile.lang}})
+			</p>
+		</div>
+
+		<div ng-show="godchildren">
+			<h4>GodChildren</h4>
+			<div>
+				<table class="table table-condensed">
+					<tr ng-repeat="user in godchildren">
+						<td data-title="'UserID'"><a href="#/friends/{{user.gamer_id}}/{{user.profile.displayName}}">{{user.gamer_id}}</a>
+						</td>
+						<td data-title="'Login'" filter="{ 'q': 'text' }">
+							{{user.profile.displayName}}
+						</td>
+						<td data-title="'Email'" filter="{ 'q': 'text' }">
+							<a href="mailto:{{user.profile.email}}">{{user.profile.email}}</a>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+
+		<h4>Friends</h4>
+		<p>Note : blacklisted users are highlighted in red.</p>
+
+		<div class="table-responsive">
+			<table ng-table="usersTable" template-pagination="custom/pager" class="table ng-table-rowselected">
+				<tr ng-repeat="user in $data" ng-class="{danger: user.blacklisted}">
+					<td><a ng-click="removeFriend(user)"> <i class="glyphicon glyphicon-trash"/></a></td>
+					<td data-title="'UserID'"><a href="#/friends/{{user.gamer_id}}/{{user.profile.displayName}}">{{user.gamer_id}}</a>
+					</td>
+					<td data-title="'Login'" filter="{ 'q': 'text' }">
+						{{user.profile.displayName}}
+					</td>
+					<td data-title="'Email'" filter="{ 'q': 'text' }">
+						<a href="mailto:{{user.profile.email}}">{{user.profile.email}}</a>
+					</td>
+				</tr>
+			</table>
+			<script type="text/ng-template" id="custom/pager">
+				<ul class="pager ng-cloak">
+					<li ng-repeat="page in pages"
+						ng-class="{'disabled': !page.active, 'previous': page.type == 'prev', 'next': page.type == 'next'}"
+						ng-show="page.type == 'prev' || page.type == 'next'" ng-switch="page.type">
+						<a ng-switch-when="prev" ng-click="params.page(page.number)" href="">&laquo; Previous {{page.active?page.number+'/'+(pages.length-2):''}}</a>
+						<a ng-switch-when="next" ng-click="params.page(page.number)" href="">Next &raquo; {{page.active?page.number+'/'+(pages.length-2):''}}</a>
+					</li>
+					<li>
+						<div class="btn-group">
+							<button type="button" ng-class="{'active':params.count() == 10}" ng-click="params.count(10)" class="btn btn-default">10</button>
+							<button type="button" ng-class="{'active':params.count() == 25}" ng-click="params.count(25)" class="btn btn-default">25</button>
+							<button type="button" ng-class="{'active':params.count() == 50}" ng-click="params.count(50)" class="btn btn-default">50</button>
+							<button type="button" ng-class="{'active':params.count() == 100}" ng-click="params.count(100)" class="btn btn-default">100</button>
+						</div>
+					</li>
+				</ul>
+			</script>
+
+		</div>
+	</div>
+
+</div>

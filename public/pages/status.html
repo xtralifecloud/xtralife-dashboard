@@ -1,0 +1,117 @@
+<div>
+    <div style="padding-top:5px;"></div>
+    <h3 class="text-center"><i class="fa fa-dashboard fa-2x"></i> Status</h3>
+    <hr/>
+
+    <div class="row">
+
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">Key/Value storage</div>
+                <div class="panel-body">
+                    <p>Your game is
+                        <ng-pluralize count="storage.length"
+                                      when="{'0': 'not using Key/Value storage',
+                                'one': 'using one key',
+                                'other': 'using {} keys'}">
+                        </ng-pluralize>
+                        in domain <em>{{domain}}</em>. You can <a ng-click="editGameStorage()">Edit</a> or
+                        <a href="/game/{{game.name}}/storage/{{domain}}/?dl=1">export</a>/<a ng-file-select ng-file-change="importGameStorage($files)">import</a>.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">Achievements definition</div>
+                <div class="panel-body">
+                    <p>You have
+                        <ng-pluralize count="achievements.length"
+                                      when="{'0': 'not yet defined achievements',
+                                'one': 'have defined one achievement',
+                                'other': 'have defined {} achievements'}">
+                        </ng-pluralize>
+                        in domain <em>{{domain}}</em>. <a ng-click="editAchievements()">Edit</a>
+                         or <a href="/game/{{game.name}}/achievements/{{domain}}/?dl=1">export</a>/<a ng-file-select ng-file-change="importAchievements($files)">import</a>.
+
+                    </p>
+                </div>
+            </div>
+        </div>
+    
+	</div>
+
+</div>
+
+<script type="text/ng-template" id="status.editGameStorage.html">
+    <div class="modal-header">
+        <h3>Edit {{game}} key/value store</h3>
+    </div>
+    <div class="modal-body">
+        <div class="kv-grid" ng-grid="kvGrid"></div>
+
+        <div class="tenpxabove">
+            <button id="deleteKey" class="btn btn-danger" type="button" ng-disabled="selectedKey.length!=1"
+                    ng-click="deleteKey(selectedKey[0])">
+                <span class="glyphicon glyphicon-trash"></span> Delete Key
+            </button>
+
+            <div class="input-group tenpxabove">
+                <input type="text" class="form-control" ng-model="newKeyName"
+                       placeholder="Enter key name and press 'Add new key'">
+                <span class="input-group-btn">
+                    <button class="btn btn-info" type="button" ng-click="addNewKey(newKeyName)">
+                        <span class="glyphicon glyphicon-plus"></span>
+                        Add new key
+                    </button>
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="ok()">Save</button>
+        <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="progress.html">
+    <div class="modal-header">
+        <h4>Uploading file</h4>
+    </div>
+    <div class="modal-body">
+        <progressbar class="progress-striped active" value="loaded" type="success"><b>{{loaded}}</b</progressbar>
+    </div>
+
+</script>
+
+<script type="text/ng-template" id="status.editAchievements.html">
+    <div class="modal-header">
+        <h3>Edit {{game}} achievements</h3>
+    </div>
+    <div class="modal-body">
+        <div class="kv-grid" ng-grid="achGrid"></div>
+
+        <div class="tenpxabove">
+            <button id="deleteAch" class="btn btn-danger" type="button" ng-disabled="selected.length!=1"
+                    ng-click="delete(selected[0])">
+                <span class="glyphicon glyphicon-trash"></span> Delete
+            </button>
+
+            <div class="input-group tenpxabove">
+                <input type="text" class="form-control" ng-model="newName"
+                       placeholder="Enter achievement name and press 'Add new'">
+                <span class="input-group-btn">
+                    <button class="btn btn-info" type="button" ng-click="addNew(newName)">
+                        <span class="glyphicon glyphicon-plus"></span>
+                        Add new
+                    </button>
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="ok()">Save</button>
+        <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+    </div>
+</script>

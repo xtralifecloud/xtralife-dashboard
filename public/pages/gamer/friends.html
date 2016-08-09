@@ -1,0 +1,23 @@
+<div ng-controller="FriendsCtrl">
+	<div class="tenpxabove">
+
+		<p>Note : blacklisted users are highlighted in red.</p>
+
+		<div class="table-responsive">
+			<table ng-table="usersTable" class="table ng-table-rowselected">
+				<tr ng-repeat="user in $data" ng-class="{danger: user.blacklisted}">
+					<td><a ng-click="removeFriend(user)"> <i class="glyphicon glyphicon-trash"/></a></td>
+					<td data-title="'UserID'"><a href="#/gamer/{{user.gamer_id}}">{{user.gamer_id}}</a>
+					</td>
+					<td data-title="'Login'" filter="{ 'q': 'text' }">
+						{{user.profile.displayName}}
+					</td>
+					<td data-title="'Email'" filter="{ 'q': 'text' }">
+						<a href="mailto:{{user.profile.email}}">{{user.profile.email}}</a>
+					</td>
+				</tr>
+			</table>
+		</div>
+
+	</div>
+</div>

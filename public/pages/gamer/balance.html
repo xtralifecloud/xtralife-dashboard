@@ -1,0 +1,21 @@
+<div class="tenpxabove" ng-controller="EditTransactionsCtrl">
+	<div>
+
+		<p>Use &lt;currency&gt;:&lt;+/- delta&gt; for each currency, separated by spaces.</p>
+
+
+		<div class="input-group tenpxabove">
+			<input type="text" class="form-control" ng-model="newTx.text" placeholder="example: Gold: 100 Silver: -2.5 Arrow: 3">
+				<span class="input-group-btn">
+					<button class="btn btn-info" type="button" ng-click="newTransaction()">
+						<span class="glyphicon glyphicon-plus"></span>
+						Create new Transaction
+					</button>
+				</span>
+		</div>
+
+		<div class="tenpxabove balance-grid" ng-grid="balanceGrid"></div>
+
+	</div>
+</div>
+

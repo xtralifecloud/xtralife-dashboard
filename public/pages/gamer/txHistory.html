@@ -1,0 +1,13 @@
+<div ng-controller="TransactionsHistoryCtrl">
+	<div class="tenpxabove">
+		<div class="table-responsive">
+			<table ng-table="txTable" class="table ng-table-rowselected">
+				<tr ng-repeat="tx in $data">
+					<td data-title="'Date'">{{tx.ts}}</td>
+					<td data-title="'Transaction'">{{tx.tx}}</td>
+					<td data-title="'Description'">{{tx.desc}}</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</div>
