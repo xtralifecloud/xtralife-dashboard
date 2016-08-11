@@ -434,7 +434,7 @@ route.post "/game/:game/push/bulk/:domain", (req, res, next)->
 
 route.get "/company", (req, res) ->
 	result  = if req.isAuthenticated() then _.omit(req.user, "password") else "0"
-	res.send result
+	res.json result
 	.end()
 
 route.get "/game/:game/matches/domain/:domain", (req, res, next)->

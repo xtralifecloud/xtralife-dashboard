@@ -1,3 +1,4 @@
+ObjectID = require('mongodb').ObjectID
 async = require 'async'
 xtralife = require 'xtralife-api'
 _ = require 'underscore'
@@ -5,8 +6,7 @@ _ = require 'underscore'
 
 cargo = async.cargo((tasks, cb)->
 	for task in tasks
-		xtralife.notify.send task.app, task.domain, task.os, task.tokens, task.alert, (err, count)->
-			console.log 'doing cargo task'
+		xtralife.api.notify.send task.app, task.domain, task.os, task.tokens, task.alert, (err, count)->
 			if err? then logger.error err.message, {stack: err.stack}
 			cb null
 , 1)
@@ -47,10 +47,10 @@ module.exports =
 	pushBulk: (appid, domain, usersids, message, cb)->
 		unless xtralife.api.game.hasListener(domain)
 			return cb(new Error "No listener on domain #{domain}!")
-		objids = _.map job.data.userids, (id)->
+		objids = _.map usersids, (id)->
 			new ObjectID(id)
 		
-		collusers().find({_id: {$in:objids}, 'games.appid': appid, 'tokens.domain': domain}, {"profile.lang": 1, tokens:1}).toArray (err, users)=>
+		xtralife.api.collections.coll("users").find({_id: {$in:objids}, 'games.appid': appid, 'tokens.domain': domain}, {"profile.lang": 1, tokens:1}).toArray (err, users)=>
 			if err? then return cb err
 			sendbulk domain, users, message
 			cb null, users.length

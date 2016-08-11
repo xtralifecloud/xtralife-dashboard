@@ -23,19 +23,17 @@ authapi =
 
 game = 'com.clanofthecloud.cloudbuilder'
 user_id = null
-gamer_id = "541189411ea82ffa76b7b72a"
+gamer_id = "57ac42c017c50ad25bbb1604"
 gamers_id = null
 domain = 'private'
-
+friend_id = "57ac42dc17c50ad25bbb1605"
 
 
 describe "BO API tests", ()->
 
-	before 'should wait for initialisation', (done)->
+	before 'should wait for initialisation', ->
 		serverPromise.then (_server)->
 			server = _server
-			done()
-		.catch done
 
 
 	describe "basic requests", ()->
@@ -49,7 +47,7 @@ describe "BO API tests", ()->
 			.end (err, res)->
 				res.status.should.eql 401
 				done(err)
-
+			return null
 
 		it "/api/v1/company should success", (done)->
 			request(server)
@@ -60,10 +58,10 @@ describe "BO API tests", ()->
 			.end (err, res)->
 				res.status.should.eql 200
 				should(err).be.undefined
-				print res.body
 				should.exist(res.body.name)
 				should.exist(res.body.games)
 				done(err)
+			return null
 
 	describe "users", ()->
 
@@ -79,6 +77,7 @@ describe "BO API tests", ()->
 				should.exist(res.body.displayName)
 				print res.body
 				done(err)
+			return null
 
 		it "list users should success", (done)->
 			request(server)
@@ -95,6 +94,7 @@ describe "BO API tests", ()->
 				gamers_id.push gamer_id
 				#print {user_id}
 				done(err)
+			return null
 
 
 		it "list balance on user should success", (done)->
@@ -108,6 +108,7 @@ describe "BO API tests", ()->
 				should(err).be.undefined
 				#print res.body
 				done(err)
+			return null
 
 		it "list transaction on user should success", (done)->
 			request(server)
@@ -122,6 +123,7 @@ describe "BO API tests", ()->
 				should.exist(res.body.transactions)
 				should.exist(res.body.count)
 				done(err)
+			return null
 
 		it "push event should success", (done)->
 			request(server)
@@ -135,6 +137,34 @@ describe "BO API tests", ()->
 				should(err).be.undefined
 				#print res.body
 				done(err)
+			return null
+
+	describe "bulk", ()->
+		it "should send bulk event", (done)->
+			request(server)
+			.post "/api/v1/game/#{game}/push/bulk/private"
+			.auth(authapi.user, authapi.password)
+			.set('Content-Type', 'application/json')
+			.send 
+				userids: [gamer_id,friend_id]
+				notification:
+					fr : "Salut!"
+					en : "hi!"
+			.expect 200
+			.end (err, res)->
+				res.status.should.eql 200
+				should(err).be.undefined
+				#print res.body
+				done(err)
+			return null
+
+		it "should wait", (done)->
+			this.timeout 0
+			setTimeout ()->
+				done()
+			, 40000
+			return null
+
 
 
 	describe "keyvalue", ()->
@@ -147,8 +177,8 @@ describe "BO API tests", ()->
 			.expect 200
 			.end (err, res)->
 				res.status.should.eql 200
-				print res.body
 				done(err)
+			return null
 
 		it "should write one key", (done)->
 			request(server)
@@ -159,8 +189,8 @@ describe "BO API tests", ()->
 			.expect 200
 			.end (err, res)->
 				res.status.should.eql 200
-				print res.body
 				done(err)
+			return null
 
 		it "should read one key", (done)->
 			request(server)
@@ -170,8 +200,8 @@ describe "BO API tests", ()->
 			.expect 200
 			.end (err, res)->
 				res.status.should.eql 200
-				print res.body
 				done(err)
+			return null
 
 	describe "game", ()->
 
@@ -183,58 +213,8 @@ describe "BO API tests", ()->
 			.expect 200
 			.end (err, res)->
 				res.status.should.eql 200
-				#print res.body
 				should.exist(res.body.appid)
 				should.exist(res.body.config)
 				done(err)
-
-		it "mau should success", (done)->
-			request(server)
-			.get "/api/v1/game/#{game}/mau"
-			.auth(authapi.user, authapi.password)
-			.set('Content-Type', 'application/json')
-			.expect 200
-			.end (err, res)->
-				res.status.should.eql 200
-				#print res.body
-				should.exist(res.body.mau)
-				should.exist(res.body.dau)
-				done(err)
-
-
-	describe "jobs", ()->
-
-		it.skip "create job with bad type should fail", (done)->
-			request(server)
-			.post "/api/v1/job/xxxx"
-			.auth(authapi.user, authapi.password)
-			.set('Content-Type', 'application/json')
-			.expect 404
-			.end (err, res)->
-				res.status.should.eql 404
-				done(err)
-
-		it.skip "create job should success", (done)->
-			this.timeout 0
-			for i in [1..20]
-				request(server)
-				.post "/api/v1/job/toast"
-				.auth(authapi.user, authapi.password)
-				.set('Content-Type', 'application/json')
-				.send { title : "npm test", data: {}, options : {}}
-				.expect 200
-				.end (err, res)->
-					res.status.should.eql 200
-					should(err).be.undefined
-					#print res.body
-			done()
-
-	# to activate if jobs are tested...
-	describe.skip "delay", ()->
-
-		it "should wait", (done)->
-			this.timeout 0
-			setTimeout ()->
-				done()
-			, 40000
+			return null
 

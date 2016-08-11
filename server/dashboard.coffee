@@ -33,6 +33,10 @@ env = process.env.NODE_ENV or "dev"
 xlenv.override null, xlenv.Log
 xlenv.override null, require '../configDashboard/config.coffee'
 xlenv.override null, require "../configDashboard/config.#{env}.coffee"
+
+if fs.statSync("#{process.env.HOME}/.xtralife/xtralife-dashboard/config.#{env}.coffee").isFile()
+	xlenv.override null, require "#{process.env.HOME}/.xtralife/xtralife-dashboard/config.#{env}.coffee" 
+
 global.logger = xlenv.createLogger xlenv.logs
 
 xlenv.env = env
@@ -82,7 +86,6 @@ checkauth = (username, password, done) ->
 
 	_loadUser username, (err, ident)->
 		if err?
-			logger.info err
 			return done null, false, message: "Incorrect username."
 
 		if hash is ident.password
