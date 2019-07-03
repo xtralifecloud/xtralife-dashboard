@@ -17,22 +17,6 @@ module.exports =
 
 	logs:
 		level: 'debug'
-		elastic:
-			enable: false
-			config:
-				level: 'debug'
-				fireAndForget: true
-				indexPrefix: 'dev-backoffice'
-				messageType: os.hostname()
-				ensureMappingTemplate: false
-				clientOpts:
-					host: 'http://localhost:9200'
-					apiVersion: '1.4'
-				transformer: (orig)->
-					"@timestamp": new Date().toISOString()
-					"@fields": orig.meta
-					level: orig.level
-					"@message": orig.message
 
 	xtralife:
 		games:
