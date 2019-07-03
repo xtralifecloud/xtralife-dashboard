@@ -1,6 +1,6 @@
 {
   "name": "xtralife-dashboard",
-  "version": "3.2.2",
+  "version": "3.2.3",
   "dependencies": {
     "abbrev": {
       "version": "1.0.9",
