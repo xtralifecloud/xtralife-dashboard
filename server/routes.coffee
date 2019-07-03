@@ -53,6 +53,20 @@ route.param 'domain', (req, res, next, domain)->
 			Message: "Access not granted"
 		.end()
 
+to_string  = (value)->
+	if _.isObject value
+		JSON.stringify value
+	else if _.isNumber value
+		value
+	else
+		'"'+value+'"'
+
+from_string  = (value)->
+	if _.indexOf(value, '"') == 0
+		value = value.substring 1, value.lastIndexOf('"')
+	else
+		JSON.parse(value)
+
 route.route "/game/:game/signedurl/:domain/:key"
 .get (req, res)->
 	xtralife.api.gamevfs.createSignedURL req.domain, req.key, (err, signedURL, getURL)->
@@ -77,14 +91,18 @@ route.route "/game/:game/storage/:domain"
 		.end()
 
 .post (req, res)->
-	obj={}
-	(obj[each.fskey] = each.fsvalue for each in req.body)
-#
-	xtralife.api.gamevfs.write req.domain, null, obj, (err)->
-		if err?
-			return res.send 500
+	try
+		obj={}
+		(obj[each.fskey] = from_string(each.fsvalue) for each in req.body)
+		xtralife.api.gamevfs.write req.domain, null, obj, (err)->
+			if err?
+				return res.send 500
+				.end()
+			res.send 200
 			.end()
-		res.send 200
+	catch ex
+		res.status 400
+		.json ex.stack.split("\n")[0]
 		.end()
 
 route.route "/game/:game/storage/:domain/:key"
@@ -291,8 +309,7 @@ route
 
 	xtralife.api.virtualfs.read req.context, req.domain, req.user_id, null
 	.then (data)->
-		console.log data
-		res.json ({fskey: key, fsvalue: value} for key, value of data)
+		res.json ({fskey: key, fsvalue: to_string(value)} for key, value of data)
 		.end()
 	.catch next
 	.done()
@@ -301,7 +318,7 @@ route
 .post (req, res, next)->
 
 	obj={}
-	(obj[each.fskey] = each.fsvalue for each in req.body)
+	(obj[each.fskey] = from_string(each.fsvalue) for each in req.body)
 
 	xtralife.api.virtualfs.write req.context, req.domain, req.user_id, null, obj
 	.then ->
