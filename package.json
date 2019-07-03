@@ -41,7 +41,7 @@
     "express-session": "^1.16.2",
     "jade": "^1.11.0",
     "markdown": "^0.5.0",
-    "mongodb": "2.1",
+    "mongodb": "2.2.36",
     "morgan": "^1.9.1",
     "nodemailer": "^6.2.1",
     "nodemailer-sendgrid-transport": "*",
@@ -53,7 +53,7 @@
     "speakeasy": "^1.0.3",
     "underscore": "^1.9.1",
     "winston": "^3.2.1",
-    "xtralife-api": "^3.2.18",
+    "xtralife-api": "^3.2.20",
     "xtralife-env": "^3.0.1"
   },
   "devDependencies": {

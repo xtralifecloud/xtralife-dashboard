@@ -23,7 +23,7 @@ fs = require "fs"
 http = require 'http'
 http.globalAgent.maxSockets = 50
 
-require "coffee-script/register"
+require "coffeescript/register"
 
 global.xlenv = require "xtralife-env"
 
