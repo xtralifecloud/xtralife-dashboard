@@ -1,6 +1,6 @@
 {
   "name": "xtralife-dashboard",
-  "version": "3.3.1",
+  "version": "3.3.2",
   "scripts": {
     "compile": "watchify --debug -t coffeeify src/app.coffee -o ./public/js/bundle.js",
     "start": "browserify -t coffeeify src/app.coffee > ./public/js/bundle.js && coffee ./server/dashboard.coffee",
