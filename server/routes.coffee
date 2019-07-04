@@ -329,11 +329,11 @@ route
 
 
 # Route to delete a user
-route.delete "/game/:game/user/:userid", (req, res)-> # TODO do we intend to delete a user for each and every game ?
+route.delete "/game/:game/user/:userid", (req, res)->
 	xtralife.api.onDeleteUser req.user_id, (err, data)->
 		res.json err
 		.end()
-
+	, req.game.appid
 
 # Route to get the balance for a user
 route.get "/game/:game/user/:userid/balance/:domain", (req, res, next)->
