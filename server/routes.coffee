@@ -87,7 +87,7 @@ route.route "/game/:game/storage/:domain"
 			.json err
 			.end()
 
-		res.json ({fskey: key, fsvalue: value} for key, value of data)
+		res.json ({fskey: key, fsvalue: to_string(value)} for key, value of data)
 		.end()
 
 .post (req, res)->
