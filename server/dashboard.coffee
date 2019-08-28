@@ -24,6 +24,7 @@ http = require 'http'
 http.globalAgent.maxSockets = 50
 
 require "coffeescript/register"
+Q = require 'bluebird'
 
 global.xlenv = require "xtralife-env"
 
@@ -114,13 +115,21 @@ passport.use new LocalStrategy {passReqToCallback: true}, (req, username, passwo
 passport.use new BasicStrategy checkauth
 
 #==================================================================
-
 # Start express application
 app = express()
+ready = Q.defer()
 
 # all environments
 app.set "port", process.env.PORT or 3000
 #app.use morgan 'combined', {}
+
+# this /v1/ping should avoid creating web sessions in redis for a simple health check
+app.get '/v1/ping', (req,res, next)=> 
+	ready.promise.then (app)->
+		res.status(200)
+		.json {backend: true, version: require("../package.json").version, utc: new Date()}
+		.end()
+
 app.use bodyParser.json({strict : false, limit: 4096000})
 
 redisForSessionStore = xlenv.redisClientSync()
@@ -189,8 +198,6 @@ app.use '/api/:version', routes
 app.use middleware.errorHandler
 
 #==================================================================
-Q = require 'bluebird'
-def = Q.defer()
 
 xtralife.configure (err)->
 	throw err if err? # fail fast, we don't want a zombie backoffice
@@ -198,6 +205,6 @@ xtralife.configure (err)->
 		console.log "Dashboard listening on port " + app.get("port")
 		console.log "http://localhost:3000"
 		xlenv.xtralife = xtralife
-		def.resolve(app)
+		ready.resolve(app)
 
-module.exports = def.promise
+module.exports = ready.promise
