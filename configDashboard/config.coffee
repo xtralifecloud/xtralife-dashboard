@@ -30,13 +30,11 @@ module.exports =
 	mongodb:
 		dbname: 'xtralife'
 		options: # see http://mongodb.github.io/node-mongodb-native/driver-articles/mongoclient.html
-			db:
-				w: 1
-				readPreference: "primaryPreferred"
-
-			server:
-				auto_reconnect: true
-
+			w: 1
+			useNewUrlParser: true
+			useUnifiedTopology: true
+			readPreference: "primaryPreferred"
+			autoReconnect: true
 			promiseLibrary: require 'bluebird'
 
 	mongoCx: (cb)->
