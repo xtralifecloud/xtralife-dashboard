@@ -1,7 +1,7 @@
 ## Xtralife Dashboard
 
 The dashboard works hand in hand with xtralife-server to show your data.
-The `./configDashboard/config.dev.coffee` must be modified just like your xtralife-server's configuration to include
+The `./configDashboard/config.dev.js` must be modified just like your xtralife-server's configuration to include
 your games, keys, etc...
 
 defaults :

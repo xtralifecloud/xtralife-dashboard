@@ -2,10 +2,9 @@
   "name": "xtralife-dashboard",
   "version": "3.3.4",
   "scripts": {
-    "watch": "watchify --debug -t coffeeify src/app.coffee -o ./public/js/bundle.js",
-    "compile": "browserify -t coffeeify src/app.coffee > ./public/js/bundle.js", 
+    "compile": "browserify src/app.js > ./public/js/bundle.js",
     "start": "node ./server/dashboard.js",
-    "test": "mocha test/tests*.coffee"
+    "test": "mocha test/tests*.js"
   },
   "keywords": [
     "backend",
@@ -18,7 +17,7 @@
   "author": "devteam <devteam@xtralife.cloud>",
   "license": "(C) Xtralife.cloud, 2015",
   "engines": {
-    "node": ">=6.2.2"
+    "node": ">=12"
   },
   "dependencies": {
     "apn": "^2.2.0",
@@ -26,8 +25,7 @@
     "aws-sdk": "^2.698.0",
     "bluebird": "^3.7.2",
     "body-parser": "^1.19.0",
-    "browserify": "^16.5.1",
-    "connect-redis": "^3.4.2",
+    "connect-redis": "^4.0.4",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
     "debug": "^4.1.1",
@@ -37,12 +35,11 @@
     "express-session": "^1.17.1",
     "markdown": "^0.5.0",
     "mongodb": "^3.5.9",
-    "morgan": "^1.10.0",
     "nodemailer": "^6.4.10",
-    "nodemailer-sendgrid-transport": "*",
+    "nodemailer-sendgrid-transport": "^0.2.0",
     "passport": "^0.4.1",
-    "passport-http": "*",
-    "passport-local": "*",
+    "passport-http": "^0.3.0",
+    "passport-local": "^1.0.0",
     "redis": "^2.8.0",
     "s3-upload-stream": "*",
     "speakeasy": "^1.0.3",
@@ -52,12 +49,9 @@
     "xtralife-env": "^4.0.0-alpha"
   },
   "devDependencies": {
-    "coffee-script-mapped": "*",
-    "coffeeify": "^3.0.1",
-    "coffeescript": "^2.5.1",
     "mocha": "^6.2.3",
     "should": "*",
     "supertest": "*",
-    "watchify": "*"
+    "browserify": "^16.5.1"
   }
 }

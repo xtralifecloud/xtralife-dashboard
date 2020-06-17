@@ -8,19 +8,19 @@ const util = require('util');
 
 module.exports = {
 
-	errorHandler(err, req, res, next){
-		logger.fatal(err.message, {stack: err.stack}, function(err){});
+	errorHandler(err, req, res, next) {
+		logger.fatal(err.message, { stack: err.stack }, function (err) { });
 		return res.status(500)
-		.json({message: err.message})
-		.end();
+			.json({ message: err.message })
+			.end();
 	},
 
-	requestLogger(req, res, next){
+	requestLogger(req, res, next) {
 		const res_end = res.end;
 		const res_json = res.json;
 		const startTime = Date.now();
 		let savedJson = null;
-		res.end = function(){
+		res.end = function () {
 			const duration = Date.now() - startTime;
 			const info = {
 				user: (req.user != null) || '',
@@ -40,26 +40,26 @@ module.exports = {
 		};
 
 		if (logger.level === 'debug') {
-			res.json = function(json){
+			res.json = function (json) {
 				savedJson = json;
 				res.json = res_json;
-				return res_json.apply(res,arguments);
+				return res_json.apply(res, arguments);
 			};
 		}
 		return next();
 	},
 
-	downloadable(type){
-		return function(req, res, next){
+	downloadable(type) {
+		return function (req, res, next) {
 			if (req.query.dl != null) {
 				const env = process.env.NODE_ENV || 'dev';
 				const date = new Date();
-				const d = function(int){
-					if (int<=9) { return '0'+int; } else { return int; }
+				const d = function (int) {
+					if (int <= 9) { return '0' + int; } else { return int; }
 				};
-				let timestamp = [date.getFullYear(), d(date.getMonth()+1), d(date.getDate())].join('.');
-				timestamp += '-'+ [d(date.getHours()), d(date.getMinutes()), d(date.getSeconds())].join('');
-				res.header({"Content-Disposition": `attachment; filename=${env}-${req.params.domain || req.game.appid}-${type}-${timestamp}.json;`});
+				let timestamp = [date.getFullYear(), d(date.getMonth() + 1), d(date.getDate())].join('.');
+				timestamp += '-' + [d(date.getHours()), d(date.getMinutes()), d(date.getSeconds())].join('');
+				res.header({ "Content-Disposition": `attachment; filename=${env}-${req.params.domain || req.game.appid}-${type}-${timestamp}.json;` });
 			}
 			return next();
 		};
