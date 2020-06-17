@@ -43,7 +43,7 @@ route.param 'domain', (req, res, next, domain)->
 		return aDomain is 'private' or req.game? and req.game.config.domains? and req.game.config.domains.indexOf(aDomain) isnt -1
 
 	if _isValidDomain(req.params.domain)
-			req.domain = if req.params.domain is "private" then "#{req.game.appid}.#{req.game.apisecret}" else req.params.domain
+			req.dom = if req.params.domain is "private" then "#{req.game.appid}.#{req.game.apisecret}" else req.params.domain
 			next()
 	else
 		logger.warn "Illegal access blocked, user #{req.user.name} for #{req.params.game} domain #{req.params.domain}"
@@ -69,7 +69,7 @@ from_string  = (value)->
 
 route.route "/game/:game/signedurl/:domain/:key"
 .get (req, res)->
-	xtralife.api.gamevfs.createSignedURL req.domain, req.key, (err, signedURL, getURL)->
+	xtralife.api.gamevfs.createSignedURL req.dom, req.key, (err, signedURL, getURL)->
 		if err?
 			return res.status 400
 			.json err
@@ -81,7 +81,7 @@ route.route "/game/:game/signedurl/:domain/:key"
 route.route "/game/:game/storage/:domain"
 .get downloadable("gamekv"), (req, res)->
 
-	xtralife.api.gamevfs.read req.domain, null, (err, data)->
+	xtralife.api.gamevfs.read req.dom, null, (err, data)->
 		if err?
 			return res.status 400
 			.json err
@@ -94,7 +94,7 @@ route.route "/game/:game/storage/:domain"
 	try
 		obj={}
 		(obj[each.fskey] = from_string(each.fsvalue) for each in req.body)
-		xtralife.api.gamevfs.write req.domain, null, obj, (err)->
+		xtralife.api.gamevfs.write req.dom, null, obj, (err)->
 			if err?
 				return res.send 500
 				.end()
@@ -108,7 +108,7 @@ route.route "/game/:game/storage/:domain"
 route.route "/game/:game/storage/:domain/:key"
 .get (req, res)->
 	key = req.params.key
-	xtralife.api.gamevfs.read req.domain, key, (err, data)->
+	xtralife.api.gamevfs.read req.dom, key, (err, data)->
 		if err?
 			return res.json 400, err
 		res.json data
@@ -116,7 +116,7 @@ route.route "/game/:game/storage/:domain/:key"
 
 .put (req, res)->
 	key = req.params.key
-	xtralife.api.gamevfs.write req.domain, key, req.body, (err)->
+	xtralife.api.gamevfs.write req.dom, key, req.body, (err)->
 		if err?
 			return res.send 500
 		res.json {done:1}
@@ -124,7 +124,7 @@ route.route "/game/:game/storage/:domain/:key"
 
 .delete (req, res)->
 	key = req.params.key
-	xtralife.api.gamevfs.delete req.domain, key, (err)->
+	xtralife.api.gamevfs.delete req.dom, key, (err)->
 		if err?
 			return res.send 500
 		res.json {done:1}
@@ -234,7 +234,7 @@ route.route "/game/:game/user/:userid/domain/:domain/properties"
 .all (req, res, next)->
 	next()
 .post (req, res)->
-	xtralife.api.user.write req.context,  req.domain, req.user_id, null, req.body
+	xtralife.api.user.write req.context,  req.dom, req.user_id, null, req.body
 	.then (result)->
 		res.json result
 		.end()
@@ -242,7 +242,7 @@ route.route "/game/:game/user/:userid/domain/:domain/properties"
 		return res.json 400, err
 
 .get (req, res)->
-	xtralife.api.user.read req.context,  req.domain, req.user_id, null
+	xtralife.api.user.read req.context,  req.dom, req.user_id, null
 	.then (result)->
 		res.json result
 		.end()
@@ -252,10 +252,10 @@ route.route "/game/:game/user/:userid/domain/:domain/properties"
 
 route.get "/game/:game/user/:userid/friends/:domain", (req, res)->
 
-	xtralife.api.social.getFriends req.context, req.domain, req.user_id, (err, friends)->
+	xtralife.api.social.getFriends req.context, req.dom, req.user_id, (err, friends)->
 		if err? then return res.json 400, err
 
-		xtralife.api.social.getBlacklistedUsers req.context, req.domain, req.user_id, (err, blacklist)->
+		xtralife.api.social.getBlacklistedUsers req.context, req.dom, req.user_id, (err, blacklist)->
 			if err? then return res.json 400, err
 			res.json {friends: friends, blackList: blacklist}
 			.end()
@@ -263,15 +263,15 @@ route.get "/game/:game/user/:userid/friends/:domain", (req, res)->
 
 route.delete "/game/:game/user/:userid/friend/:domain/:friendid", (req, res)->
 
-	xtralife.api.social.setFriendStatus req.domain, req.user_id, req.friend_id, "forget", null, (err, result)->
+	xtralife.api.social.setFriendStatus req.dom, req.user_id, req.friend_id, "forget", null, (err, result)->
 		if err? then return res.json 400, err
 		res.json result
 		.end()
 
 route.get "/game/:game/user/:userid/friends/:domain/god", (req, res)->
 
-	xtralife.api.social.getGodfather req.context, req.domain, req.user_id, (err, godfather)->
-		xtralife.api.social.getGodchildren req.context, req.domain, req.user_id, (err, godchildren)->
+	xtralife.api.social.getGodfather req.context, req.dom, req.user_id, (err, godfather)->
+		xtralife.api.social.getGodchildren req.context, req.dom, req.user_id, (err, godchildren)->
 			res.json {godfather, godchildren}
 			.end()
 
@@ -283,7 +283,7 @@ route
 .get (req, res, next)->
 
 	query = {user_id : new ObjectID(req.user_id)}
-	xtralife.api.kv.list req.context, req.domain, query, 0, 1000
+	xtralife.api.kv.list req.context, req.dom, query, 0, 1000
 	.then (data)->
 		for kv in data
 			kv.value = JSON.stringify(kv.value)
@@ -307,7 +307,7 @@ route
 .route "/game/:game/user/:userid/storage/:domain"
 .get (req, res, next)->
 
-	xtralife.api.virtualfs.read req.context, req.domain, req.user_id, null
+	xtralife.api.virtualfs.read req.context, req.dom, req.user_id, null
 	.then (data)->
 		res.json ({fskey: key, fsvalue: to_string(value)} for key, value of data)
 		.end()
@@ -320,7 +320,7 @@ route
 	obj={}
 	(obj[each.fskey] = from_string(each.fsvalue) for each in req.body)
 
-	xtralife.api.virtualfs.write req.context, req.domain, req.user_id, null, obj
+	xtralife.api.virtualfs.write req.context, req.dom, req.user_id, null, obj
 	.then ->
 		res.status 200
 		.end()
@@ -337,7 +337,7 @@ route.delete "/game/:game/user/:userid", (req, res)->
 
 # Route to get the balance for a user
 route.get "/game/:game/user/:userid/balance/:domain", (req, res, next)->
-	xtralife.api.transaction.balance req.context, req.domain, req.user_id
+	xtralife.api.transaction.balance req.context, req.dom, req.user_id
 	.then (data)->
 		res.json data
 		.end()
@@ -346,7 +346,7 @@ route.get "/game/:game/user/:userid/balance/:domain", (req, res, next)->
 
 # Route to record a new transaction for a user
 route.post "/game/:game/user/:userid/transaction/:domain", (req, res, next)->
-	xtralife.api.transaction.transaction req.context, req.domain, req.user_id, req.body.tx, req.body.description
+	xtralife.api.transaction.transaction req.context, req.dom, req.user_id, req.body.tx, req.body.description
 	.spread (data)->
 		res.json data
 		.end()
@@ -354,7 +354,7 @@ route.post "/game/:game/user/:userid/transaction/:domain", (req, res, next)->
 	.done()
 
 route.get "/game/:game/user/:userid/txHistory/:domain", (req, res)->
-	xtralife.api.transaction.txHistory req.domain, req.user_id, null, parseInt(req.query.skip), parseInt(req.query.limit), (err, data)->
+	xtralife.api.transaction.txHistory req.dom, req.user_id, null, parseInt(req.query.skip), parseInt(req.query.limit), (err, data)->
 		if err?
 			res.set "Connection", "close" # otherwise error will not show immediately
 			res.send 400, err
@@ -369,7 +369,7 @@ route.route "/game/:game/domain/:domain/leaderboard/:leaderboard"
 	page = parseInt(req.query.page) or 1
 
 	# order is passed as null (the 2nd one)
-	xtralife.api.leaderboard.gethighscore req.context, req.domain, null, req.params.leaderboard , page, count, (err, leaderboard)->
+	xtralife.api.leaderboard.gethighscore req.context, req.dom, null, req.params.leaderboard , page, count, (err, leaderboard)->
 		if err?
 			console.log err
 		res.json leaderboard
@@ -377,40 +377,40 @@ route.route "/game/:game/domain/:domain/leaderboard/:leaderboard"
 
 .post (req, res, next)->
 	logger.warn "Rebuilding leaderboard #{req.params.leaderboard} for #{req.game.appid}"
-	xtralife.api.leaderboard.rebuild req.domain, req.params.leaderboard, (err)->
+	xtralife.api.leaderboard.rebuild req.dom, req.params.leaderboard, (err)->
 		if err?
 			console.log err
 		res.end()
 
 .delete (req, res, next)->
 	logger.warn "Removing leaderboard #{req.params.leaderboard} for #{req.game.appid}"
-	xtralife.api.leaderboard.deleteLeaderboard req.domain, req.params.leaderboard, (err)->
+	xtralife.api.leaderboard.deleteLeaderboard req.dom, req.params.leaderboard, (err)->
 		console.log err if err?
 		res.end()
 
 route.get "/game/:game/user/:userid/domain/:domain/bestscores", (req, res, next)->
 
-	xtralife.api.leaderboard.bestscores req.domain, req.user_id, (err, data)->
+	xtralife.api.leaderboard.bestscores req.dom, req.user_id, (err, data)->
 		res.status 200
 		.json data
 		.end()
 
 route.delete "/:game/user/:userid/domain/:domain/:leaderboard", (req, res, next)->
 
-	xtralife.api.leaderboard.deleteScore req.domain, req.user_id, req.params.leaderboard, (err, data)->
+	xtralife.api.leaderboard.deleteScore req.dom, req.user_id, req.params.leaderboard, (err, data)->
 		res.status 200
 		.json data
 		.end()
 
 # get whole game object
 route.get "/game/:game/domain/:domain", (req, res, next)->
-	xtralife.api.game.getGame req.game.appid, req.domain, (err, game)->
+	xtralife.api.game.getGame req.game.appid, req.dom, (err, game)->
 		res.json game
 		.end()
 
 route.route "/game/:game/achievements/:domain"
 .get downloadable('achievements'), (req, res, next)->
-	xtralife.api.achievement.loadAchievementsDefinitions req.domain
+	xtralife.api.achievement.loadAchievementsDefinitions req.dom
 	.then (definitions)->
 		res.json definitions
 		.end()
@@ -418,7 +418,7 @@ route.route "/game/:game/achievements/:domain"
 	.done()
 
 .post (req, res, next)->
-	xtralife.api.achievement.saveAchievementsDefinitions req.domain, req.body
+	xtralife.api.achievement.saveAchievementsDefinitions req.dom, req.body
 	.then (ach)->
 		res.json ach
 		.end()
@@ -428,7 +428,7 @@ route.route "/game/:game/achievements/:domain"
 
 route.post "/game/:game/user/:userid/message/:domain", (req, res, next)->
 	message = req.body
-	xlenv.broker.send req.domain, req.user_id, message
+	xlenv.broker.send req.dom, req.user_id, message
 	.then ()->
 		res.status 200
 		.json message # with .id field added
@@ -442,7 +442,7 @@ route.post "/game/:game/push/bulk/:domain", (req, res, next)->
 	return next new Error('notification is missing') unless req.body.notification? 
 	return next new Error('userids should be an array') unless _.isArray(req.body.userids) 
 
-	notify.pushBulk req.game.appid, req.domain, req.body.userids, req.body.notification, (err, found)->
+	notify.pushBulk req.game.appid, req.dom, req.body.userids, req.body.notification, (err, found)->
 		return next err if err?
 		res.status 200
 		.json { found }
@@ -455,7 +455,7 @@ route.get "/company", (req, res) ->
 	.end()
 
 route.get "/game/:game/matches/domain/:domain", (req, res, next)->
-	xtralife.api.match.list req.domain,
+	xtralife.api.match.list req.dom,
 		parseInt(req.query.skip),
 		parseInt(req.query.limit),
 		req.query.hideFinished or false,
