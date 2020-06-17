@@ -43,7 +43,6 @@ module.exports = {
 			useNewUrlParser: true,
 			useUnifiedTopology: true,
 			readPreference: "primaryPreferred",
-			autoReconnect: true,
 			promiseLibrary: require('bluebird')
 		}
 	},

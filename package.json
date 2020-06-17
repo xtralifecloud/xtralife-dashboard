@@ -2,8 +2,9 @@
   "name": "xtralife-dashboard",
   "version": "3.3.4",
   "scripts": {
-    "compile": "watchify --debug -t coffeeify src/app.coffee -o ./public/js/bundle.js",
-    "start": "browserify -t coffeeify src/app.coffee > ./public/js/bundle.js && node ./server/dashboard.js",
+    "watch": "watchify --debug -t coffeeify src/app.coffee -o ./public/js/bundle.js",
+    "compile": "browserify -t coffeeify src/app.coffee > ./public/js/bundle.js", 
+    "start": "node ./server/dashboard.js",
     "test": "mocha test/tests*.coffee"
   },
   "keywords": [
@@ -26,9 +27,6 @@
     "bluebird": "^3.7.2",
     "body-parser": "^1.19.0",
     "browserify": "^16.5.1",
-    "coffee-script-mapped": "*",
-    "coffeeify": "^3.0.1",
-    "coffeescript": "^2.5.1",
     "connect-redis": "^3.4.2",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
@@ -54,6 +52,9 @@
     "xtralife-env": "^4.0.0-alpha"
   },
   "devDependencies": {
+    "coffee-script-mapped": "*",
+    "coffeeify": "^3.0.1",
+    "coffeescript": "^2.5.1",
     "mocha": "^6.2.3",
     "should": "*",
     "supertest": "*",
