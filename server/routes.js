@@ -61,7 +61,7 @@ route.param('domain', function (req, res, next, domain) {
 	const _isValidDomain = aDomain => (aDomain === 'private') || ((req.game != null) && (req.game.config.domains != null) && (req.game.config.domains.indexOf(aDomain) !== -1));
 
 	if (_isValidDomain(req.params.domain)) {
-		req.domain = req.params.domain === "private" ? `${req.game.appid}.${req.game.apisecret}` : req.params.domain;
+		req.dom = req.params.domain === "private" ? `${req.game.appid}.${req.game.apisecret}` : req.params.domain;
 		return next();
 	} else {
 		logger.warn(`Illegal access blocked, user ${req.user.name} for ${req.params.game} domain ${req.params.domain}`);
@@ -92,7 +92,7 @@ const from_string = function (value) {
 };
 
 route.route("/game/:game/signedurl/:domain/:key")
-	.get((req, res) => xtralife.api.gamevfs.createSignedURL(req.domain, req.key, function (err, signedURL, getURL) {
+	.get((req, res) => xtralife.api.gamevfs.createSignedURL(req.dom, req.key, function (err, signedURL, getURL) {
 		if (err != null) {
 			return res.status(400)
 				.json(err)
@@ -104,7 +104,7 @@ route.route("/game/:game/signedurl/:domain/:key")
 
 
 route.route("/game/:game/storage/:domain")
-	.get(downloadable("gamekv"), (req, res) => xtralife.api.gamevfs.read(req.domain, null, function (err, data) {
+	.get(downloadable("gamekv"), (req, res) => xtralife.api.gamevfs.read(req.dom, null, function (err, data) {
 		if (err != null) {
 			return res.status(400)
 				.json(err)
@@ -124,7 +124,7 @@ route.route("/game/:game/storage/:domain")
 		try {
 			const obj = {};
 			for (let each of Array.from(req.body)) { obj[each.fskey] = from_string(each.fsvalue); }
-			return xtralife.api.gamevfs.write(req.domain, null, obj, function (err) {
+			return xtralife.api.gamevfs.write(req.dom, null, obj, function (err) {
 				if (err != null) {
 					return res.send(500)
 						.end();
@@ -144,7 +144,7 @@ route.route("/game/:game/storage/:domain/:key")
 		const {
 			key
 		} = req.params;
-		return xtralife.api.gamevfs.read(req.domain, key, function (err, data) {
+		return xtralife.api.gamevfs.read(req.dom, key, function (err, data) {
 			if (err != null) {
 				return res.json(400, err);
 			}
@@ -155,7 +155,7 @@ route.route("/game/:game/storage/:domain/:key")
 		const {
 			key
 		} = req.params;
-		return xtralife.api.gamevfs.write(req.domain, key, req.body, function (err) {
+		return xtralife.api.gamevfs.write(req.dom, key, req.body, function (err) {
 			if (err != null) {
 				return res.send(500);
 			}
@@ -166,7 +166,7 @@ route.route("/game/:game/storage/:domain/:key")
 		const {
 			key
 		} = req.params;
-		return xtralife.api.gamevfs.delete(req.domain, key, function (err) {
+		return xtralife.api.gamevfs.delete(req.dom, key, function (err) {
 			if (err != null) {
 				return res.send(500);
 			}
@@ -295,17 +295,17 @@ route.route("/game/:game/user/:userid/profile")
 
 
 route.route("/game/:game/user/:userid/domain/:domain/properties")
-	.all((req, res, next) => next()).post((req, res) => xtralife.api.user.write(req.context, req.domain, req.user_id, null, req.body)
+	.all((req, res, next) => next()).post((req, res) => xtralife.api.user.write(req.context, req.dom, req.user_id, null, req.body)
 		.then(result => res.json(result)
-			.end()).catch(err => res.json(400, err))).get((req, res) => xtralife.api.user.read(req.context, req.domain, req.user_id, null)
+			.end()).catch(err => res.json(400, err))).get((req, res) => xtralife.api.user.read(req.context, req.dom, req.user_id, null)
 				.then(result => res.json(result)
 					.end()).catch(err => res.json(400, err)));
 
 
-route.get("/game/:game/user/:userid/friends/:domain", (req, res) => xtralife.api.social.getFriends(req.context, req.domain, req.user_id, function (err, friends) {
+route.get("/game/:game/user/:userid/friends/:domain", (req, res) => xtralife.api.social.getFriends(req.context, req.dom, req.user_id, function (err, friends) {
 	if (err != null) { return res.json(400, err); }
 
-	return xtralife.api.social.getBlacklistedUsers(req.context, req.domain, req.user_id, function (err, blacklist) {
+	return xtralife.api.social.getBlacklistedUsers(req.context, req.dom, req.user_id, function (err, blacklist) {
 		if (err != null) { return res.json(400, err); }
 		return res.json({ friends, blackList: blacklist })
 			.end();
@@ -313,13 +313,13 @@ route.get("/game/:game/user/:userid/friends/:domain", (req, res) => xtralife.api
 }));
 
 
-route.delete("/game/:game/user/:userid/friend/:domain/:friendid", (req, res) => xtralife.api.social.setFriendStatus(req.domain, req.user_id, req.friend_id, "forget", null, function (err, result) {
+route.delete("/game/:game/user/:userid/friend/:domain/:friendid", (req, res) => xtralife.api.social.setFriendStatus(req.dom, req.user_id, req.friend_id, "forget", null, function (err, result) {
 	if (err != null) { return res.json(400, err); }
 	return res.json(result)
 		.end();
 }));
 
-route.get("/game/:game/user/:userid/friends/:domain/god", (req, res) => xtralife.api.social.getGodfather(req.context, req.domain, req.user_id, (err, godfather) => xtralife.api.social.getGodchildren(req.context, req.domain, req.user_id, (err, godchildren) => res.json({ godfather, godchildren })
+route.get("/game/:game/user/:userid/friends/:domain/god", (req, res) => xtralife.api.social.getGodfather(req.context, req.dom, req.user_id, (err, godfather) => xtralife.api.social.getGodchildren(req.context, req.dom, req.user_id, (err, godchildren) => res.json({ godfather, godchildren })
 	.end())));
 
 
@@ -330,7 +330,7 @@ route
 	.get(function (req, res, next) {
 
 		const query = { user_id: new ObjectID(req.user_id) };
-		return xtralife.api.kv.list(req.context, req.domain, query, 0, 1000)
+		return xtralife.api.kv.list(req.context, req.dom, query, 0, 1000)
 			.then(function (data) {
 				for (let kv of Array.from(data)) {
 					kv.value = JSON.stringify(kv.value);
@@ -352,7 +352,7 @@ route
 // Route to GET virtualfs storage for a user
 route
 	.route("/game/:game/user/:userid/storage/:domain")
-	.get((req, res, next) => xtralife.api.virtualfs.read(req.context, req.domain, req.user_id, null)
+	.get((req, res, next) => xtralife.api.virtualfs.read(req.context, req.dom, req.user_id, null)
 		.then(data => res.json(((() => {
 			const result = [];
 			for (let key in data) {
@@ -367,7 +367,7 @@ route
 			const obj = {};
 			for (let each of Array.from(req.body)) { obj[each.fskey] = from_string(each.fsvalue); }
 
-			return xtralife.api.virtualfs.write(req.context, req.domain, req.user_id, null, obj)
+			return xtralife.api.virtualfs.write(req.context, req.dom, req.user_id, null, obj)
 				.then(() => res.status(200)
 					.end()).catch(next)
 				.done();
@@ -380,18 +380,18 @@ route.delete("/game/:game/user/:userid", (req, res) => xtralife.api.onDeleteUser
 	, req.game.appid));
 
 // Route to get the balance for a user
-route.get("/game/:game/user/:userid/balance/:domain", (req, res, next) => xtralife.api.transaction.balance(req.context, req.domain, req.user_id)
+route.get("/game/:game/user/:userid/balance/:domain", (req, res, next) => xtralife.api.transaction.balance(req.context, req.dom, req.user_id)
 	.then(data => res.json(data)
 		.end()).catch(next)
 	.done());
 
 // Route to record a new transaction for a user
-route.post("/game/:game/user/:userid/transaction/:domain", (req, res, next) => xtralife.api.transaction.transaction(req.context, req.domain, req.user_id, req.body.tx, req.body.description)
+route.post("/game/:game/user/:userid/transaction/:domain", (req, res, next) => xtralife.api.transaction.transaction(req.context, req.dom, req.user_id, req.body.tx, req.body.description)
 	.spread(data => res.json(data)
 		.end()).catch(next)
 	.done());
 
-route.get("/game/:game/user/:userid/txHistory/:domain", (req, res) => xtralife.api.transaction.txHistory(req.domain, req.user_id, null, parseInt(req.query.skip), parseInt(req.query.limit), function (err, data) {
+route.get("/game/:game/user/:userid/txHistory/:domain", (req, res) => xtralife.api.transaction.txHistory(req.dom, req.user_id, null, parseInt(req.query.skip), parseInt(req.query.limit), function (err, data) {
 	if (err != null) {
 		res.set("Connection", "close"); // otherwise error will not show immediately
 		res.send(400, err);
@@ -408,7 +408,7 @@ route.route("/game/:game/domain/:domain/leaderboard/:leaderboard")
 		const page = parseInt(req.query.page) || 1;
 
 		// order is passed as null (the 2nd one)
-		return xtralife.api.leaderboard.gethighscore(req.context, req.domain, null, req.params.leaderboard, page, count, function (err, leaderboard) {
+		return xtralife.api.leaderboard.gethighscore(req.context, req.dom, null, req.params.leaderboard, page, count, function (err, leaderboard) {
 			if (err != null) {
 				console.log(err);
 			}
@@ -417,7 +417,7 @@ route.route("/game/:game/domain/:domain/leaderboard/:leaderboard")
 		});
 	}).post(function (req, res, next) {
 		logger.warn(`Rebuilding leaderboard ${req.params.leaderboard} for ${req.game.appid}`);
-		return xtralife.api.leaderboard.rebuild(req.domain, req.params.leaderboard, function (err) {
+		return xtralife.api.leaderboard.rebuild(req.dom, req.params.leaderboard, function (err) {
 			if (err != null) {
 				console.log(err);
 			}
@@ -425,37 +425,41 @@ route.route("/game/:game/domain/:domain/leaderboard/:leaderboard")
 		});
 	}).delete(function (req, res, next) {
 		logger.warn(`Removing leaderboard ${req.params.leaderboard} for ${req.game.appid}`);
-		return xtralife.api.leaderboard.deleteLeaderboard(req.domain, req.params.leaderboard, function (err) {
+		return xtralife.api.leaderboard.deleteLeaderboard(req.dom, req.params.leaderboard, function (err) {
 			if (err != null) { console.log(err); }
 			return res.end();
 		});
 	});
 
-route.get("/game/:game/user/:userid/domain/:domain/bestscores", (req, res, next) => xtralife.api.leaderboard.bestscores(req.domain, req.user_id, (err, data) => res.status(200)
+route.get("/game/:game/user/:userid/domain/:domain/bestscores", (req, res, next) => xtralife.api.leaderboard.bestscores(req.dom, req.user_id, (err, data) => res.status(200)
 	.json(data)
 	.end()));
 
-route.delete("/:game/user/:userid/domain/:domain/:leaderboard", (req, res, next) => xtralife.api.leaderboard.deleteScore(req.domain, req.user_id, req.params.leaderboard, (err, data) => res.status(200)
+route.delete("/:game/user/:userid/domain/:domain/:leaderboard", (req, res, next) => xtralife.api.leaderboard.deleteScore(req.dom, req.user_id, req.params.leaderboard, (err, data) => res.status(200)
 	.json(data)
 	.end()));
 
 // get whole game object
-route.get("/game/:game/domain/:domain", (req, res, next) => xtralife.api.game.getGame(req.game.appid, req.domain, (err, game) => res.json(game)
+route.get("/game/:game/domain/:domain", (req, res, next) => xtralife.api.game.getGame(req.game.appid, req.dom, (err, game) => res.json(game)
 	.end()));
 
-route.route("/game/:game/achievements/:domain")
-	.get(downloadable('achievements'), (req, res, next) => xtralife.api.achievement.loadAchievementsDefinitions(req.domain)
-		.then(definitions => res.json(definitions)
-			.end()).catch(next)
-		.done()).post((req, res, next) => xtralife.api.achievement.saveAchievementsDefinitions(req.domain, req.body)
-			.then(ach => res.json(ach)
-				.end()).catch(next)
-			.done());
+route.get("/game/:game/achievements/:domain", downloadable('achievements'), (req, res, next) => 
+	xtralife.api.achievement.loadAchievementsDefinitions(req.dom)
+	.then(definitions => res.json(definitions)
+		.end())
+	.catch(next)
+	.done())
+route.post("/game/:game/achievements/:domain", (req, res, next) => 
+	xtralife.api.achievement.saveAchievementsDefinitions(req.dom, req.body)
+	.then(ach => res.json(ach)
+		.end())
+	.catch(next)
+	.done());
 
 
 route.post("/game/:game/user/:userid/message/:domain", function (req, res, next) {
 	const message = req.body;
-	return xlenv.broker.send(req.domain, req.user_id, message)
+	return xlenv.broker.send(req.dom, req.user_id, message)
 		.then(() => res.status(200)
 			.json(message) // with .id field added
 			.end()).catch(err => next(err));
@@ -467,7 +471,7 @@ route.post("/game/:game/push/bulk/:domain", function (req, res, next) {
 	if (req.body.notification == null) { return next(new Error('notification is missing')); }
 	if (!_.isArray(req.body.userids)) { return next(new Error('userids should be an array')); }
 
-	return notify.pushBulk(req.game.appid, req.domain, req.body.userids, req.body.notification, function (err, found) {
+	return notify.pushBulk(req.game.appid, req.dom, req.body.userids, req.body.notification, function (err, found) {
 		if (err != null) { return next(err); }
 		return res.status(200)
 			.json({ found })
@@ -482,7 +486,7 @@ route.get("/company", function (req, res) {
 		.end();
 });
 
-route.get("/game/:game/matches/domain/:domain", (req, res, next) => xtralife.api.match.list(req.domain,
+route.get("/game/:game/matches/domain/:domain", (req, res, next) => xtralife.api.match.list(req.dom,
 	parseInt(req.query.skip),
 	parseInt(req.query.limit),
 	req.query.hideFinished || false,
