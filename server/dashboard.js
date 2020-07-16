@@ -239,4 +239,6 @@ xtralife.configure(function (err) {
 	});
 });
 
+require('./metrics-server.js')
+
 module.exports = ready.promise;

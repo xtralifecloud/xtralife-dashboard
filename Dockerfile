@@ -12,6 +12,7 @@ COPY . /server
 RUN npm run compile
 
 EXPOSE 3000
+EXPOSE 10254
 
 VOLUME ["/server/configDashboard", "/server/logs"]
 
