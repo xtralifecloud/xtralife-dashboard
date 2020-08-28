@@ -1,6 +1,6 @@
 {
   "name": "xtralife-dashboard",
-  "version": "4.0.0-beta2",
+  "version": "4.0.0",
   "scripts": {
     "compile": "browserify src/app.js > ./public/js/bundle.js",
     "start": "node ./server/dashboard.js",
