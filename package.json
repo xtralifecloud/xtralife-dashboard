@@ -45,7 +45,7 @@
     "passport": "^0.4.0",
     "passport-http": "*",
     "passport-local": "*",
-    "redis": "^2.8.0",
+    "redis": "^3.1.1",
     "s3-upload-stream": "*",
     "speakeasy": "^1.0.3",
     "underscore": "^1.9.1",
