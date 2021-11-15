@@ -7,7 +7,7 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 const {
-	ObjectID
+	ObjectId
 } = require('mongodb');
 const async = require('async');
 const xtralife = require('xtralife-api');
@@ -79,7 +79,7 @@ module.exports = {
 		if (!xtralife.api.game.hasListener(domain)) {
 			return cb(new Error(`No listener on domain ${domain}!`));
 		}
-		const objids = _.map(usersids, id => new ObjectID(id));
+		const objids = _.map(usersids, id => new ObjectId(id));
 
 		return xtralife.api.collections.coll("users").find({ _id: { $in: objids }, 'games.appid': appid, 'tokens.domain': domain }, { "profile.lang": 1, tokens: 1 }).toArray((err, users) => {
 			if (err != null) { return cb(err); }

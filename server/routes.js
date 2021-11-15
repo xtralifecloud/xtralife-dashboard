@@ -7,7 +7,7 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 const {
-	ObjectID
+	ObjectId
 } = require('mongodb');
 const async = require('async');
 const _ = require('underscore');
@@ -37,17 +37,17 @@ route.param('game', function (req, res, next, game) {
 });
 
 route.param('userid', function (req, res, next, userid) {
-	req.user_id = new ObjectID(userid);
+	req.user_id = new ObjectId(userid);
 	return next();
 });
 
 route.param('friendid', function (req, res, next, friendid) {
-	req.friend_id = new ObjectID(friendid);
+	req.friend_id = new ObjectId(friendid);
 	return next();
 });
 
 route.param('matchid', function (req, res, next, matchid) {
-	req.match_id = new ObjectID(matchid);
+	req.match_id = new ObjectId(matchid);
 	return next();
 });
 
@@ -245,7 +245,7 @@ route.get("/game/:game/users/find/:user_id", function (req, res, next) {
 
 	// doesn't use the route param userid to manage exceptions...
 	try {
-		id = new ObjectID(req.params.user_id);
+		id = new ObjectId(req.params.user_id);
 	} catch (error) {
 		id = null;
 	}
@@ -281,7 +281,7 @@ route.route("/game/:game/user/:userid/outline")
 	}));
 
 route.route("/game/:game/user/:userid/profile")
-	.get((req, res, next) => //don't use req.user_id as connect.exist do the new ObjectID by itself
+	.get((req, res, next) => //don't use req.user_id as connect.exist do the new ObjectId by itself
 		xtralife.api.connect.exist(req.params.userid, function (err, result) {
 			if ((err != null) || (result === null)) { return res.json(400, err); }
 			return res.json(result.profile)
@@ -329,7 +329,7 @@ route
 	.route("/game/:game/user/:userid/kvstore/:domain")
 	.get(function (req, res, next) {
 
-		const query = { user_id: new ObjectID(req.user_id) };
+		const query = { user_id: new ObjectId(req.user_id) };
 		return xtralife.api.kv.list(req.context, req.dom, query, 0, 1000)
 			.then(function (data) {
 				for (let kv of Array.from(data)) {

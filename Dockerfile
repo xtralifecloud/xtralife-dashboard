@@ -1,15 +1,14 @@
 FROM node:12
 
+RUN npm install -g browserify
 RUN mkdir -p /server
 WORKDIR /server
 
-COPY package.json /server/
-COPY package-lock.json /server/
+COPY package*.json /server/
 
-RUN npm install
+RUN npm ci
 
 COPY . /server
-RUN npm run compile
 
 EXPOSE 3000
 EXPOSE 10254

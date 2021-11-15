@@ -31,7 +31,7 @@ const authapi = {
 
 const game = 'com.clanofthecloud.cloudbuilder';
 let user_id = null;
-const gamer_id = "57ac42c017c50ad25bbb1604";
+let gamer_id = null;
 let gamers_id = null;
 const domain = 'private';
 const friend_id = "57ac42dc17c50ad25bbb1605";
@@ -76,6 +76,23 @@ describe("BO API tests", function(){
 
 	describe("users", function(){
 
+		it("list users should success", function(done){
+			request(server)
+			.get(`/api/v1/game/${game}/users?skip=0&limit=3`)
+			.auth(authapi.user, authapi.password)
+			.set('Content-Type', 'application/json')
+			.expect(200)
+			.end(function(err, res){
+				res.status.should.eql(200);
+				should(err).be.undefined;
+				user_id = res.body.list[0]._id;
+				gamers_id = (Array.from(res.body.list).map((u) => u._id));
+				gamer_id = gamers_id[0]
+				return done(err);
+			});
+			return null;
+		});
+
 		it("get profile should success", function(done){
 			request(server)
 			.get(`/api/v1/game/${game}/user/${gamer_id}/profile`)
@@ -87,25 +104,6 @@ describe("BO API tests", function(){
 				should(err).be.undefined;
 				should.exist(res.body.displayName);
 				print(res.body);
-				return done(err);
-			});
-			return null;
-		});
-
-		it("list users should success", function(done){
-			request(server)
-			.get(`/api/v1/game/${game}/users?skip=0&limit=3`)
-			.auth(authapi.user, authapi.password)
-			.set('Content-Type', 'application/json')
-			.expect(200)
-			.end(function(err, res){
-				res.status.should.eql(200);
-				should(err).be.undefined;
-				//print res.body
-				user_id = res.body.list[0]._id;
-				gamers_id = (Array.from(res.body.list).map((u) => u._id));
-				gamers_id.push(gamer_id);
-				//print {user_id}
 				return done(err);
 			});
 			return null;
@@ -168,7 +166,7 @@ describe("BO API tests", function(){
 			.auth(authapi.user, authapi.password)
 			.set('Content-Type', 'application/json')
 			.send({ 
-				userids: [gamer_id,friend_id],
+				userids: [gamer_id, friend_id],
 				notification: {
 					fr : "Salut!",
 					en : "hi!"
