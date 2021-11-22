@@ -17,9 +17,14 @@ module.exports = function($scope, $q, MatchService, ngTableParams){
 	$scope.hideFinished = false;
 
 	$scope.$on('domainChanged', function(event, value){
-		domain = value;
-		$scope.selectedMatches = [];
-		return $scope.matchesTable.reload();
+		if(value.fromGameChange) {
+			domain = value.domain;
+		}else{
+			domain = value.domain;
+			$scope.selectedMatches = [];
+			$scope.matchesTable.reload();
+		}
+		return;
 	});
 
 	$scope.$on('gameChanged', function(event, value){

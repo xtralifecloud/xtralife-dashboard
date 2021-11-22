@@ -16,8 +16,13 @@ module.exports = function($rootScope, $scope, $modal, $route, $q, $routeParams, 
 	UserService.getUserProfile(game.name, $scope.userId).success(profile => $scope.name = profile.displayName).catch(err => $scope.name = "undefined");
 
 	$scope.$on('domainChanged', function(event, value){
-		domain = value;
-		return $route.reload();
+		if(value.fromGameChange) {
+			domain = value.domain;
+		}else{
+			domain = value.domain;
+			$route.reload()
+		}
+		return;
 	});
 
 	return $scope.$on('gameChanged', function(event, value){

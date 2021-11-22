@@ -206,15 +206,29 @@ app.controller("SelectorCtrl", function ($rootScope, $scope, AuthService) {
 		}
 	});
 
-	$scope.$watch('game', function (value) {
-		$scope.domain = 'private';
-		$rootScope.$broadcast('domainChanged', 'private');
-		return $rootScope.$broadcast('gameChanged', value);
+	$scope.$watch('game', function (value) {		
+		if (value != null){
+			if(value.domains.includes($scope.domain)){
+				return $rootScope.$broadcast('gameChanged', value);
+			}
+			const domainChange = {
+				"domain": value.domains[0],
+				"fromGameChange": true
+			}
+			$scope.domain = value.domains[0];
+			$rootScope.$broadcast('domainChanged', domainChange);
+			return $rootScope.$broadcast('gameChanged', value);
+		}
 	});
 
-
 	return $scope.$watch('domain', function (value) {
-		if (value != null) { return $rootScope.$broadcast('domainChanged', value); }
+		if (value != null) { 
+			const domainChange = {
+				"domain": value,
+				"fromGameChange": false
+			}
+			return $rootScope.$broadcast('domainChanged', domainChange); 
+		}
 	});
 });
 

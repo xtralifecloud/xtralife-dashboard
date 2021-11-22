@@ -25,17 +25,22 @@ module.exports = function($rootScope, $scope, $modal, $upload, $http, GameServic
 
 	const updateEnablePullEvents = () => $scope.enablePullEvents = game.eventedDomains.indexOf(domain) !== -1;
 
-	const loadStorage = () => GameService.getGameStorage(game.name, domain).success(storage => $scope.storage = storage
-    , err => console.error("error"));
+	const loadStorage = () => GameService.getGameStorage(game.name, domain)
+	.success(storage => $scope.storage = storage
+    , err => console.error(err));
 
 	const loadAchievements = () => GameService.getAchievements(game.name, domain)
     .then(achievements => $scope.achievements = achievements
     , err => console.error(err));
 
 	$scope.$on('domainChanged', function(event, value){
-		$scope.domain = (domain = value);
-		loadStorage();
-		loadAchievements();
+		if(value.fromGameChange) {
+			$scope.domain = (domain = value.domain);
+		}else{
+			$scope.domain = (domain = value.domain);
+			loadStorage();
+			loadAchievements();
+		}
 		return updateEnablePullEvents();
 	});
 

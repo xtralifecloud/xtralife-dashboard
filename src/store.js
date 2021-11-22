@@ -22,8 +22,13 @@ module.exports = function($scope, $q, $modal, StoreService, ngTableParams, Expor
         }}).result;
 
 	$scope.$on('domainChanged', function(event, value){
-		$scope.domain = (domain = value);
-		return $scope.productsTable.reload();
+		if(value.fromGameChange) {
+			$scope.domain = (domain = value.domain);
+		}else{
+			$scope.domain = (domain = value.domain);
+			$scope.productsTable.reload();
+		}
+		return;
 	});
 
 	$scope.$on('gameChanged', function(event, value){

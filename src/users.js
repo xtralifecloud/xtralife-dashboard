@@ -48,8 +48,13 @@ module.exports = function($rootScope, $scope, $modal, $location, $q, UserService
 	);
 
 	$scope.$on('domainChanged', function(event, value){
-		domain = value;
-		return $scope.usersTable.reload();
+		if(value.fromGameChange) {
+			domain = value.domain;
+		}else{
+			domain = value.domain;
+			$scope.usersTable.reload()
+		}
+		return;
 	});
 
 	$scope.$on('gameChanged', function(event, value){

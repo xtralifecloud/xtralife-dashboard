@@ -43,9 +43,14 @@ module.exports = function($rootScope, $scope, $modal, $log, $q, UserService, Gam
 	});
 
 	$scope.$on('domainChanged', function(event, value){
-		domain = value;
-		$scope.scoresTable.reload();
-		return _loadLeaderboards();
+		if(value.fromGameChange) {
+			domain = value.domain;
+		}else{
+			domain = value.domain;
+			$scope.scoresTable.reload();
+			_loadLeaderboards();
+		}
+		return;
 	});
 
 	$scope.scoresTable = new ngTableParams({
