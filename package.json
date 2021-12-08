@@ -3,7 +3,8 @@
   "version": "4.0.3",
   "scripts": {
     "compile": "browserify src/app.js > ./public/js/bundle.js",
-    "start": "browserify src/app.js > ./public/js/bundle.js && node ./server/dashboard.js",
+    "start-angular": "browserify src/app.js > ./public/js/bundle.js && node ./server/dashboard-angular.js",
+    "start-react": "cd client && npm run build && cd .. && node ./server/dashboard-react.js",
     "test": "mocha test/tests*.js"
   },
   "keywords": [

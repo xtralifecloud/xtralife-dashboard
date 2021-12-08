@@ -1,0 +1,21 @@
+.table-fixed-storage {
+  width: 100%;
+  tbody {
+    display: flex;
+    flex-direction: column;
+    height: 400px;
+    overflow-y: auto;
+  }
+
+  .td-overflow {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  tr {
+    width: 100%;
+    display: table;
+    table-layout: fixed;
+  }
+}

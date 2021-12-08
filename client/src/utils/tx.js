@@ -1,0 +1,16 @@
+export const parseTx = (tx) => {
+  const reg = /[ ]*([^:, ]+) *: *([+-]* *[0-9.]+)[ ]*/g;
+  if (tx.match(reg)) {
+    const filtered = tx
+      .split(reg)
+      .filter((each) => each !== "" && each !== ",");
+    const obj = {};
+    for (let i = 0; i < filtered.length; i += 2) {
+      const ccy = filtered[i];
+      obj[ccy] = parseFloat(filtered[i + 1]);
+    }
+    return obj;
+  } else {
+    return null;
+  }
+};

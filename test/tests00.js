@@ -11,7 +11,7 @@ const should = require("should");
 const util = require("util");
 
 let server = null;
-const serverPromise = require('../server/dashboard.js');
+const serverPromise = require('../server/dashboard-angular.js');
 
 // ------------------------------------------------
 // ------------------------------------------------
