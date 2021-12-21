@@ -22,7 +22,7 @@ const Navigation = () => {
               <NavDropdown.Item as='span'><Link className="deco-none" to="/store">Store</Link></NavDropdown.Item>
             </NavDropdown>
             <NavDropdown title="Community" id="collasible-nav-dropdown">
-              <NavDropdown.Item as='span'><Link className="deco-none" to="/gamers">Gamers</Link></NavDropdown.Item>
+              <NavDropdown.Item as='span'><Link className="deco-none" to="/users">Users</Link></NavDropdown.Item>
               <NavDropdown.Item as='span'>
                 <Link className="deco-none" to="/leaderboards">Leaderboards</Link>
               </NavDropdown.Item>

@@ -1,20 +1,50 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Modal, Form, Row, Col } from "react-bootstrap";
-import { parseTx } from "./../../../utils/tx";
-import { getProducts, postProduct } from "../../../services/store";
+import { parseTx, printTx } from "../../../utils/tx";
+import { getProducts, postProduct, updateProduct } from "../../../services/store";
 import { useAppContext } from "../../../context/app-context";
 import { isPresent } from "../../../utils/isPresent";
 
-export const AddProductModal = (props) => {
-  const {game} = useAppContext()
-  const [productId, setProductId] = useState(props.productId);
-  const [appStoreId, setAppStoreId] = useState(props.appStoreId);
-  const [macStoreId, setMacStoreId] = useState(props.macStoreId);
-  const [googlePlayId, setGooglePlayId] = useState(props.googlePlayId);
-  const [tx, setTx] = useState(props.tx);
-  const [description, setDescription] = useState(props.description);
-  const [txDomain, setTxDomain] = useState(props.txDomain);
-  const [disableSave, setDisableSave] = useState(true);
+export const AddEditProductModal = (props) => {
+  const { game } = useAppContext();
+  const [productId, setProductId] = useState(null);
+  const [appStoreId, setAppStoreId] = useState(null);
+  const [macStoreId, setMacStoreId] = useState(null);
+  const [googlePlayId, setGooglePlayId] = useState(null);
+  const [tx, setTx] = useState(null);
+  const [description, setDescription] = useState(null);
+  const [txDomain, setTxDomain] = useState(null);
+  const [disableSave, setDisableSave] = useState(false);
+  const [disableProductId, setDisableProductId] = useState(false);
+
+  useEffect(() => {
+    if (props.product) {
+      setProductId(props.product.productId);
+      setAppStoreId(props.product.appStoreId);
+      setMacStoreId(props.product.macStoreId);
+      setGooglePlayId(props.product.googlePlayId);
+      setTx(props.product.reward.tx);
+      setDescription(props.product.reward.description);
+      setTxDomain(props.product.reward.domain);
+      setDisableSave(false);
+      setDisableProductId(true)
+    }
+    if(props.action === "add"){
+      setDisableProductId(false)
+    }
+  }, [props]);
+
+  const clearStates = () => {
+    props.setSelectedProduct({reward: {}})
+    setProductId(null);
+    setAppStoreId(null);
+    setMacStoreId(null);
+    setGooglePlayId(null);
+    setTx(null);
+    setDescription(null);
+    setTxDomain(null);
+    setDisableSave(true);
+  };
 
   const handleSave = async () => {
     const product = {
@@ -29,8 +59,15 @@ export const AddProductModal = (props) => {
       },
     };
 
-    await postProduct(game.name, product);
-    props.setProducts(await getProducts(game.name))
+    clearStates()
+
+    if (props.action === "add") {
+      await postProduct(game.name, product);
+    } else if (props.action === "edit") {
+      await updateProduct(game.name, product)
+    }
+    
+    props.setProducts(await getProducts(game.name));
     props.setShow(false);
   };
 
@@ -59,6 +96,8 @@ export const AddProductModal = (props) => {
             >
               <Form.Control
                 type="text"
+                defaultValue={props.product.productId}
+                disabled={disableProductId}
                 placeholder="Used to identify the product in your app"
                 onChange={(e) => {
                   const textRequired = document.getElementById("text-required");
@@ -88,6 +127,7 @@ export const AddProductModal = (props) => {
             >
               <Form.Control
                 type="text"
+                defaultValue={props.product.appStoreId}
                 placeholder="Equivalent product on the AppStore"
                 onChange={(e) => {
                   setAppStoreId(e.target.value);
@@ -106,6 +146,7 @@ export const AddProductModal = (props) => {
             >
               <Form.Control
                 type="text"
+                defaultValue={props.product.macStoreId}
                 placeholder="Equivalent product on the Mac AppStore"
                 onChange={(e) => {
                   setMacStoreId(e.target.value);
@@ -124,6 +165,7 @@ export const AddProductModal = (props) => {
             >
               <Form.Control
                 type="text"
+                defaultValue={props.product.googlePlayId}
                 placeholder="Equivalent product on Google play"
                 onChange={(e) => {
                   setGooglePlayId(e.target.value);
@@ -139,6 +181,7 @@ export const AddProductModal = (props) => {
             <Col sm={10}>
               <Form.Control
                 as="textarea"
+                defaultValue={printTx(props.product.reward.tx)}
                 placeholder="Example: gold: +50, silver: +100"
                 onChange={(e) => {
                   setTx(parseTx(e.target.value));
@@ -152,18 +195,20 @@ export const AddProductModal = (props) => {
               Transaction on success
             </Form.Label>
             <Col sm={10}>
-              {isPresent([game]) && <Form.Select
-                defaultValue={txDomain}
-                onChange={(e) => setTxDomain(e.target.value)}
-              >
-                {game.domains.map((domain, i) => {
-                  return (
-                    <option value={domain} key={i}>
-                      {domain}
-                    </option>
-                  );
-                })}
-              </Form.Select>}
+              {isPresent([game]) && (
+                <Form.Select
+                  defaultValue={props.product.reward.domain}
+                  onChange={(e) => setTxDomain(e.target.value)}
+                >
+                  {game.domains.map((domain, i) => {
+                    return (
+                      <option value={domain} key={i}>
+                        {domain}
+                      </option>
+                    );
+                  })}
+                </Form.Select>
+              )}
             </Col>
           </Form.Group>
 
@@ -177,6 +222,7 @@ export const AddProductModal = (props) => {
             >
               <Form.Control
                 type="text"
+                defaultValue={props.product.reward.description}
                 placeholder="Description for transaction executed upon purchase"
                 onChange={(e) => {
                   setDescription(e.target.value);
@@ -186,7 +232,7 @@ export const AddProductModal = (props) => {
           </Form.Group>
 
           <Modal.Footer className="pb-0">
-            <Button variant="secondary" onClick={() => props.setShow(false)}>
+            <Button variant="secondary" onClick={() => {clearStates(); props.setShow(false)}}>
               Cancel
             </Button>
             <Button

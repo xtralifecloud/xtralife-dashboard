@@ -7,20 +7,23 @@ import {
   Spinner,
 } from "react-bootstrap";
 import { Shop } from "react-bootstrap-icons";
-import { AddProductModal } from "../components/modals/store/AddProductModal";
+import ConfirmationModal from "../components/modals/ConfirmationModal";
+import { AddEditProductModal } from "../components/modals/store/AddEditProductModal";
 import { useAppContext } from "../context/app-context";
-import { getProducts } from "../services/store";
+import { getProducts, deleteProduct } from "../services/store";
 import { isPresent } from "../utils/isPresent";
 
 const Store = () => {
   const { game, domain } = useAppContext();
-  const [products, setProducts] = useState([]);
-  const [showAddProduct, setShowAddProduct] = useState(false);
+  const [products, setProducts] = useState({});
+  const [showAddEditProduct, setShowAddEditProduct] = useState(false);
+  const [showDeleteProduct, setShowDeleteProduct] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [selected, setSelected] = useState(null)
-  console.log('selected:', selected)
-  const [editDisabled, setEditDisabled] = useState(true)
-  const [deleteDisabled, setDeleteDisabled] = useState(true)
+  const [selectedProductIndex, setSelectedProductIndex] = useState(null);
+  const [selectedProduct, setSelectedProduct] = useState({reward: {}});
+  const [editDisabled, setEditDisabled] = useState(true);
+  const [deleteDisabled, setDeleteDisabled] = useState(true);
+  const [modalAction, setModalAction] = useState('');
 
   useEffect(() => {
     const getDataProducts = async () => {
@@ -35,19 +38,46 @@ const Store = () => {
   }, [game, domain]);
 
   useEffect(() => {
-    if(selected !== null){
-      setEditDisabled(false)
-      setDeleteDisabled(false)
-    }else{
-      setEditDisabled(true)
-      setDeleteDisabled(true)
+    if (selectedProductIndex !== null) {
+      setEditDisabled(false);
+      setDeleteDisabled(false);
+    } else {
+      setEditDisabled(true);
+      setDeleteDisabled(true);
     }
-  }, [selected])
+  }, [selectedProductIndex]);
 
   const handleSelect = (i) => {
-    setSelected(i)
-    document.getElementById(`line-${i}`).style.backgroundColor = "#ced4da"
-  }
+    if (selectedProductIndex !== null)
+      document
+        .getElementById(`line-${selectedProductIndex}`)
+        .classList.remove("active-row");
+    setSelectedProductIndex(i);
+    document.getElementById(`line-${i}`).classList.add("active-row");
+  };
+
+  const handleAddProduct = () => {
+    setModalAction('add')
+    setShowAddEditProduct(true);
+  };
+
+  const handleEditProduct = () => {
+    setModalAction('edit')
+    setSelectedProduct(products.list[selectedProductIndex])
+    setShowAddEditProduct(true);
+  };
+
+  const handleDeleteProduct = () => {
+    setShowDeleteProduct(false);
+    const productId = products.list[selectedProductIndex].productId;
+    products["list"] = products.list.filter((_, i) => i !== selectedProductIndex);
+    setProducts(products);
+    document
+      .getElementById(`line-${selectedProductIndex}`)
+      .classList.remove("active-row");
+    setSelectedProductIndex(null);
+    deleteProduct(game.name, productId);
+  };
 
   return (
     <Container>
@@ -58,11 +88,23 @@ const Store = () => {
 
       <div className="d-flex justify-content-between my-5">
         <ButtonGroup aria-label="actions">
-          <Button variant="success" onClick={() => setShowAddProduct(true)}>
+          <Button variant="success" onClick={() => handleAddProduct()}>
             Add product
           </Button>
-          <Button variant="secondary" disabled={editDisabled}>Edit product</Button>
-          <Button variant="danger" disabled={deleteDisabled}>Delete product</Button>
+          <Button
+            variant="secondary"
+            disabled={editDisabled}
+            onClick={() => handleEditProduct()}
+          >
+            Edit product
+          </Button>
+          <Button
+            variant="danger"
+            disabled={deleteDisabled}
+            onClick={() => setShowDeleteProduct(true)}
+          >
+            Delete product
+          </Button>
         </ButtonGroup>
         <ButtonGroup aria-label="import-export">
           <Button variant="outline-primary">Export</Button>
@@ -75,7 +117,7 @@ const Store = () => {
         ) : products.total === 0 ? (
           <p>You don't have any product yet</p>
         ) : (
-          <Table size="sm" striped bordered hover borderless>
+          <Table size="sm" bordered hover borderless>
             <thead>
               <tr>
                 <th>ID</th>
@@ -87,7 +129,11 @@ const Store = () => {
             <tbody>
               {products.list.map((product, i) => {
                 return (
-                  <tr id={`line-${i}`} key={`line-${i}`} onClick={() => handleSelect(i)}>
+                  <tr
+                    id={`line-${i}`}
+                    key={`line-${i}`}
+                    onClick={() => handleSelect(i)}
+                  >
                     <td key={`productId-${i}`}>{product.productId}</td>
                     <td key={`appStoreId-${i}`}>{product.appStoreId}</td>
                     <td key={`macStoreId-${i}`}>{product.macStoreId}</td>
@@ -99,13 +145,29 @@ const Store = () => {
           </Table>
         ))}
 
-      <AddProductModal
-        show={showAddProduct}
-        setShow={setShowAddProduct}
-        action="add"
-        txDomain="private"
+      <AddEditProductModal
+        show={showAddEditProduct}
+        setShow={setShowAddEditProduct}
         setProducts={setProducts}
+        setSelectedProduct={setSelectedProduct}
+        product={selectedProduct}
+        action={modalAction}
+        key={selectedProduct}
       />
+
+      {showDeleteProduct && (
+        <ConfirmationModal
+          show={showDeleteProduct}
+          onHide={() => setShowDeleteProduct(false)}
+          action={handleDeleteProduct}
+          body={`Are you sure you want to delete product ${
+            selectedProductIndex !== null
+              ? products.list[selectedProductIndex].productId
+              : ""
+          } ?`}
+          title="Product deletion"
+        />
+      )}
     </Container>
   );
 };

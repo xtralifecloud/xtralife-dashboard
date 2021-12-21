@@ -74,11 +74,11 @@ const Status = () => {
     }
   }, [modalKV]);
 
-
   const deleteKV = () => {
     setConfirmation(false);
     let tempStorage = storage.filter((kv, i) => i !== selectedKV);
     setStorage(tempStorage);
+    setSelectedKV(null)
     updateGameStorage(game.name, domain, tempStorage);
   };
 
@@ -91,6 +91,8 @@ const Status = () => {
     setStorage(tempStorage);
     updateGameStorage(game.name, domain, tempStorage);
   };
+
+
   return (
     <Container>
       <div className="d-flex align-items-center justify-content-center mt-5">
@@ -163,64 +165,66 @@ const Status = () => {
             </div>
 
             <Collapse in={toggleKV}>
-              <Table
-                borderless
-                striped
-                hover
-                size="sm"
-                className="table-fixed-storage"
-              >
-                <thead>
-                  <tr>
-                    <th className="col-3">Key</th>
-                    <th className="col-7">Value</th>
-                    <th className="col-2">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {storage.map((item, i) => {
-                    return (
-                      <tr key={`tr-${i}`}>
-                        <td className="col-3" key={`key-${i}`}>
-                          {item.fskey}
-                        </td>
-                        <td className="td-overflow col-7" key={`value-${i}`}>
-                          {item.fsvalue}
-                        </td>
-                        <td
-                          className="d-flex justify-content-around w-100 col-2"
-                          key={`buttons-${i}`}
-                        >
-                          <Button
-                            key={`edit-${i}`}
-                            style={{ width: "30%" }}
-                            size="sm"
-                            variant="primary"
-                            onClick={() => {
-                              setSelectedKV(i);
-                              setModalKV(true);
-                            }}
+              <div className="table-wrapper">
+                <Table
+                  borderless
+                  striped
+                  hover
+                  size="sm"
+                  className="table-fixed-storage"
+                >
+                  <thead>
+                    <tr>
+                      <th className="col-3">Key</th>
+                      <th className="col-7">Value</th>
+                      <th className="col-2">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {storage.map((item, i) => {
+                      return (
+                        <tr key={`tr-${i}`}>
+                          <td className="col-3" key={`key-${i}`}>
+                            {item.fskey}
+                          </td>
+                          <td className="td-overflow col-7" key={`value-${i}`}>
+                            {item.fsvalue}
+                          </td>
+                          <td
+                            className="d-flex justify-content-around w-100 col-2"
+                            key={`buttons-${i}`}
                           >
-                            <PencilSquare size={20} />
-                          </Button>
-                          <Button
-                            key={`delete-${i}`}
-                            style={{ width: "30%" }}
-                            variant="danger"
-                            size="sm"
-                            onClick={() => {
-                              setSelectedKV(i);
-                              setConfirmation(true);
-                            }}
-                          >
-                            <Trash color="white" size={20} />
-                          </Button>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </Table>
+                            <Button
+                              key={`edit-${i}`}
+                              style={{ width: "30%" }}
+                              size="sm"
+                              variant="primary"
+                              onClick={() => {
+                                setSelectedKV(i);
+                                setModalKV(true);
+                              }}
+                            >
+                              <PencilSquare size={20} />
+                            </Button>
+                            <Button
+                              key={`delete-${i}`}
+                              style={{ width: "30%" }}
+                              variant="danger"
+                              size="sm"
+                              onClick={() => {
+                                setSelectedKV(i);
+                                setConfirmation(true);
+                              }}
+                            >
+                              <Trash color="white" size={20} />
+                            </Button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </Table>
+              </div>
             </Collapse>
           </Card.Body>
         )}

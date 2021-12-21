@@ -14,3 +14,15 @@ export const parseTx = (tx) => {
     return null;
   }
 };
+
+export const printTx = (tx) =>{
+	const args = ((() => {
+		const result = [];
+		for (let prop in tx) {
+			const value = tx[prop];
+			result.push(prop + ": " + value);
+		}
+		return result;
+	})());
+	return args.join(", ");
+};
