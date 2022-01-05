@@ -5,6 +5,8 @@ import GameAndDomainSelector from "./components/GameAndDomainSelector";
 import { useEffect } from "react";
 import { useAppContext } from "./context/app-context";
 import { getEnv } from "./services/init";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   const { setEnv, setVersion, setOptions } = useAppContext();
@@ -18,9 +20,8 @@ function App() {
         setOptions(res.data.options);
       }
     };
-
     init();
-  }, [setEnv, setVersion, setOptions])  ;
+  }, [setEnv, setVersion, setOptions]);
 
   return (
     <div>
@@ -28,6 +29,7 @@ function App() {
         <Navigation />
         <GameAndDomainSelector />
         <AppRoutes />
+        <ToastContainer theme="dark" position="bottom-right"/>
       </BrowserRouter>
     </div>
   );

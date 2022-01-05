@@ -14,7 +14,7 @@ export const AddEditProductModal = (props) => {
   const [tx, setTx] = useState(null);
   const [description, setDescription] = useState(null);
   const [txDomain, setTxDomain] = useState(null);
-  const [disableSave, setDisableSave] = useState(false);
+  const [disableSave, setDisableSave] = useState(true);
   const [disableProductId, setDisableProductId] = useState(false);
 
   useEffect(() => {
@@ -30,6 +30,7 @@ export const AddEditProductModal = (props) => {
       setDisableProductId(true)
     }
     if(props.action === "add"){
+      setDisableSave(true);
       setDisableProductId(false)
     }
   }, [props]);

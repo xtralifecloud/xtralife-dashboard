@@ -6,22 +6,28 @@ import {
   Spinner,
   Table,
   FormCheck,
+  Form,
 } from "react-bootstrap";
-import { People, Trash, Chat } from "react-bootstrap-icons";
+import {
+  People,
+  Trash,
+  Chat,
+  Search,
+  PencilSquare,
+} from "react-bootstrap-icons";
 import { useAppContext } from "../context/app-context";
-import { deleteUser, getUsers } from "../services/user";
+import { deleteUser, getUsers, searchUsers, findUser } from "../services/user";
 import { isPresent } from "../utils/isPresent";
 import Paginate from "../components/Paginate";
 import { useNavigate } from "react-router-dom";
 
 const Users = () => {
-  const { game } = useAppContext();
+  const { game, page, setPage, itemsNumber, setItemsNumber } = useAppContext();
   const [users, setUsers] = useState({});
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1);
-  const [itemsNumber, setItemsNumber] = useState(10);
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const [selectedUsers, setSelectedUsers] = useState([]);
+  const [search, setSearch] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -51,12 +57,30 @@ const Users = () => {
       setSelectedUsers(selectedUsers.filter((id) => id !== userId));
     }
   };
-  
+
   const bulkDeleteUser = () => {
-    for(const user_id of selectedUsers) {
+    for (const user_id of selectedUsers) {
       deleteUser(game.name, user_id);
     }
-  }
+  };
+
+  const handleSearch = async () => {
+    setLoading(true);
+    if (search === null || search === "") {
+      const skip = (page - 1) * itemsNumber;
+      const users = await getUsers(game.name, skip, itemsNumber);
+      setUsers(users);
+      setLoading(false);
+    } else if (/^\d+$/.test(search)) {
+      const users = await searchUsers(game.name, 0, 0, search);
+      setUsers(users);
+      setLoading(false);
+    } else {
+      const user = await findUser(game.name, search);
+      setUsers(user);
+      setLoading(false);
+    }
+  };
 
   return (
     <Container>
@@ -67,13 +91,27 @@ const Users = () => {
 
       <div className="d-flex justify-content-between my-5">
         <ButtonGroup aria-label="import-export">
-          <Button variant="danger" disabled={buttonDisabled} onClick={() => bulkDeleteUser()}>
-            <Trash size={20} /> Delete {selectedUsers.length} users
+          <Button
+            variant="danger"
+            disabled={buttonDisabled}
+            onClick={() => bulkDeleteUser()}
+            className="d-flex align-items-center"
+          >
+            <Trash size={20} className="mr-2" /> Delete {selectedUsers.length} users
           </Button>
-          <Button variant="secondary" disabled={buttonDisabled}>
-            <Chat size={20} /> Message {selectedUsers.length} users
+          <Button variant="secondary" disabled={buttonDisabled} className="d-flex align-items-center">
+            <Chat size={20} className="mr-2"/> Message {selectedUsers.length} users
           </Button>
         </ButtonGroup>
+        <div className="d-flex">
+          <Form.Control
+            placeholder="Search"
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <Button variant="secondary" onClick={() => handleSearch()}  className="d-flex align-items-center">
+            <Search size={15} />
+          </Button>
+        </div>
       </div>
 
       {loading ? (
@@ -97,7 +135,7 @@ const Users = () => {
             <tbody>
               {users.list.map((user, i) => {
                 return (
-                  <tr id={`line-${i}`} key={`line-${i}`}>
+                  <tr id={`line-${i}`} key={`line-${user._id}`}>
                     <td>
                       <div className="d-flex align-items-center justify-content-center">
                         <FormCheck.Input
@@ -106,17 +144,20 @@ const Users = () => {
                         />
                       </div>
                     </td>
-                    <td
-                      onClick={() => navigate(`/gamer/${user._id}`)}
-                      key={`id-${i}`}
-                    >
+                    <td key={`id-${user._id}`} className="d-flex justify-content-between">
                       {user._id}
+                      <button
+                        onClick={() => navigate(`/gamer/${user._id}`)}
+                        className="remove-btn-css mr-2 d-flex algin-items-center"
+                      >
+                        <PencilSquare size={20}/>
+                      </button>
                     </td>
-                    <td key={`name-${i}`}>{user.profile.displayName}</td>
-                    <td key={`email-${i}`}>{user.profile.email}</td>
-                    <td key={`lang-${i}`}>{user.profile.lang}</td>
-                    <td key={`linkedto-${i}`}></td>
-                    <td key={`events-${i}`}>
+                    <td key={`name-${user._id}`}>{user.profile.displayName}</td>
+                    <td key={`email-${user._id}`}>{user.profile.email}</td>
+                    <td key={`lang-${user._id}`}>{user.profile.lang}</td>
+                    <td key={`linkedto-${user._id}`}></td>
+                    <td key={`events-${user._id}`}>
                       {user.mqPending}/{user.mqTimedout}
                     </td>
                   </tr>

@@ -1,28 +1,31 @@
+import { toast } from "react-toastify";
+
 export const checkFileName = (filename, expectedType, expectedDomain, action) => {
     if(action === null) action = 'replace'
     const extension = (filename.split('.'))[(filename.split('.')).length-1];
-    //const env = filename.split('-')[0];
+    const env = filename.split('-')[0];
     const domain = filename.split('-')[1];
     const type = filename.split('-')[2];
 
     if (extension.toLowerCase() !== 'json') {
-        return 'wrongExtensionModal'
+        toast.warn(`Incorrect file type. Found: ${extension} but expected .json`)
+        return {state: "error"};
     }
 
     if (type !== expectedType) {
-        return 'wrongTypeModal';
+        toast.warn(`Wrong export type. Found: ${type} but expected ${expectedType}`)
+        return {state: "error"};
     }
 
     if (domain !== expectedDomain) {
-        return 'confirmDomainModal'
+        return {state: "unexpectedDomain", domain: domain, expectedDomain: expectedDomain}
     }
 
-/*     if (confirm(`Are you sure you want to ${action} this data with data from ${env}? `)) {
-        return true;
-    } else { return false; } */
+    return {state: "success", action: action, env: env}
 }
 
 export const readFileAsJson = (file, cb) => {
+    console.log('file2:', file)
     const filereader = new FileReader();
     filereader.onloadend = function() {
         const jsonContents = JSON.parse(filereader.result);

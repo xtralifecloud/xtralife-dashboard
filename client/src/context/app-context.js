@@ -9,33 +9,35 @@ export const useAppContext = () => {
 const AppContextProvider = ({ children }) => {
   const [user, setUser] = useState({});
   const [game, setGame] = useState({});
-  const [domain, setDomain] = useState('');
-  const [env, setEnv] = useState('');
-  const [version, setVersion] = useState(''); 
-  const [options, setOptions] = useState({}); 
+  const [domain, setDomain] = useState("");
+  const [env, setEnv] = useState("");
+  const [version, setVersion] = useState("");
+  const [options, setOptions] = useState({});
+  const [page, setPage] = useState(1);
+  const [itemsNumber, setItemsNumber] = useState(10);
 
   useEffect(() => {
-    if (localStorage.getItem("user")) {
-      setUser(JSON.parse(localStorage.getItem("user")));
+    if (sessionStorage.getItem("user")) {
+      setUser(JSON.parse(sessionStorage.getItem("user")));
     }
-    if (localStorage.getItem("game")) {
-      setGame(JSON.parse(localStorage.getItem("game")));
+    if (sessionStorage.getItem("game")) {
+      setGame(JSON.parse(sessionStorage.getItem("game")));
     }
-    if (localStorage.getItem("domain")) {
-      setDomain(localStorage.getItem("domain"));
+    if (sessionStorage.getItem("domain")) {
+      setDomain(sessionStorage.getItem("domain"));
     }
   }, [setUser, setDomain, setGame]);
 
   useEffect(() => {
-    localStorage.setItem("user", JSON.stringify(user));
+    sessionStorage.setItem("user", JSON.stringify(user));
   }, [user]);
 
   useEffect(() => {
-    localStorage.setItem("game", JSON.stringify(game));
+    sessionStorage.setItem("game", JSON.stringify(game));
   }, [game]);
 
   useEffect(() => {
-    localStorage.setItem("domain", domain);
+    sessionStorage.setItem("domain", domain);
   }, [domain]);
 
   const value = {
@@ -49,8 +51,12 @@ const AppContextProvider = ({ children }) => {
     setEnv,
     version,
     setVersion,
-    options, 
+    options,
     setOptions,
+    page,
+    setPage,
+    itemsNumber,
+    setItemsNumber,
   };
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };

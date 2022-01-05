@@ -10,6 +10,9 @@ import Profile from "../components/gamer/Profile";
 import Raw from "../components/gamer/Raw";
 import TxHistory from "../components/gamer/TxHistory";
 import Score from "../components/gamer/Score";
+import Balance from "../components/gamer/Balance";
+import Properties from "../components/gamer/Properties";
+import KVStorage from "../components/gamer/KVStorage";
 
 const Gamer = () => {
   const { game } = useAppContext();
@@ -39,25 +42,25 @@ const Gamer = () => {
         variant="pills"
       >
         <Tab eventKey="profile" title="Profile">
-          <Profile gamer={gamer} setGamer={setGamer}/>
+          <Profile gamer={gamer} setGamer={setGamer} />
         </Tab>
         <Tab eventKey="contact" title="Properties">
-          Properties
+          <Properties />
         </Tab>
         <Tab eventKey="storage" title="Storage">
-            <Storage />
+          <Storage />
         </Tab>
         <Tab eventKey="kvstorage" title="KV Storage">
-          KV Storage
+          <KVStorage />
         </Tab>
         <Tab eventKey="balance" title="Balance">
-          Balance
+          <Balance />
         </Tab>
-        <Tab eventKey="txhistory" title="tx history">
-          <TxHistory/>
+        <Tab eventKey="txhistory" title="Tx History">
+          <TxHistory />
         </Tab>
         <Tab eventKey="scores" title="Scores">
-          <Score/>
+          <Score />
         </Tab>
         <Tab eventKey="friends" title="Friends">
           Friends
@@ -66,7 +69,7 @@ const Gamer = () => {
           Godchildren
         </Tab>
         <Tab eventKey="raw" title="Raw">
-          <Raw/>
+          <Raw />
         </Tab>
       </Tabs>
     </Container>

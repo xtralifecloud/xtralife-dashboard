@@ -89,9 +89,9 @@ const Storage = () => {
             >
               <thead>
                 <tr>
-                  <th className="col-1"></th>
-                  <th className="col-5">Key</th>
-                  <th className="col-6">Value</th>
+                  <th style={{width:"3%"}}></th>
+                  <th style={{width:"22%"}}>Key</th>
+                  <th style={{width:"75%"}}>Value</th>
                 </tr>
               </thead>
               <tbody>
@@ -100,7 +100,7 @@ const Storage = () => {
                     <tr
                       key={`line-${e.fskey}`}
                     >
-                      <td key={`checkbox-${e.fskey}`} className="col-1">
+                      <td key={`checkbox-${e.fskey}`} style={{width:"3%"}}>
 											<div className="d-flex align-items-center justify-content-center">
                         <FormCheck.Input
                           type="checkbox"
@@ -110,7 +110,8 @@ const Storage = () => {
 											</td>
                       <td
                         key={`fskey-${e.fskey}`}
-                        className="td-overflow col-5"
+                        className="td-overflow"
+                        style={{width:"22%"}}
 												onClick={() => {
                         setSelectedKV(i);
                         setShowModal(true);
@@ -120,7 +121,8 @@ const Storage = () => {
                       </td>
                       <td
                         key={`fsvalue-${e.fskey}`}
-                        className="td-overflow col-6"
+                        className="td-overflow"
+                        style={{width:"75%"}}
 												onClick={() => {
                         setSelectedKV(i);
                         setShowModal(true);

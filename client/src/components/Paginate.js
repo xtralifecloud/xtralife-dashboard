@@ -50,7 +50,7 @@ const Paginate = ({ page, setPage, totalItems, itemsNumber, setItemsNumber }) =>
   }, [page, itemsNumber, totalItems]);
 
   return (
-    <div className="d-flex justify-content-between align-items-top my-5">
+    <div className="d-flex justify-content-between align-items-top">
       <Pagination size="sm">
         {page !== 1 && <Pagination.Prev />}
         {pageArray.map((n, i) => {

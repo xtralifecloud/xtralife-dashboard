@@ -7,7 +7,6 @@ const useSession = () => {
   const navigate = useNavigate();
 
   const login = (username, password, ggcode) => {
-    console.log("login:");
     axios
       .post("/login", {
         username: username,
@@ -27,12 +26,9 @@ const useSession = () => {
   };
 
   const logout = () => {
-    console.log("logout:");
     axios.post("/logout").then(() => {
-      window.localStorage.clear();
-      setUser({});
-      setGame({});
-      setDomain("");
+      window.sessionStorage.clear();
+      window.location.replace('/')
     });
   };
 
