@@ -10,33 +10,35 @@ import { Plus, Trash } from "react-bootstrap-icons";
 const Storage = () => {
   const { game, domain } = useAppContext();
   const [storage, setStorage] = useState([]);
+  console.log("storage2:", storage);
   const { userId } = useParams();
   const [showModal, setShowModal] = useState(false);
   const [selectedKV, setSelectedKV] = useState(null);
   const [newKey, setNewKey] = useState(null);
-	const [deleteDisabled, setDeleteDisabled] = useState(true);
-	const [selectedKeys, setSelectedKeys] = useState([]);
+  const [deleteDisabled, setDeleteDisabled] = useState(true);
+  const [selectedKeys, setSelectedKeys] = useState([]);
 
   useEffect(() => {
-    const getStorage = async () => {
+    (async () => {
       if (game && domain) {
         const storage = await getUserStorage(game.name, domain, userId);
-        setStorage(storage);
+        if (storage) setStorage(storage);
       }
-    };
-    getStorage();
+    })();
   }, [game, domain, userId]);
 
   const addKV = () => {
-    const newItem = {
+    const updatedStorage = storage
+    updatedStorage.push({
       fskey: newKey,
       fsvalue: JSON.stringify({ edit: "me" }),
-    };
-    setStorage((storage) => [...storage, newItem]);
+    });
+    setStorage(updatedStorage);
+
     updateUserStorage(game.name, domain, userId, storage);
   };
 
-	const handleSelection = (e, i) => {
+  const handleSelection = (e, i) => {
     if (e.target.checked) {
       setSelectedKeys((selectedKeys) => [...selectedKeys, i]);
     } else {
@@ -44,20 +46,22 @@ const Storage = () => {
     }
   };
 
-	const bulkDeleteUser = () => {
-		const filteredStorage = storage.filter((_,index) => !selectedKeys.includes(index))
-		setStorage(filteredStorage);
-		setSelectedKeys([])
-		updateUserStorage(game.name, domain, userId, filteredStorage);
-  }
+  const bulkDeleteUser = () => {
+    const filteredStorage = storage.filter(
+      (_, index) => !selectedKeys.includes(index)
+    );
+    setStorage(filteredStorage);
+    setSelectedKeys([]);
+    updateUserStorage(game.name, domain, userId, filteredStorage);
+  };
 
-	useEffect(() => {
-		if(selectedKeys.length === 0){
-			setDeleteDisabled(true);
-		}else{
-			setDeleteDisabled(false);
-		}
-	}, [selectedKeys])
+  useEffect(() => {
+    if (selectedKeys.length === 0) {
+      setDeleteDisabled(true);
+    } else {
+      setDeleteDisabled(false);
+    }
+  }, [selectedKeys]);
 
   return (
     <Container className="p-0">
@@ -72,8 +76,12 @@ const Storage = () => {
               onChange={(e) => setNewKey(e.target.value)}
             />
             <div className="input-group-append">
-              <Button variant="success" onClick={() => addKV()}>
-                <Plus size={25} /> Add new key
+              <Button
+                variant="success"
+                onClick={() => addKV()}
+                className="d-flex align-items-center"
+              >
+                <Plus size={25} className="mr-2" /> Add new key
               </Button>
             </div>
           </div>
@@ -89,44 +97,42 @@ const Storage = () => {
             >
               <thead>
                 <tr>
-                  <th style={{width:"3%"}}></th>
-                  <th style={{width:"22%"}}>Key</th>
-                  <th style={{width:"75%"}}>Value</th>
+                  <th style={{ width: "3%" }}></th>
+                  <th style={{ width: "22%" }}>Key</th>
+                  <th style={{ width: "75%" }}>Value</th>
                 </tr>
               </thead>
               <tbody>
                 {storage.map((e, i) => {
                   return (
-                    <tr
-                      key={`line-${e.fskey}`}
-                    >
-                      <td key={`checkbox-${e.fskey}`} style={{width:"3%"}}>
-											<div className="d-flex align-items-center justify-content-center">
-                        <FormCheck.Input
-                          type="checkbox"
-                          onClick={(e) => handleSelection(e, i)}
-                        />
-                      </div>
-											</td>
+                    <tr key={`line-${e.fskey}`}>
+                      <td key={`checkbox-${e.fskey}`} style={{ width: "3%" }}>
+                        <div className="d-flex align-items-center justify-content-center">
+                          <FormCheck.Input
+                            type="checkbox"
+                            onClick={(e) => handleSelection(e, i)}
+                          />
+                        </div>
+                      </td>
                       <td
                         key={`fskey-${e.fskey}`}
                         className="td-overflow"
-                        style={{width:"22%"}}
-												onClick={() => {
-                        setSelectedKV(i);
-                        setShowModal(true);
-                      }}
+                        style={{ width: "22%" }}
+                        onClick={() => {
+                          setSelectedKV(i);
+                          setShowModal(true);
+                        }}
                       >
                         {e.fskey}
                       </td>
                       <td
                         key={`fsvalue-${e.fskey}`}
                         className="td-overflow"
-                        style={{width:"75%"}}
-												onClick={() => {
-                        setSelectedKV(i);
-                        setShowModal(true);
-                      }}
+                        style={{ width: "75%" }}
+                        onClick={() => {
+                          setSelectedKV(i);
+                          setShowModal(true);
+                        }}
                       >
                         {e.fsvalue}
                       </td>
@@ -135,12 +141,15 @@ const Storage = () => {
                 })}
               </tbody>
             </Table>
-						
           </div>
-					<Button variant="danger" disabled={deleteDisabled} onClick={() => bulkDeleteUser()} className="mt-3">
-              <Trash size={20} /> Delete {selectedKeys.length} keys
+          <Button
+            variant="danger"
+            disabled={deleteDisabled}
+            onClick={() => bulkDeleteUser()}
+            className="mt-3"
+          >
+            <Trash size={20} /> Delete {selectedKeys.length} keys
           </Button>
-
 
           <Modal
             size="lg"

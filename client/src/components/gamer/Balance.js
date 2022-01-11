@@ -20,22 +20,22 @@ const Balance = () => {
   const getBalanceData = async (game, domain, userId) => {
     if (game && domain) {
       const balance = await getBalance(game.name, domain, userId);
-      setBalance(balance);
+      if(balance) setBalance(balance);
     }
   };
 
   const handleChange = (value) => {
-    const tx = parseTx(value)
-    if(tx !== null){
-        setDisabledNewTx(false)
-        setNewTx(tx)
-    }else{
-        setDisabledNewTx(true)
+    const tx = parseTx(value);
+    if (tx !== null) {
+      setDisabledNewTx(false);
+      setNewTx(tx);
+    } else {
+      setDisabledNewTx(true);
     }
-  }
+  };
   const addTx = async () => {
-    await newTransaction(game.name, domain, userId, newTx)
-    getBalanceData(game, domain, userId)
+    await newTransaction(game.name, domain, userId, newTx);
+    getBalanceData(game, domain, userId);
   };
 
   return (
@@ -53,8 +53,13 @@ const Balance = () => {
             onChange={(e) => handleChange(e.target.value)}
           />
           <div className="input-group-append">
-            <Button variant="success" onClick={() => addTx()} disabled={disabledNewTx}>
-              <Plus size={25} /> Create new Transaction
+            <Button
+              variant="success"
+              onClick={() => addTx()}
+              disabled={disabledNewTx}
+              className="d-flex align-items-center"
+            >
+              <Plus size={25} className="mr-2" /> Create new Transaction
             </Button>
           </div>
         </div>

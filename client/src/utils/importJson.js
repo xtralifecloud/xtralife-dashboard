@@ -25,7 +25,6 @@ export const checkFileName = (filename, expectedType, expectedDomain, action) =>
 }
 
 export const readFileAsJson = (file, cb) => {
-    console.log('file2:', file)
     const filereader = new FileReader();
     filereader.onloadend = function() {
         const jsonContents = JSON.parse(filereader.result);

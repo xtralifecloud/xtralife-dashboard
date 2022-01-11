@@ -1,7 +1,7 @@
-export const exportJson = (env, domain, data) => {
+export const exportJson = (env, domain, data, name) => {
   const date = new Date().toLocaleDateString().replace(/\//g,'.');
   const time = new Date().toLocaleTimeString().replace(/:/g,'')
-  const fileName = `${env}-${domain}-gamekv-${date}-${time}`;
+  const fileName = `${env}-${domain}-${name}-${date}-${time}`;
   const json = JSON.stringify(data);
   const blob = new Blob([json], { type: "application/json" });
   const href = URL.createObjectURL(blob);

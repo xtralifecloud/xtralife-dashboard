@@ -19,6 +19,7 @@ import { JsonEditor } from "jsoneditor-react";
 import ImportButton from "./../../components/ImportButton";
 import "jsoneditor-react/es/editor.min.css";
 import ConfirmationModal from "../../components/modals/ConfirmationModal";
+import { toast } from "react-toastify";
 
 const Storage = () => {
   const { game, domain, env } = useAppContext();
@@ -35,15 +36,14 @@ const Storage = () => {
   const [newKey, setNewKey] = useState("");
 
   useEffect(() => {
-    const getDataStorage = async () => {
+    (async () => {
       if (game.name && domain) {
         setLoadingStorage(true);
         const storage = await getGameStorage(game.name, domain);
-        setStorage(storage);
+        if(storage) setStorage(storage);
         setLoadingStorage(false);
       }
-    };
-    getDataStorage();
+    })();
   }, [game, domain]);
 
   useEffect(() => {
@@ -72,13 +72,35 @@ const Storage = () => {
   };
 
   const addKV = () => {
-    let tempStorage = storage;
-    tempStorage.push({
-      fskey: newKey,
-      fsvalue: JSON.stringify({ edit: "me" }),
-    });
-    setStorage(tempStorage);
-    updateGameStorage(game.name, domain, tempStorage);
+    for (const e of storage) {
+      if (Object.values(e).includes(newKey)) {
+        toast.warning(`Duplicate key: "${newKey}"`);
+        return;
+      }
+    }
+
+    setStorage((previousStorage) => [
+      ...previousStorage,
+      {
+        fskey: newKey,
+        fsvalue: JSON.stringify({ edit: "me" }),
+      },
+    ]);
+  };
+
+  const saveKV = () => {
+    if (tempValue === null) {
+      toast.warning("Invalid JSON");
+    } else {
+      setModalKV(false);
+      setSelectedKV(null);
+      if(storage[selectedKV].fsvalue !== tempValue){
+        storage[selectedKV].fsvalue = JSON.stringify(tempValue);
+      }
+      setStorage([...storage]);
+      setTempValue(null);
+      updateGameStorage(game.name, domain, storage, setStorage);
+    }
   };
 
   return (
@@ -104,27 +126,27 @@ const Storage = () => {
             </Col>
             {!loadingStorage ? (
               <Col className="d-flex justify-content-end align-items-center">
-                {storage.length !== 0 && (
-                  <div className="d-flex justify-content-end align-items-center">
+                <div className="d-flex justify-content-end align-items-center">
+                  <Button
+                    onClick={() => setToggleKV(!toggleKV)}
+                    variant="secondary"
+                  >
+                    Edit
+                  </Button>
+                  {storage.length !== 0 && (
                     <Button
-                      onClick={() => setToggleKV(!toggleKV)}
-                      variant="outline-secondary"
-                    >
-                      Show
-                    </Button>
-                    <Button
-                      className="mx-2"
-                      onClick={() => exportJson(env, domain, storage)}
-                      variant="outline-primary"
+                      onClick={() => exportJson(env, domain, storage, "gamekv")}
+                      variant="primary"
                     >
                       Export
                     </Button>
-                  </div>
-                )}
+                  )}
+                </div>
                 <ImportButton
                   expectedDomain={domain}
                   expectedType="gamekv"
                   gameName={game.name}
+                  cb={setStorage}
                 />
               </Col>
             ) : (
@@ -161,6 +183,7 @@ const Storage = () => {
                 <Table
                   size="sm"
                   bordered
+                  striped
                   hover
                   borderless
                   responsive
@@ -187,7 +210,10 @@ const Storage = () => {
                               />
                             </div>
                           </td>
-                          <td style={{ width: "34%" }} key={`key-${item.fskey}`}>
+                          <td
+                            style={{ width: "34%" }}
+                            key={`key-${item.fskey}`}
+                          >
                             {item.fskey}
                           </td>
                           <td
@@ -201,6 +227,7 @@ const Storage = () => {
                             <button
                               onClick={() => {
                                 setSelectedKV(i);
+                                setTempValue(item.fsvalue)
                                 setModalKV(true);
                               }}
                               className="remove-btn-css mr-2 d-flex algin-items-center"
@@ -278,13 +305,7 @@ const Storage = () => {
           <Button
             variant="success"
             onClick={() => {
-              setModalKV(false);
-              setSelectedKV(null);
-              let tempStorage = storage;
-              tempStorage[selectedKV].fsvalue = JSON.stringify(tempValue);
-              setStorage(tempStorage);
-              setTempValue(null);
-              updateGameStorage(game.name, domain, tempStorage);
+              saveKV();
             }}
           >
             Save

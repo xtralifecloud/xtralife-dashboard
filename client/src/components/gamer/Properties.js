@@ -10,35 +10,39 @@ import { toast } from "react-toastify";
 
 const Properties = () => {
   const { game, domain } = useAppContext();
-  const [properties, setProperties] = useState();
+  const [properties, setProperties] = useState({});
   const { userId } = useParams();
   const [newProperty, setNewProperty] = useState(null);
   const [deleteDisabled, setDeleteDisabled] = useState(true);
   const [selectedProperties, setSelectedProperties] = useState([]);
 
   useEffect(() => {
-    const getProperties = async () => {
+    (async () => {
       if (game && domain) {
         const properties = await getUserProperties(game.name, domain, userId);
-        setProperties(properties);
+        if (properties) setProperties(properties);
       }
-    };
-    getProperties();
+    })();
   }, [game, domain, userId]);
 
   const saveProperties = async () => {
-    const res = await updateUserProperties(game.name, domain, userId, properties);
-    if(res.status === 200){
-      toast.success("Properties saved")
+    const res = await updateUserProperties(
+      game.name,
+      domain,
+      userId,
+      properties
+    );
+    if (res.status === 200) {
+      toast.success("Properties updated successfully");
     }
   };
 
   const addProperty = () => {
     if (newProperty === null || newProperty === "") {
       toast.warn("Cannot add property with null key");
-    } else if(newProperty in properties){
-      toast.warn(`Cannot add duplicate property ${newProperty}`);
-    }else {
+    } else if (newProperty in properties) {
+      toast.warn(`Duplicate key: "${newProperty}"`);
+    } else {
       setProperties(
         Object.assign(properties, { [newProperty]: "default value, update me" })
       );
@@ -48,19 +52,23 @@ const Properties = () => {
 
   const handleSelection = (e, key) => {
     if (e.target.checked) {
-      setSelectedProperties((selectedProperties) => [...selectedProperties, key]);
+      setSelectedProperties((selectedProperties) => [
+        ...selectedProperties,
+        key,
+      ]);
     } else {
-      setSelectedProperties(selectedProperties.filter((property) => property !== key));
+      setSelectedProperties(
+        selectedProperties.filter((property) => property !== key)
+      );
     }
   };
 
   const bulkDeleteProperties = () => {
-    for(const property of selectedProperties){
+    for (const property of selectedProperties) {
       delete properties[property];
     }
     setProperties(properties);
     setSelectedProperties([]);
-    updateUserProperties(game.name, domain, userId, properties);
   };
 
   useEffect(() => {
@@ -84,8 +92,12 @@ const Properties = () => {
               onChange={(e) => setNewProperty(e.target.value)}
             />
             <div className="input-group-append">
-              <Button variant="success" onClick={() => addProperty()}>
-                <Plus size={25} /> Add new property
+              <Button
+                variant="success"
+                onClick={() => addProperty()}
+                className="d-flex align-items-center"
+              >
+                <Plus size={25} className="mr-2" /> Add new property
               </Button>
             </div>
           </div>
@@ -107,7 +119,7 @@ const Properties = () => {
                 </tr>
               </thead>
               <tbody>
-                {Object.keys(properties).map(key => {
+                {Object.keys(properties).map((key) => {
                   return (
                     <tr key={`line-${key}`}>
                       <td key={`checkbox-${key}`} style={{ width: "3%" }}>
@@ -152,8 +164,10 @@ const Properties = () => {
               variant="danger"
               disabled={deleteDisabled}
               onClick={() => bulkDeleteProperties()}
+              className="d-flex align-items-center"
             >
-              <Trash size={20} /> Delete {selectedProperties.length} properties
+              <Trash size={20} className="mr-2" /> Delete{" "}
+              {selectedProperties.length} properties
             </Button>
 
             <Button variant="success" onClick={() => saveProperties()}>

@@ -7,17 +7,17 @@ const GameAndDomainSelector = () => {
   const { user, game, domain, setGame, setDomain } = useAppContext();
 
   const handleChangeGame = (e) => {
-    const newGame = JSON.parse(e.target.value)
-    if(!newGame.domains.includes(domain)){
-      setDomain(newGame.domains[0])
+    const newGame = JSON.parse(e.target.value);
+    if (!newGame.domains.includes(domain)) {
+      setDomain(newGame.domains[0]);
     }
-    setGame(newGame)
-  }
+    setGame(newGame);
+  };
 
   return (
-    <Card>
-      {isPresent([game]) && (
-        <Container>
+    isPresent([game]) && (
+      <Container className="mt-3">
+        <Card style={{borderRadius: "10px"}}>
           <Form className="my-3">
             <Container fluid>
               <Row>
@@ -25,7 +25,7 @@ const GameAndDomainSelector = () => {
                   <Form.Label className="my-0 mx-3">Game:</Form.Label>
                   <Form.Select
                     defaultValue={JSON.stringify(game)}
-                    onChange={(e) => handleChangeGame(e) }
+                    onChange={(e) => handleChangeGame(e)}
                   >
                     {user.games.map((game, i) => {
                       return (
@@ -55,9 +55,9 @@ const GameAndDomainSelector = () => {
               </Row>
             </Container>
           </Form>
-        </Container>
-      )}
-    </Card>
+        </Card>
+      </Container>
+    )
   );
 };
 

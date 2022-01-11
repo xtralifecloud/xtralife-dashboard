@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Container,
   ButtonGroup,
@@ -16,31 +16,40 @@ import {
   PencilSquare,
 } from "react-bootstrap-icons";
 import { useAppContext } from "../context/app-context";
-import { deleteUser, getUsers, searchUsers, findUser } from "../services/user";
+import {
+  deleteUser,
+  getUsers,
+  searchUsers,
+  findUser,
+  sendMessage,
+} from "../services/user";
 import { isPresent } from "../utils/isPresent";
 import Paginate from "../components/Paginate";
 import { useNavigate } from "react-router-dom";
 
 const Users = () => {
   const { game, page, setPage, itemsNumber, setItemsNumber } = useAppContext();
-  const [users, setUsers] = useState({});
+  const [users, setUsers] = useState({ list: [] });
   const [loading, setLoading] = useState(true);
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [search, setSearch] = useState(null);
+  const containerRef = useRef(null);
+
   const navigate = useNavigate();
 
   useEffect(() => {
-    const getRangeUsers = async (skip, limit) => {
-      if (game.name) {
+    const skip = (page - 1) * itemsNumber;
+    (async (skip, limit) => {
+      if (game.name && containerRef) {
+        containerRef.current.classList.add("grayout");
         const users = await getUsers(game.name, skip, limit);
-        setUsers(users);
+        if (users) setUsers(users);
+        containerRef.current.classList.remove("grayout");
         setLoading(false);
       }
-    };
-    const skip = (page - 1) * itemsNumber;
-    getRangeUsers(skip, itemsNumber);
-  }, [game, itemsNumber, page]);
+    })(skip, itemsNumber);
+  }, [game, itemsNumber, page, containerRef]);
 
   useEffect(() => {
     if (selectedUsers.length > 0) {
@@ -64,6 +73,11 @@ const Users = () => {
     }
   };
 
+  const bulkMessageUser = () => {
+    for (const user_id of selectedUsers) {
+      sendMessage(game.name, user_id);
+    }
+  };
   const handleSearch = async () => {
     setLoading(true);
     if (search === null || search === "") {
@@ -71,19 +85,22 @@ const Users = () => {
       const users = await getUsers(game.name, skip, itemsNumber);
       setUsers(users);
       setLoading(false);
-    } else if (/^\d+$/.test(search)) {
-      const users = await searchUsers(game.name, 0, 0, search);
+    } else if (/^[0-9a-fA-F]{24}$/.test(search)) {
+      console.log("true");
+      const users = await findUser(game.name, search);
       setUsers(users);
       setLoading(false);
     } else {
-      const user = await findUser(game.name, search);
+      console.log("false");
+      const skip = (page - 1) * itemsNumber;
+      const user = await searchUsers(game.name, skip, itemsNumber, search);
       setUsers(user);
       setLoading(false);
     }
   };
 
   return (
-    <Container>
+    <Container ref={containerRef}>
       <div className="d-flex align-items-center justify-content-center mt-5">
         <People className="mx-1" size={40} />
         <h1 className="m-0 mx-1">Users</h1>
@@ -97,10 +114,17 @@ const Users = () => {
             onClick={() => bulkDeleteUser()}
             className="d-flex align-items-center"
           >
-            <Trash size={20} className="mr-2" /> Delete {selectedUsers.length} users
+            <Trash size={20} className="mr-2" /> Delete {selectedUsers.length}{" "}
+            users
           </Button>
-          <Button variant="secondary" disabled={buttonDisabled} className="d-flex align-items-center">
-            <Chat size={20} className="mr-2"/> Message {selectedUsers.length} users
+          <Button
+            variant="secondary"
+            disabled={buttonDisabled}
+            className="d-flex align-items-center"
+            onClick={() => bulkMessageUser()}
+          >
+            <Chat size={20} className="mr-2" /> Message {selectedUsers.length}{" "}
+            users
           </Button>
         </ButtonGroup>
         <div className="d-flex">
@@ -108,7 +132,11 @@ const Users = () => {
             placeholder="Search"
             onChange={(e) => setSearch(e.target.value)}
           />
-          <Button variant="secondary" onClick={() => handleSearch()}  className="d-flex align-items-center">
+          <Button
+            variant="secondary"
+            onClick={() => handleSearch()}
+            className="d-flex align-items-center"
+          >
             <Search size={15} />
           </Button>
         </div>
@@ -144,13 +172,16 @@ const Users = () => {
                         />
                       </div>
                     </td>
-                    <td key={`id-${user._id}`} className="d-flex justify-content-between">
+                    <td
+                      key={`id-${user._id}`}
+                      className="d-flex justify-content-between"
+                    >
                       {user._id}
                       <button
                         onClick={() => navigate(`/gamer/${user._id}`)}
                         className="remove-btn-css mr-2 d-flex algin-items-center"
                       >
-                        <PencilSquare size={20}/>
+                        <PencilSquare size={20} />
                       </button>
                     </td>
                     <td key={`name-${user._id}`}>{user.profile.displayName}</td>

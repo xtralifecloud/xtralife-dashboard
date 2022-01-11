@@ -8,75 +8,136 @@ import {
   Row,
   Col,
   Collapse,
+  FormCheck,
 } from "react-bootstrap";
+import { Plus, Trash } from "react-bootstrap-icons";
 import { useAppContext } from "./../../context/app-context";
 import {
-  getGameAchievement,
+  getGameAchievements,
+  updateGameAchievements,
 } from "./../../services/status";
 import { exportJson } from "./../../utils/exportJson";
 import ImportButton from "./../ImportButton";
 import "jsoneditor-react/es/editor.min.css";
+import ContentEditable from "react-contenteditable";
+import { toast } from "react-toastify";
 
 const Achievements = () => {
   const { game, domain, env } = useAppContext();
 
-  const [loadingAchievement, setLoadingAchievement] = useState(true);
-  const [achievement, setAchievement] = useState([]);
-  const [toggleAchievement, setToggleAchievement] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [achievements, setAchievements] = useState({});
+  const [toggle, setToggle] = useState(false);
+  const [selected, setSelected] = useState([]);
+  const [newKey, setNewKey] = useState("null");
+  const [buttonDisabled, setButtonDisabled] = useState(true);
 
   useEffect(() => {
-    const getDataAchievement = async () => {
+    (async () => {
       if (game.name && domain) {
-        setLoadingAchievement(true);
-        const achievement = await getGameAchievement(game.name, domain);
-        setAchievement(achievement);
-        setLoadingAchievement(false);
+        setLoading(true);
+        const achievements = await getGameAchievements(game.name, domain);
+        if (achievements) setAchievements(achievements);
+        setLoading(false);
       }
-    };
-
-    getDataAchievement();
+    })();
   }, [game, domain]);
+
+  useEffect(() => {
+    if (selected.length > 0) {
+      setButtonDisabled(false);
+    } else {
+      setButtonDisabled(true);
+    }
+  }, [selected]);
+
+  const save = () => {
+    updateGameAchievements(game.name, domain, achievements);
+  };
+
+  const add = () => {
+    for (const ach in achievements) {
+      if (ach === newKey) {
+        toast.warning(`Duplicate key: "${newKey}"`);
+        return;
+      }
+    }
+
+    setAchievements({
+      ...Object.assign(achievements, {
+        [newKey]: {
+          type: "limit",
+          config: {
+            unit: "default",
+            maxValue: 0,
+          },
+        },
+      }),
+    });
+  };
+
+  const bulkDelete = () => {
+    for (const ach of selected) {
+      delete achievements[ach];
+    }
+
+    setAchievements({ ...achievements });
+    setSelected([]);
+    updateGameAchievements(game.name, domain, achievements);
+  };
+
+  const handleSelection = (e, key) => {
+    if (e.target.checked) {
+      setSelected((selected) => [...selected, key]);
+    } else {
+      setSelected(selected.filter((k) => k !== key));
+    }
+  };
 
   return (
     <Container>
       <Card className="my-5">
         <Card.Header>
           <Row>
-            <Col md={9}>
+            <Col>
               <Card.Title>Achievements definition</Card.Title>
-              {achievement.length === 0
-                ? !loadingAchievement && (
+              {Object.keys(achievements).length === 0
+                ? !loading && (
                     <Card.Text>
                       You have not defined achievements in domain {domain} yet
                     </Card.Text>
                   )
-                : !loadingAchievement && (
+                : !loading && (
                     <Card.Text>
-                      You have {achievement.length} achievements defined in
-                      domain {domain}
+                      You have {Object.keys(achievements).length} achievements
+                      defined in domain {domain}
                     </Card.Text>
                   )}
             </Col>
-            {!loadingAchievement ? (
+            {!loading ? (
               <Col className="d-flex justify-content-end align-items-center">
-                {achievement.length !== 0 && (
-                  <div className="d-flex justify-content-end align-items-center">
+                <div className="d-flex justify-content-end align-items-center">
+                  <Button
+                    variant="secondary"
+                    onClick={() => setToggle(!toggle)}
+                  >
+                    Edit
+                  </Button>
+                  {Object.keys(achievements).length !== 0 && (
                     <Button
-                      variant="outline-secondary"
-                      onClick={() => setToggleAchievement(!toggleAchievement)}
-                    >
-                      Show
-                    </Button>
-                    <Button
-                      className="mx-2"
-                      onClick={() => exportJson(env, domain, achievement)}
-                      variant="outline-primary"
+                      onClick={() => exportJson(env, domain, achievements, "achievements")}
+                      variant="primary"
                     >
                       Export
                     </Button>
-                  </div>
-                )}
-                <ImportButton expectedDomain={domain} expectedType="achievements"/>
+                  )}
+                </div>
+                <ImportButton
+                  expectedDomain={domain}
+                  expectedType="achievements"
+                  gameName={game.name}
+                  cb={setAchievements}
+                />
               </Col>
             ) : (
               <Col className="d-flex justify-content-end align-items-center">
@@ -85,45 +146,85 @@ const Achievements = () => {
             )}
           </Row>
         </Card.Header>
-        {achievement && toggleAchievement && (
+        {achievements && toggle && (
           <Card.Body>
-            <Collapse in={toggleAchievement}>
+            <div className="input-group mb-3">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Enter achievement name and press 'Add new'"
+                aria-label="Enter achievement name and press 'Add new'"
+                onChange={(e) => setNewKey(e.target.value)}
+              />
+              <div className="input-group-append">
+                <Button
+                  variant="success"
+                  onClick={() => add()}
+                  className="d-flex align-items-center"
+                >
+                  <Plus size={25} className="mr-2" /> Add new
+                </Button>
+              </div>
+            </div>
+            <Collapse in={toggle}>
               <Table striped bordered hover size="sm" className="table-fixed">
                 <thead>
                   <tr>
-                    <th className="col-3">Key</th>
-                    <th className="col-7">Value</th>
-                    <th className="col-2">Action</th>
+                    <th style={{ width: "3%" }}></th>
+                    <th style={{ width: "32%" }}>Name</th>
+                    <th style={{ width: "32%" }}>Unit</th>
+                    <th style={{ width: "32%" }}>Trigger value</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {achievement.map((item, i) => {
+                  {Object.keys(achievements).map((key) => {
                     return (
-                      <tr key={`tr-${i}`}>
-                        <td key={`key-${i}`}>{item.fskey}</td>
-                        <td className="td-overflow" key={`value-${i}`}>
-                          {item.fsvalue}
+                      <tr key={`tr-${key}`}>
+                        <td style={{ width: "3%" }}>
+                          <div className="d-flex align-items-center justify-content-center">
+                            <FormCheck.Input
+                              type="checkbox"
+                              name="keyValueCheckBox"
+                              onClick={(e) => handleSelection(e, key)}
+                            />
+                          </div>
                         </td>
-                        <td
-                          className="d-flex justify-content-around"
-                          key={`buttons-${i}`}
-                        >
-                          <Button
-                            key={`edit-${i}`}
-                            style={{ width: "30%" }}
-                            size="sm"
-                            variant="outline-primary"
-                          >
-                            Edit
-                          </Button>
-                          <Button
-                            key={`delete-${i}`}
-                            style={{ width: "30%" }}
-                            variant="outline-danger"
-                            size="sm"
-                          >
-                            Delete
-                          </Button>
+                        <td key={`key-${key}`}>{key}</td>
+                        <td key={`unit-${key}`}>
+                          <ContentEditable
+                            html={achievements[key].config.unit}
+                            onChange={(e) => {
+                              setAchievements(
+                                Object.assign(achievements, {
+                                  [key]: {
+                                    type: achievements[key].type,
+                                    config: {
+                                      unit: e.target.value,
+                                      maxValue:
+                                        achievements[key].config.maxValue,
+                                    },
+                                  },
+                                })
+                              );
+                            }}
+                          />
+                        </td>
+                        <td key={`maxValue-${key}`}>
+                          <ContentEditable
+                            html={achievements[key].config.maxValue}
+                            onChange={(e) => {
+                              setAchievements(
+                                Object.assign(achievements, {
+                                  [key]: {
+                                    config: {
+                                      unit: achievements[key].config.unit,
+                                      maxValue: e.target.value,
+                                    },
+                                  },
+                                })
+                              );
+                            }}
+                          />
                         </td>
                       </tr>
                     );
@@ -131,6 +232,20 @@ const Achievements = () => {
                 </tbody>
               </Table>
             </Collapse>
+            <div className="w-100 d-flex justify-content-between">
+              <Button
+                variant="danger"
+                disabled={buttonDisabled}
+                onClick={() => bulkDelete()}
+                className="d-flex align-items-center my-2"
+              >
+                <Trash size={20} className="mr-2" /> Delete {selected.length}{" "}
+                achievements
+              </Button>
+              <Button variant="success" className="my-2" onClick={() => save()}>
+                Save
+              </Button>
+            </div>
           </Card.Body>
         )}
       </Card>

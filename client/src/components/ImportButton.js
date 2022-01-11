@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import { checkFileName, readFileAsJson } from "../utils/importJson";
 import ConfirmationModal from "./modals/ConfirmationModal";
-import { updateGameStorage } from "./../services/status";
+import { updateGameStorage, updateGameAchievements } from "./../services/status";
 
 const ImportButton = (props) => {
   const inputFile = useRef(null);
@@ -38,17 +38,18 @@ const ImportButton = (props) => {
         props = {
           title: "Unexpected Domain",
           body: `Are you sure you want to import into ${props.expectedDomain} your configuration from ${result.domain} ?`,
+          cb: props.cb,
           onHide: () => {
             setShowConfirmation(false);
             setConfirmationProps({});
           },
-          action: () => importData(files[0]),
+          action: () => importData(files[0], props.cb),
         };
         setConfirmationProps(props);
         setShowConfirmation(true);
       }
       if (result.state === "success") {
-        importData(files[0]);
+        importData(files[0], props.cb);
       }
     }
   };
@@ -57,22 +58,26 @@ const ImportButton = (props) => {
     inputFile.current.click();
   };
 
-  const importData = (file) => {
+  const importData = async (file, cb) => {
     setShowConfirmation(false);
     setConfirmationProps({});
-    readFileAsJson(file, jsonContents => updateGameStorage(gameName, domain, jsonContents))
+    if(props.expectedType === "gamekv"){
+      readFileAsJson(file, jsonContents => updateGameStorage(gameName, domain, jsonContents, cb))
+    }
+    if(props.expectedType === "achievements"){
+      readFileAsJson(file, jsonContents => updateGameAchievements(gameName, domain, jsonContents, cb))
+    }
   };
 
   return (
     <div>
       <input
         style={{ display: "none" }}
-        // accept=".zip,.rar"
         ref={inputFile}
         onChange={handleFileUpload}
         type="file"
       />
-      <Button variant="outline-success" onClick={onButtonClick}>
+      <Button variant="success" onClick={onButtonClick}>
         Import
       </Button>
       <ConfirmationModal show={showConfirmation} {...confirmationProps} />

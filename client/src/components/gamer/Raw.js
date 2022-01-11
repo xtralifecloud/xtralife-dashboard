@@ -10,22 +10,23 @@ const Raw = () => {
   const { userId } = useParams();
 
   useEffect(() => {
-    const getRawData = async () => {
+    (async () => {
       if (game.name) {
         let rawData = await getUserOutline(game.name, userId);
-        delete rawData.profile;
-		delete rawData.domains;
-		delete rawData.servertime;
-        setRaw(rawData);
+        if (rawData) {
+          delete rawData.profile;
+          delete rawData.domains;
+          delete rawData.servertime;
+          setRaw(rawData);
+        }
       }
-    };
-    getRawData();
+    })();
   }, [game, userId]);
 
   return (
     <Container>
       <div>
-        <pre style={{color:"#a11"}}>{JSON.stringify(raw, null, 2)}</pre>
+        <pre>{JSON.stringify(raw, null, 2)}</pre>
       </div>
     </Container>
   );

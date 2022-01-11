@@ -20,11 +20,10 @@ const Gamer = () => {
   const { userId } = useParams();
 
   useEffect(() => {
-    const getSelectedUser = async () => {
+    (async () => {
       const user = await getUserProfile(game.name, userId);
       setGamer(user);
-    };
-    getSelectedUser();
+    })();
   }, [game, userId]);
 
   return (

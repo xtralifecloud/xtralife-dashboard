@@ -10,13 +10,12 @@ const KVStorage = () => {
   const { userId } = useParams();
 
   useEffect(() => {
-    const getKVStorage = async () => {
+    (async () => {
       if (game && domain) {
         const KVStorage = await getUserKVStore(game.name, domain, userId);
-        setKVStorage(KVStorage);
+        if (KVStorage) setKVStorage(KVStorage);
       }
-    };
-    getKVStorage();
+    })();
   }, [game, domain, userId]);
   return (
     <Container className="p-0">

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Form, Button, Container, Alert } from "react-bootstrap";
+import { Person } from "react-bootstrap-icons";
 import useSession from "../hooks/useSession";
 import "./../styles/table.scss";
 
@@ -8,7 +9,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [ggcode, setGgcode] = useState("");
   const [missing, setMissing] = useState([]);
-  const {login} = useSession();
+  const { login } = useSession();
 
   const handleClick = () => {
     if (username === "") setMissing((missing) => [...missing, "Username"]);
@@ -20,7 +21,12 @@ const Login = () => {
   };
 
   return (
-    <Container className="container-height-100-vh d-flex justify-content-center align-items-center">
+    <Container className="container-height-100-vh d-flex flex-column justify-content-center align-items-center">
+      <div className="d-flex align-items-center justify-content-center mb-5">
+        <Person className="mx-1" size={40} />
+        <h1 className="m-0 mx-1">Sign in</h1>
+      </div>
+
       <Form className="mx-3 max-w-600px d-flex flex-column align-items-center">
         <Form.Group className="mb-3 w-100">
           {missing.length > 0 && (
@@ -56,7 +62,7 @@ const Login = () => {
           />
         </Form.Group>
 
-        <Form.Group className="mb-3 w-100">
+        <Form.Group className="mb-3 w-100" style={{display: "none"}}>
           <Form.Label>2FA code (optional)</Form.Label>
           <Form.Control
             type="text"

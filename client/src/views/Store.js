@@ -26,15 +26,14 @@ const Store = () => {
   const [modalAction, setModalAction] = useState('');
 
   useEffect(() => {
-    const getDataProducts = async () => {
+    (async () => {
       if (game.name && domain) {
         setLoading(true);
         const products = await getProducts(game.name);
-        setProducts(products);
+        if(products) setProducts(products);
         setLoading(false);
       }
-    };
-    getDataProducts();
+    })();
   }, [game, domain]);
 
   useEffect(() => {

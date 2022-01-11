@@ -4,7 +4,7 @@ import { Table, FormCheck, Button } from "react-bootstrap";
 import { useAppContext } from "../../context/app-context";
 import { useParams } from "react-router-dom";
 import { getBestScores, deleteScore } from "../../services/user";
-import {Trash} from "react-bootstrap-icons";
+import { Trash } from "react-bootstrap-icons";
 
 const Score = () => {
   const [scores, setScores] = useState(null);
@@ -14,22 +14,21 @@ const Score = () => {
   const [deleteDisabled, setDeleteDisabled] = useState(true);
 
   useEffect(() => {
-    const getRangeTx = async () => {
+    (async () => {
       if (game.name) {
         const scores = await getBestScores(game.name, domain, userId);
-        setScores(scores);
+        if(scores) setScores(scores);
       }
-    };
-    getRangeTx();
+    })();
   }, [game, domain, userId]);
-  
+
   useEffect(() => {
-		if(selectedScores.length === 0){
-			setDeleteDisabled(true);
-		}else{
-			setDeleteDisabled(false);
-		}
-	}, [selectedScores])
+    if (selectedScores.length === 0) {
+      setDeleteDisabled(true);
+    } else {
+      setDeleteDisabled(false);
+    }
+  }, [selectedScores]);
 
   const handleSelection = (e, key) => {
     if (e.target.checked) {
@@ -40,16 +39,16 @@ const Score = () => {
   };
 
   const bulkDeleteScores = () => {
-		for (const lb of selectedScores) {
-      deleteScore(game.name, domain, userId, lb)
-      setScores(scores => {
-        const newScores = {...scores};
-        delete newScores[lb]
-        return newScores
+    for (const lb of selectedScores) {
+      deleteScore(game.name, domain, userId, lb);
+      setScores((scores) => {
+        const newScores = { ...scores };
+        delete newScores[lb];
+        return newScores;
       });
     }
-    setSelectedScores([])
-  }
+    setSelectedScores([]);
+  };
 
   return (
     <Container>
@@ -59,9 +58,10 @@ const Score = () => {
             variant="danger"
             disabled={deleteDisabled}
             onClick={() => bulkDeleteScores()}
-            className="mb-3"
+            className="d-flex align-items-center mb-3"
           >
-            <Trash size={20} /> Delete {selectedScores.length} scores
+            <Trash size={20} className="mr-2" /> Delete {selectedScores.length}{" "}
+            scores
           </Button>
           <Table size="sm" bordered hover borderless responsive>
             <thead>

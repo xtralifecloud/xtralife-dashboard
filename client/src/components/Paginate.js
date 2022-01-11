@@ -52,7 +52,7 @@ const Paginate = ({ page, setPage, totalItems, itemsNumber, setItemsNumber }) =>
   return (
     <div className="d-flex justify-content-between align-items-top">
       <Pagination size="sm">
-        {page !== 1 && <Pagination.Prev />}
+        {page !== 1 && <Pagination.Prev onClick={() => setPage(page - 1)} />}
         {pageArray.map((n, i) => {
             if(n === ""){
                 return <Pagination.Ellipsis key={i} disabled/>
@@ -62,7 +62,7 @@ const Paginate = ({ page, setPage, totalItems, itemsNumber, setItemsNumber }) =>
                 return <Pagination.Item variant="danger" key={i} onClick={() => setPage(n)}>{n}</Pagination.Item>
             }
         })}
-        {page !== Math.ceil(totalItems / itemsNumber) && <Pagination.Next />}
+        {page !== Math.ceil(totalItems / itemsNumber) && <Pagination.Next  onClick={() => setPage(page + 1)}/>}
       </Pagination>
 
       <ButtonGroup size="sm" className="d-block">

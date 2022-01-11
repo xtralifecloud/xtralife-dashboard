@@ -1,4 +1,7 @@
+@import "~bootswatch/dist/superhero/variables";
 @import "~bootstrap/scss/bootstrap";
+@import "~bootswatch/dist/superhero/bootswatch";
+
 
 body {
   margin: 0;
@@ -15,7 +18,7 @@ code {
 }
 
 .container-height-100-vh {
-  height: calc(100vh - 60px);
+  height: calc(100vh - 90px);
 }
 
 .max-w-600px {
@@ -51,4 +54,9 @@ img, svg{
 	font: inherit;
 	cursor: pointer;
 	outline: inherit;
+}
+
+.grayout {
+  opacity: 0.3; /* Real browsers */
+  filter: alpha(opacity = 100); /* MSIE */
 }

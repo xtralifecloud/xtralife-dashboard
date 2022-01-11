@@ -31,7 +31,7 @@ const TxHistory = () => {
           skip,
           limit
         );
-        setTx(txs);
+        if(txs) setTx(txs);
       })(skip, itemsNumber);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
