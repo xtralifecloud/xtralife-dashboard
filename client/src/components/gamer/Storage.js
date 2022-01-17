@@ -28,7 +28,7 @@ const Storage = () => {
   }, [game, domain, userId]);
 
   const addKV = () => {
-    const updatedStorage = storage
+    const updatedStorage = storage;
     updatedStorage.push({
       fskey: newKey,
       fsvalue: JSON.stringify({ edit: "me" }),
@@ -148,7 +148,8 @@ const Storage = () => {
             onClick={() => bulkDeleteUser()}
             className="mt-3"
           >
-            <Trash size={20} /> Delete {selectedKeys.length} keys
+            <Trash size={20} /> Delete {selectedKeys.length}{" "}
+            {selectedKeys.length === 1 ? "key" : "keys"}
           </Button>
 
           <Modal

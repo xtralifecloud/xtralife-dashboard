@@ -29,7 +29,7 @@ const Achievements = () => {
   const [achievements, setAchievements] = useState({});
   const [toggle, setToggle] = useState(false);
   const [selected, setSelected] = useState([]);
-  const [newKey, setNewKey] = useState("null");
+  const [newKey, setNewKey] = useState("");
   const [buttonDisabled, setButtonDisabled] = useState(true);
 
   useEffect(() => {
@@ -61,6 +61,11 @@ const Achievements = () => {
         toast.warning(`Duplicate key: "${newKey}"`);
         return;
       }
+    }
+
+    if(newKey === "" || newKey === null){
+      toast.warning(`Cannot add empty key`);
+      return;
     }
 
     setAchievements({
@@ -240,7 +245,8 @@ const Achievements = () => {
                 className="d-flex align-items-center my-2"
               >
                 <Trash size={20} className="mr-2" /> Delete {selected.length}{" "}
-                achievements
+                {selected.length=== 1 ? "achievement": "achievements"}
+
               </Button>
               <Button variant="success" className="my-2" onClick={() => save()}>
                 Save

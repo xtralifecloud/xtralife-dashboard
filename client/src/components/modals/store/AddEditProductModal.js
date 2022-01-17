@@ -232,8 +232,8 @@ export const AddEditProductModal = (props) => {
             </Col>
           </Form.Group>
 
-          <Modal.Footer className="pb-0">
-            <Button variant="secondary" onClick={() => {clearStates(); props.setShow(false)}}>
+          <div className="mt-4 text-end">
+            <Button variant="dark" onClick={() => {clearStates(); props.setShow(false)}}>
               Cancel
             </Button>
             <Button
@@ -244,7 +244,7 @@ export const AddEditProductModal = (props) => {
             >
               Save
             </Button>
-          </Modal.Footer>
+          </div>
         </Form>
       </Modal.Body>
     </Modal>

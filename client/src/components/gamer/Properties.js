@@ -167,7 +167,8 @@ const Properties = () => {
               className="d-flex align-items-center"
             >
               <Trash size={20} className="mr-2" /> Delete{" "}
-              {selectedProperties.length} properties
+              {selectedProperties.length}{" "}
+              {selectedProperties.length === 1 ? "property" : "properties"}
             </Button>
 
             <Button variant="success" onClick={() => saveProperties()}>

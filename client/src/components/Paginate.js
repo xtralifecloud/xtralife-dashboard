@@ -1,12 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { ButtonGroup, Button, Pagination } from "react-bootstrap";
 
-const Paginate = ({ page, setPage, totalItems, itemsNumber, setItemsNumber }) => {
+const Paginate = ({
+  page,
+  setPage,
+  totalItems,
+  itemsNumber,
+  setItemsNumber,
+  maxPage,
+}) => {
   const itemsNumberButtons = ["10", "25", "50", "100"];
   const [pageArray, setPageArray] = useState([]);
 
   useEffect(() => {
-    const totPages = Math.ceil(totalItems / itemsNumber);
+    let totPages = 0;
+    if (totalItems) {
+      totPages = Math.ceil(totalItems / itemsNumber);
+    } else {
+      totPages = maxPage;
+    }
+
     let pageArr = [];
     if (totPages > 1) {
       if (totPages <= 9) {
@@ -47,22 +60,36 @@ const Paginate = ({ page, setPage, totalItems, itemsNumber, setItemsNumber }) =>
       }
     }
     setPageArray(pageArr);
-  }, [page, itemsNumber, totalItems]);
+  }, [page, itemsNumber, totalItems, maxPage]);
 
   return (
     <div className="d-flex justify-content-between align-items-top">
       <Pagination size="sm">
         {page !== 1 && <Pagination.Prev onClick={() => setPage(page - 1)} />}
         {pageArray.map((n, i) => {
-            if(n === ""){
-                return <Pagination.Ellipsis key={i} disabled/>
-            }else if(n === page){
-                return <Pagination.Item key={i} active >{n}</Pagination.Item>
-            }else{
-                return <Pagination.Item variant="danger" key={i} onClick={() => setPage(n)}>{n}</Pagination.Item>
-            }
+          if (n === "") {
+            return <Pagination.Ellipsis key={i} disabled />;
+          } else if (n === page) {
+            return (
+              <Pagination.Item key={i} active>
+                {n}
+              </Pagination.Item>
+            );
+          } else {
+            return (
+              <Pagination.Item
+                variant="danger"
+                key={i}
+                onClick={() => setPage(n)}
+              >
+                {n}
+              </Pagination.Item>
+            );
+          }
         })}
-        {page !== Math.ceil(totalItems / itemsNumber) && <Pagination.Next  onClick={() => setPage(page + 1)}/>}
+        {page !== Math.ceil(totalItems / itemsNumber) && (
+          <Pagination.Next onClick={() => setPage(page + 1)} />
+        )}
       </Pagination>
 
       <ButtonGroup size="sm" className="d-block">
@@ -72,7 +99,10 @@ const Paginate = ({ page, setPage, totalItems, itemsNumber, setItemsNumber }) =>
               key={n}
               active={itemsNumber.toString() === n ? true : false}
               variant="outline-secondary"
-              onClick={() => {setItemsNumber(parseInt(n)); setPage(1)}}
+              onClick={() => {
+                setItemsNumber(parseInt(n));
+                setPage(1);
+              }}
             >
               {n}
             </Button>

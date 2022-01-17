@@ -21,7 +21,6 @@ import {
   getUsers,
   searchUsers,
   findUser,
-  sendMessage,
 } from "../services/user";
 import { isPresent } from "../utils/isPresent";
 import Paginate from "../components/Paginate";
@@ -74,9 +73,9 @@ const Users = () => {
   };
 
   const bulkMessageUser = () => {
-    for (const user_id of selectedUsers) {
+    /* for (const user_id of selectedUsers) {
       sendMessage(game.name, user_id);
-    }
+    } */
   };
   const handleSearch = async () => {
     setLoading(true);
@@ -115,7 +114,7 @@ const Users = () => {
             className="d-flex align-items-center"
           >
             <Trash size={20} className="mr-2" /> Delete {selectedUsers.length}{" "}
-            users
+            {selectedUsers.length=== 1 ? "user": "users"}
           </Button>
           <Button
             variant="secondary"
@@ -124,7 +123,7 @@ const Users = () => {
             onClick={() => bulkMessageUser()}
           >
             <Chat size={20} className="mr-2" /> Message {selectedUsers.length}{" "}
-            users
+            {selectedUsers.length=== 1 ? "user": "users"}
           </Button>
         </ButtonGroup>
         <div className="d-flex">

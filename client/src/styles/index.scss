@@ -60,3 +60,9 @@ img, svg{
   opacity: 0.3; /* Real browsers */
   filter: alpha(opacity = 100); /* MSIE */
 }
+
+.score-bubble{
+  font-size: 15px;
+  font-weight: 500;
+  margin-right: 15px;
+}

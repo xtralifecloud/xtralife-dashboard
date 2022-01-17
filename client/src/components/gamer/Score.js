@@ -61,9 +61,9 @@ const Score = () => {
             className="d-flex align-items-center mb-3"
           >
             <Trash size={20} className="mr-2" /> Delete {selectedScores.length}{" "}
-            scores
+            {selectedScores.length === 1 ? "score": "scores"}
           </Button>
-          <Table size="sm" bordered hover borderless responsive>
+          <Table size="sm" bordered hover borderless responsive>    
             <thead>
               <tr>
                 <th style={{ width: "3%" }}></th>

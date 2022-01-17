@@ -79,6 +79,11 @@ const Storage = () => {
       }
     }
 
+    if(newKey === "" || newKey === null){
+      toast.warning(`Cannot add empty key`);
+      return;
+    }
+
     setStorage((previousStorage) => [
       ...previousStorage,
       {
