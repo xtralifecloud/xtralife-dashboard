@@ -40,7 +40,7 @@ const Users = () => {
   useEffect(() => {
     const skip = (page - 1) * itemsNumber;
     (async (skip, limit) => {
-      if (game.name && containerRef) {
+      if (game.name && containerRef && !search) {
         containerRef.current.classList.add("grayout");
         const users = await getUsers(game.name, skip, limit);
         if (users) setUsers(users);
@@ -48,7 +48,7 @@ const Users = () => {
         setLoading(false);
       }
     })(skip, itemsNumber);
-  }, [game, itemsNumber, page, containerRef]);
+  }, [game, itemsNumber, page, containerRef, search]);
 
   useEffect(() => {
     if (selectedUsers.length > 0) {
@@ -85,12 +85,10 @@ const Users = () => {
       setUsers(users);
       setLoading(false);
     } else if (/^[0-9a-fA-F]{24}$/.test(search)) {
-      console.log("true");
       const users = await findUser(game.name, search);
       setUsers(users);
       setLoading(false);
     } else {
-      console.log("false");
       const skip = (page - 1) * itemsNumber;
       const user = await searchUsers(game.name, skip, itemsNumber, search);
       setUsers(user);
@@ -144,7 +142,8 @@ const Users = () => {
       {loading ? (
         <Spinner animation="border" variant="outline-primary" />
       ) : isPresent([users]) && users.total === 0 ? (
-        <p>You don't have any user yet</p>
+        search ? <p>No users found with username "{search}"</p>
+        :<p>You don't have any user yet</p>
       ) : (
         <div>
           <Table size="sm" bordered hover borderless responsive>

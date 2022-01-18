@@ -197,7 +197,7 @@ const Achievements = () => {
                         <td key={`key-${key}`}>{key}</td>
                         <td key={`unit-${key}`}>
                           <ContentEditable
-                            html={achievements[key].config.unit}
+                            html={achievements[key].config.unit.toString()}
                             onChange={(e) => {
                               setAchievements(
                                 Object.assign(achievements, {
@@ -216,7 +216,7 @@ const Achievements = () => {
                         </td>
                         <td key={`maxValue-${key}`}>
                           <ContentEditable
-                            html={achievements[key].config.maxValue}
+                            html={achievements[key].config.maxValue.toString()}
                             onChange={(e) => {
                               setAchievements(
                                 Object.assign(achievements, {

@@ -178,14 +178,6 @@ app.use(passport.session()); // Add passport initialization
 
 //==================================================================
 // routes
-app.use(express.static(path.join(__dirname, "../client/build")));
-app.get('/login', (req, res) => res.sendFile(path.resolve('client', 'build', 'index.html')));
-app.get('/status', (req, res) => res.sendFile(path.resolve('client', 'build', 'index.html')));
-app.get('/store', (req, res) => res.sendFile(path.resolve('client', 'build', 'index.html')));
-app.get('/gamers', (req, res) => res.sendFile(path.resolve('client', 'build', 'index.html')));
-app.get('/leaderboards', (req, res) => res.sendFile(path.resolve('client', 'build', 'index.html')));
-app.get('/matches', (req, res) => res.sendFile(path.resolve('client', 'build', 'index.html')));
-
 
 app.get("/*", function (req, res, next) {
 	res.set({
@@ -236,6 +228,9 @@ app.use('/api', cors(xlenv.http.cors), passport.authenticate("basic", { session:
 app.use('/api/:version', routes);
 
 app.use(middleware.errorHandler);
+
+app.use(express.static(path.join(__dirname, "../client/build")));
+app.get('*', (req, res) => res.sendFile(path.resolve('client', 'build', 'index.html')));
 
 //==================================================================
 
