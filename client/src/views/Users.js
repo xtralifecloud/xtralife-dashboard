@@ -21,6 +21,8 @@ import {
   getUsers,
   searchUsers,
   findUser,
+  getUsersCount,
+  searchUsersCount,
 } from "../services/user";
 import { isPresent } from "../utils/isPresent";
 import Paginate from "../components/Paginate";
@@ -29,26 +31,48 @@ import { useNavigate } from "react-router-dom";
 const Users = () => {
   const { game, page, setPage, itemsNumber, setItemsNumber } = useAppContext();
   const [users, setUsers] = useState({ list: [] });
+  const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [search, setSearch] = useState(null);
-  const containerRef = useRef(null);
+  const tableRef = useRef();
+  const paginateRef = useRef();
 
   const navigate = useNavigate();
 
   useEffect(() => {
     const skip = (page - 1) * itemsNumber;
-    (async (skip, limit) => {
-      if (game.name && containerRef && !search) {
-        containerRef.current.classList.add("grayout");
+    if (game.name && !search) {
+      (async (skip, limit) => {
+        if (tableRef.current) tableRef.current.classList.add("grayout");
         const users = await getUsers(game.name, skip, limit);
         if (users) setUsers(users);
-        containerRef.current.classList.remove("grayout");
+        if (tableRef.current) tableRef.current.classList.remove("grayout");
         setLoading(false);
-      }
-    })(skip, itemsNumber);
-  }, [game, itemsNumber, page, containerRef, search]);
+      })(skip, itemsNumber);
+      (async () => {
+        const count = await getUsersCount(game.name);
+        if (count) setCount(count.total);
+        setLoading(false);
+      })();
+    }
+  }, [game, itemsNumber, page, tableRef, search]);
+
+  useEffect(() => {
+    if (game.name && search) {
+      (async () => {
+        const skip = (page - 1) * itemsNumber;
+        const users = await searchUsers(game.name, skip, itemsNumber, search);
+        setUsers(users);
+        const count = await searchUsersCount(game.name, search);
+        setCount(count.total);
+        setLoading(false);
+      })();
+    }
+    /* eslint-disable */
+  }, [itemsNumber, page]);
+
 
   useEffect(() => {
     if (selectedUsers.length > 0) {
@@ -85,19 +109,24 @@ const Users = () => {
       setUsers(users);
       setLoading(false);
     } else if (/^[0-9a-fA-F]{24}$/.test(search)) {
-      const users = await findUser(game.name, search);
-      setUsers(users);
+      const user = await findUser(game.name, search);
+      setUsers(user);
       setLoading(false);
     } else {
       const skip = (page - 1) * itemsNumber;
-      const user = await searchUsers(game.name, skip, itemsNumber, search);
-      setUsers(user);
+      setCount(0);
+      const users = await searchUsers(game.name, skip, itemsNumber, search);
+      setUsers(users);
       setLoading(false);
+      if (paginateRef.current) paginateRef.current.classList.add("grayout");
+      const count = await searchUsersCount(game.name, search);
+      setCount(count.total);
+      if (paginateRef.current) paginateRef.current.classList.remove("grayout");
     }
   };
 
   return (
-    <Container ref={containerRef}>
+    <Container>
       <div className="d-flex align-items-center justify-content-center mt-5">
         <People className="mx-1" size={40} />
         <h1 className="m-0 mx-1">Users</h1>
@@ -112,7 +141,7 @@ const Users = () => {
             className="d-flex align-items-center"
           >
             <Trash size={20} className="mr-2" /> Delete {selectedUsers.length}{" "}
-            {selectedUsers.length=== 1 ? "user": "users"}
+            {selectedUsers.length === 1 ? "user" : "users"}
           </Button>
           <Button
             variant="secondary"
@@ -121,7 +150,7 @@ const Users = () => {
             onClick={() => bulkMessageUser()}
           >
             <Chat size={20} className="mr-2" /> Message {selectedUsers.length}{" "}
-            {selectedUsers.length=== 1 ? "user": "users"}
+            {selectedUsers.length === 1 ? "user" : "users"}
           </Button>
         </ButtonGroup>
         <div className="d-flex">
@@ -142,11 +171,14 @@ const Users = () => {
       {loading ? (
         <Spinner animation="border" variant="outline-primary" />
       ) : isPresent([users]) && users.total === 0 ? (
-        search ? <p>No users found with username "{search}"</p>
-        :<p>You don't have any user yet</p>
+        search ? (
+          <p>No users found with username "{search}"</p>
+        ) : (
+          <p>You don't have any user yet</p>
+        )
       ) : (
         <div>
-          <Table size="sm" bordered hover borderless responsive>
+          <Table ref={tableRef} size="sm" bordered hover borderless responsive>
             <thead>
               <tr>
                 <th></th>
@@ -194,13 +226,15 @@ const Users = () => {
               })}
             </tbody>
           </Table>
-          <Paginate
-            page={page}
-            setPage={setPage}
-            itemsNumber={itemsNumber}
-            setItemsNumber={setItemsNumber}
-            totalItems={users.total}
-          />
+          <div ref={paginateRef}>
+            <Paginate
+              page={page}
+              setPage={setPage}
+              itemsNumber={itemsNumber}
+              setItemsNumber={setItemsNumber}
+              totalItems={count}
+            />
+          </div>
         </div>
       )}
     </Container>

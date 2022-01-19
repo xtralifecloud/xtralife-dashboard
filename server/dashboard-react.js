@@ -230,7 +230,12 @@ app.use('/api/:version', routes);
 app.use(middleware.errorHandler);
 
 app.use(express.static(path.join(__dirname, "../client/build")));
-app.get('*', (req, res) => res.sendFile(path.resolve('client', 'build', 'index.html')));
+app.get('/login', (req, res) => res.sendFile(path.resolve('client', 'build', 'index.html')));
+app.get('/status', (req, res) => res.sendFile(path.resolve('client', 'build', 'index.html')));
+app.get('/store', (req, res) => res.sendFile(path.resolve('client', 'build', 'index.html')));
+app.get('/users', (req, res) => res.sendFile(path.resolve('client', 'build', 'index.html')));
+app.get('/leaderboards', (req, res) => res.sendFile(path.resolve('client', 'build', 'index.html')));
+app.get('/matches', (req, res) => res.sendFile(path.resolve('client', 'build', 'index.html')));
 
 //==================================================================
 

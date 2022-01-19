@@ -13,6 +13,18 @@ export const getUsers = async (game, skip, limit) => {
   }
 };
 
+export const getUsersCount = async (game) => {
+  try {
+    const res = await axios.get(
+      `/game/${game}/users/count`
+    );
+    return res.data;
+  } catch (err) {
+    toast.error("Error while loading users count. See console for more details");
+    return console.log(err);
+  }
+};
+
 export const searchUsers = async (game, skip, limit, q) => {
   try {
     const res = await axios.get(
@@ -21,6 +33,18 @@ export const searchUsers = async (game, skip, limit, q) => {
     return res.data;
   } catch (err) {
     toast.error("Error while searching users. See console for more details");
+    return console.log(err);
+  }
+};
+
+export const searchUsersCount = async (game, q) => {
+  try {
+    const res = await axios.get(
+      `/game/${game}/users/search/count?q=${q}`
+    );
+    return res.data;
+  } catch (err) {
+    toast.error("Error while searching users count. See console for more details");
     return console.log(err);
   }
 };
