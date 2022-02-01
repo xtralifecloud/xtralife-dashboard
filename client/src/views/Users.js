@@ -35,6 +35,7 @@ const Users = () => {
   const [loading, setLoading] = useState(true);
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const [selectedUsers, setSelectedUsers] = useState([]);
+  const [searchType, setSearchType] = useState("userId");
   const [search, setSearch] = useState(null);
   const tableRef = useRef();
   const paginateRef = useRef();
@@ -73,7 +74,6 @@ const Users = () => {
     /* eslint-disable */
   }, [itemsNumber, page]);
 
-
   useEffect(() => {
     if (selectedUsers.length > 0) {
       setButtonDisabled(false);
@@ -101,14 +101,16 @@ const Users = () => {
       sendMessage(game.name, user_id);
     } */
   };
-  const handleSearch = async () => {
+
+  const handleSearch = async (e) => {
+    e.preventDefault();
     setLoading(true);
     if (search === null || search === "") {
       const skip = (page - 1) * itemsNumber;
       const users = await getUsers(game.name, skip, itemsNumber);
       setUsers(users);
       setLoading(false);
-    } else if (/^[0-9a-fA-F]{24}$/.test(search)) {
+    } else if (searchType === "userId") {
       const user = await findUser(game.name, search);
       setUsers(user);
       setLoading(false);
@@ -154,17 +156,37 @@ const Users = () => {
           </Button>
         </ButtonGroup>
         <div className="d-flex">
-          <Form.Control
-            placeholder="Search"
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <Button
-            variant="secondary"
-            onClick={() => handleSearch()}
-            className="d-flex align-items-center"
-          >
-            <Search size={15} />
-          </Button>
+          <Form className="d-flex align-items-center">
+            <Form.Check
+              inline
+              label="UserId"
+              type="radio"
+              checked={searchType === "userId"}
+              readOnly={true}
+              className="mb-0"
+              onClick={() => setSearchType("userId")}
+            />
+            <Form.Check
+              inline
+              label="Name/Email"
+              type="radio"
+              checked={searchType === "name"}
+              readOnly={true}
+              onClick={() => setSearchType("name")}
+            />
+
+            <Form.Control
+              placeholder="Search"
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            <Button
+              variant="secondary"
+              type="submit"
+              onClick={(e) => handleSearch(e)}
+            >
+              <Search size={15} />
+            </Button>
+          </Form>
         </div>
       </div>
 

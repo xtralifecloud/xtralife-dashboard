@@ -56,7 +56,7 @@ export const findUser = async (game, user_id) => {
     );
     return res.data;
   } catch (err) {
-    toast.error("Error while searching users. See console for more details");
+    toast.error("Error while searching user. See console for more details");
     return console.log(err);
   }
 };

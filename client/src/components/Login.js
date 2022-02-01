@@ -1,19 +1,20 @@
 import React, { useState } from "react";
-import { Form, Button, Container, Alert } from "react-bootstrap";
+import { Form, Button} from "react-bootstrap";
 import { Person } from "react-bootstrap-icons";
 import useSession from "../hooks/useSession";
 import "./../styles/table.scss";
+import { toast } from "react-toastify";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [ggcode, setGgcode] = useState("");
-  const [missing, setMissing] = useState([]);
   const { login } = useSession();
 
-  const handleClick = () => {
-    if (username === "") setMissing((missing) => [...missing, "Username"]);
-    if (password === "") setMissing((missing) => [...missing, "Password"]);
+  const handleClick = (e) => {
+    e.preventDefault();
+    if (username === "") toast.warn("Username should not be empty");
+    if (password === "") toast.warn("Password should not be empty");
 
     if (username && password) {
       login(username, password, ggcode);
@@ -21,24 +22,13 @@ const Login = () => {
   };
 
   return (
-    <Container className="container-height-100-vh d-flex flex-column justify-content-center align-items-center">
+    <div className="d-flex flex-column justify-content-center align-items-center">
       <div className="d-flex align-items-center justify-content-center mb-5">
         <Person className="mx-1" size={40} />
-        <h1 className="m-0 mx-1">Sign in</h1>
+        <h2 className="m-0 mx-1">Sign in</h2>
       </div>
-
       <Form className="mx-3 max-w-600px d-flex flex-column align-items-center">
         <Form.Group className="mb-3 w-100">
-          {missing.length > 0 && (
-            <Alert variant="warning">
-              <p>This inputs should not be emtpy: </p>
-              <ul>
-                {missing.map((e, i) => {
-                  return <li key={i}>{e}</li>;
-                })}
-              </ul>
-            </Alert>
-          )}
           <Form.Label>Username</Form.Label>
           <Form.Control
             type="text"
@@ -77,12 +67,13 @@ const Login = () => {
         <Button
           className="w-50"
           variant="primary"
-          onClick={() => handleClick()}
+          type="submit"
+          onClick={(e) => handleClick(e)}
         >
           Login
         </Button>
       </Form>
-    </Container>
+    </div>
   );
 };
 

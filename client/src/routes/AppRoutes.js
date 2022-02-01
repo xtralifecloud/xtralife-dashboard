@@ -1,25 +1,24 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 import Home from "../views/Home";
-import Login from "../views/Login";
 import Status from "../views/Status";
 import Store from "../views/Store";
 import Users from "../views/Users";
 import Leaderboards from "../views/Leaderboards";
 import Matches from "../views/Matches";
 import Gamer from "../views/Gamer";
+import PrivateRoute from "./PrivateRoute";
 
 const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/status" element={<Status />} />
-      <Route path="/store" element={<Store />} />
-      <Route path="/users" element={<Users />} />
-      <Route path="/gamer/:userId" element={<Gamer />} />
-      <Route path="/leaderboards" element={<Leaderboards />} />
-      <Route path="/matches" element={<Matches />} />
+      <Route path="/status" element={<PrivateRoute><Status /></PrivateRoute>} />
+      <Route path="/store" element={<PrivateRoute><Store /></PrivateRoute>} />
+      <Route path="/users" element={<PrivateRoute><Users /></PrivateRoute>} />
+      <Route path="/gamer/:userId" element={<PrivateRoute><Gamer /></PrivateRoute>} />
+      <Route path="/leaderboards" element={<PrivateRoute><Leaderboards /></PrivateRoute>} />
+      <Route path="/matches" element={<PrivateRoute><Matches /></PrivateRoute>} />
       <Route
         path="*"
         element={
