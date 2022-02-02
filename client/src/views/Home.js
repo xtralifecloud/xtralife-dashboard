@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { House, BoxArrowInRight } from "react-bootstrap-icons";
 import { Container, Row, Col, Button } from "react-bootstrap";
 import Login from "../components/Login";
@@ -8,7 +8,14 @@ import useSession from "../hooks/useSession";
 
 const Home = () => {
   const { user } = useAppContext();
-  const {logout} = useSession()
+  const {logout, checkLogin} = useSession()
+
+  useEffect(() => {
+    (async () => {
+      await checkLogin();
+    })();
+    // eslint-disable-next-line
+  }, []);
 
   return (
     <Container>

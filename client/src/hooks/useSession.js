@@ -2,7 +2,7 @@ import axios from "axios";
 import { useNavigate } from "react-router";
 import { useAppContext } from "../context/app-context";
 import { toast } from "react-toastify";
-
+import { isPresent } from "../utils/isPresent";
 
 const useSession = () => {
   const { setUser, setGame, setDomain } = useAppContext();
@@ -32,8 +32,11 @@ const useSession = () => {
 
   const logout = () => {
     axios.post("/logout").then(() => {
-      window.sessionStorage.clear();
-      window.location.replace('/')
+      setUser(null);
+      setGame(null);
+      setDomain(null);
+      sessionStorage.clear()
+      navigate("/");
     });
   };
 
@@ -41,9 +44,24 @@ const useSession = () => {
     const res = await axios.get("/loggedin");
     if (res.data === 0) {
       setUser(null);
+      setGame(null);
+      setDomain(null);
+      navigate("/");
       return false;
     }
+    const sessionGame = JSON.parse(sessionStorage.getItem("game"))
+    const sessionDomain = sessionStorage.getItem("domain")
     setUser(res.data);
+    if(isPresent([sessionGame])){
+      setGame(sessionGame)
+    }else{
+      setGame(res.data.games[0]);
+    }
+    if(sessionDomain !== null && sessionDomain !== ""){
+      setDomain(sessionDomain)
+    }else{
+      setDomain(res.data.games[0].domains[0]);
+    }
     return true;
   };
 

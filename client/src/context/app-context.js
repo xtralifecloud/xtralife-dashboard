@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
+import { isPresent } from "../utils/isPresent";
 
 const AppContext = createContext();
 
@@ -17,28 +18,12 @@ const AppContextProvider = ({ children }) => {
   const [itemsNumber, setItemsNumber] = useState(10);
 
   useEffect(() => {
-    if (sessionStorage.getItem("user")) {
-      setUser(JSON.parse(sessionStorage.getItem("user")));
-    }
-    if (sessionStorage.getItem("game")) {
-      setGame(JSON.parse(sessionStorage.getItem("game")));
-    }
-    if (sessionStorage.getItem("domain")) {
-      setDomain(sessionStorage.getItem("domain"));
-    }
-  }, [setUser, setDomain, setGame]);
+    if(user && isPresent([game])) sessionStorage.setItem("game", JSON.stringify(game));
+  }, [game, user]);
 
   useEffect(() => {
-    sessionStorage.setItem("user", JSON.stringify(user));
-  }, [user]);
-
-  useEffect(() => {
-    sessionStorage.setItem("game", JSON.stringify(game));
-  }, [game]);
-
-  useEffect(() => {
-    sessionStorage.setItem("domain", domain);
-  }, [domain]);
+    if(user && domain) sessionStorage.setItem("domain", domain);
+  }, [domain, user]);
 
   const value = {
     user,

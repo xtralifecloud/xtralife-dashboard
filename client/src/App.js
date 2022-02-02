@@ -9,7 +9,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 function App() {
-  const { setEnv, setVersion, setOptions } = useAppContext();
+  const { user, game, domain, setEnv, setVersion, setOptions } = useAppContext();
 
   useEffect(() => {
     const init = async () => {
@@ -27,7 +27,7 @@ function App() {
     <div>
       <BrowserRouter>
         <Navigation />
-        <GameAndDomainSelector />
+        {user && game && domain && <GameAndDomainSelector />}
         <AppRoutes />
         <ToastContainer theme="dark" position="bottom-right"/>
       </BrowserRouter>

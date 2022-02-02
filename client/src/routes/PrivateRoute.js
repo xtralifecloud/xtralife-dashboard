@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import { useEffect } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import useSession from "../hooks/useSession";
+import { useAppContext } from "../context/app-context";
 
 const PrivateRoute = (props) => {
+  const { user, game, domain } = useAppContext();
   const { children } = props;
   const [loading, setLoading] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(true);
@@ -21,7 +23,7 @@ const PrivateRoute = (props) => {
 
   return loading ? (
     <div></div>
-  ) : isLoggedIn ? (
+  ) : isLoggedIn && user && game && domain ? (
     <>{children}</>
   ) : (
     <Navigate
