@@ -236,6 +236,7 @@ app.get('/store', (req, res) => res.sendFile(path.resolve('client', 'build', 'in
 app.get('/users', (req, res) => res.sendFile(path.resolve('client', 'build', 'index.html')));
 app.get('/leaderboards', (req, res) => res.sendFile(path.resolve('client', 'build', 'index.html')));
 app.get('/matches', (req, res) => res.sendFile(path.resolve('client', 'build', 'index.html')));
+app.get('/gamer/*', (req, res) => res.sendFile(path.resolve('client', 'build', 'index.html')));
 
 //==================================================================
 
