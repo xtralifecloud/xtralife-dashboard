@@ -6,11 +6,11 @@ import { getUserStorage, updateUserStorage } from "../../services/user";
 import { JsonEditor } from "jsoneditor-react";
 import "jsoneditor-react/es/editor.min.css";
 import { Plus, Trash } from "react-bootstrap-icons";
+import { toast } from "react-toastify";
 
-const Storage = () => {
+const Storage = ({ refresh }) => {
   const { game, domain } = useAppContext();
   const [storage, setStorage] = useState([]);
-  console.log("storage2:", storage);
   const { userId } = useParams();
   const [showModal, setShowModal] = useState(false);
   const [selectedKV, setSelectedKV] = useState(null);
@@ -19,23 +19,38 @@ const Storage = () => {
   const [selectedKeys, setSelectedKeys] = useState([]);
 
   useEffect(() => {
-    (async () => {
-      if (game && domain) {
-        const storage = await getUserStorage(game.name, domain, userId);
-        if (storage) setStorage(storage);
-      }
-    })();
-  }, [game, domain, userId]);
+    getStorageData(game, domain, userId)
+  }, [game, domain, userId, refresh]);
 
-  const addKV = () => {
+  const getStorageData = async (game, domain, userId) => {
+    if (game && domain) {
+      const storage = await getUserStorage(game.name, domain, userId);
+      if (storage) setStorage(storage);
+    }
+  }
+
+  const addKV = async (e) => {
+    e.preventDefault()
+    for (const el of storage) {
+      if (Object.values(el).includes(newKey)) {
+        toast.warning(`Duplicate key: "${newKey}"`);
+        return;
+      }
+    }
+    if (newKey === "" || newKey === null) {
+      toast.warning(`Cannot add empty key`);
+      return;
+    }
+
+    
     const updatedStorage = storage;
     updatedStorage.push({
       fskey: newKey,
       fsvalue: JSON.stringify({ edit: "me" }),
     });
-    setStorage(updatedStorage);
 
-    updateUserStorage(game.name, domain, userId, storage);
+    await updateUserStorage(game.name, domain, userId, updatedStorage)
+    getStorageData(game, domain, userId)
   };
 
   const handleSelection = (e, i) => {
@@ -67,7 +82,7 @@ const Storage = () => {
     <Container className="p-0">
       {storage && (
         <div>
-          <div className="input-group mb-3 w-70">
+          <form className="input-group mb-3 w-70">
             <input
               type="text"
               className="form-control"
@@ -78,13 +93,14 @@ const Storage = () => {
             <div className="input-group-append">
               <Button
                 variant="success"
-                onClick={() => addKV()}
+                type="submit"
+                onClick={(e) => addKV(e)}
                 className="d-flex align-items-center"
               >
                 <Plus size={25} className="mr-2" /> Add new key
               </Button>
             </div>
-          </div>
+          </form>
 
           <div className="table-wrapper">
             <Table

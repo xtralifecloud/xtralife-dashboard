@@ -4,7 +4,7 @@ import { useAppContext } from "../../context/app-context";
 import { useParams } from "react-router-dom";
 import { getUserOutline } from "./../../services/user";
 
-const Raw = () => {
+const Raw = ({refresh}) => {
   const [raw, setRaw] = useState(null);
   const { game } = useAppContext();
   const { userId } = useParams();
@@ -21,7 +21,7 @@ const Raw = () => {
         }
       }
     })();
-  }, [game, userId]);
+  }, [game, userId, refresh]);
 
   return (
     <Container>

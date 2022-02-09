@@ -8,7 +8,7 @@ import "jsoneditor-react/es/editor.min.css";
 import { Plus, Trash } from "react-bootstrap-icons";
 import { toast } from "react-toastify";
 
-const Properties = () => {
+const Properties = ({refresh}) => {
   const { game, domain } = useAppContext();
   const [properties, setProperties] = useState({});
   const { userId } = useParams();
@@ -23,21 +23,20 @@ const Properties = () => {
         if (properties) setProperties(properties);
       }
     })();
-  }, [game, domain, userId]);
+  }, [game, domain, userId, refresh]);
 
   const saveProperties = async () => {
-    const res = await updateUserProperties(
+    updateUserProperties(
       game.name,
       domain,
       userId,
       properties
     );
-    if (res.status === 200) {
-      toast.success("Properties updated successfully");
-    }
   };
 
-  const addProperty = () => {
+  const addProperty = (e) => {
+    e.preventDefault()
+
     if (newProperty === null || newProperty === "") {
       toast.warn("Cannot add property with null key");
     } else if (newProperty in properties) {
@@ -83,7 +82,7 @@ const Properties = () => {
     <Container className="p-0">
       {properties && (
         <div>
-          <div className="input-group mb-3 w-70">
+          <form className="input-group mb-3 w-70">
             <input
               type="text"
               className="form-control"
@@ -94,13 +93,14 @@ const Properties = () => {
             <div className="input-group-append">
               <Button
                 variant="success"
-                onClick={() => addProperty()}
+                type="submit"
+                onClick={(e) => addProperty(e)}
                 className="d-flex align-items-center"
               >
                 <Plus size={25} className="mr-2" /> Add new property
               </Button>
             </div>
-          </div>
+          </form>
 
           <div className="table-wrapper">
             <Table

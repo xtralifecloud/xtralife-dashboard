@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 import { getBestScores, deleteScore } from "../../services/user";
 import { Trash } from "react-bootstrap-icons";
 
-const Score = () => {
+const Score = ({refresh}) => {
   const [scores, setScores] = useState(null);
   const { game, domain } = useAppContext();
   const { userId } = useParams();
@@ -20,7 +20,7 @@ const Score = () => {
         if(scores) setScores(scores);
       }
     })();
-  }, [game, domain, userId]);
+  }, [game, domain, userId, refresh]);
 
   useEffect(() => {
     if (selectedScores.length === 0) {

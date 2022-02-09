@@ -5,14 +5,15 @@ import { useAppContext } from "../../context/app-context";
 import { useParams } from "react-router-dom";
 import { searchTxHistory } from "../../services/user";
 import Paginate from "../Paginate";
+import Highlighter from "react-highlight-words";
 
-const TxHistory = () => {
+const TxHistory = ({ refresh }) => {
   const [page, setPage] = useState(1);
   const [itemsNumber, setItemsNumber] = useState(10);
   const [tx, setTx] = useState(null);
   const [ts1, setTs1] = useState(null);
   const [ts2, setTs2] = useState(null);
-  const [descQuery, setDescQuery] = useState(null);
+  const [query, setQuery] = useState(null);
   const [searchTrigger, setSearchTrigger] = useState(0);
   const { game, domain } = useAppContext();
   const { userId } = useParams();
@@ -27,15 +28,20 @@ const TxHistory = () => {
           userId,
           ts1,
           ts2,
-          descQuery,
+          query,
           skip,
           limit
         );
-        if(txs) setTx(txs);
+        if (txs) setTx(txs);
       })(skip, itemsNumber);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [game, domain, userId, itemsNumber, page, searchTrigger]);
+  }, [game, domain, userId, itemsNumber, page, searchTrigger, refresh]);
+
+  const handleSearch = (e) => {
+    e.preventDefault()
+    setSearchTrigger(searchTrigger + 1)
+  }
 
   return (
     <Container>
@@ -63,33 +69,36 @@ const TxHistory = () => {
               />
             </Col>
             <Col md={1} xs={6}></Col>
-            <Col md={5} xs={12} className="d-flex align-items-center">
-              <Form.Control
-                placeholder="Search"
-                id="descInput"
-                onChange={(e) => setDescQuery(e.target.value)}
-              />
-              <Button
-                variant="success"
-                onClick={() => setSearchTrigger(searchTrigger + 1)}
-              >
-                <Search size={15} />
-              </Button>
-              <Button
-                variant="secondary"
-                className="d-flex align-items-center mx-3"
-                onClick={() => {
-                  document.getElementById("datepicker1").value = null;
-                  document.getElementById("datepicker2").value = null;
-                  document.getElementById("descInput").value = null;
-                  setTs1(null);
-                  setTs2(null);
-                  setDescQuery(null);
-                  setSearchTrigger(searchTrigger + 1);
-                }}
-              >
-                Clear
-              </Button>
+            <Col md={5} xs={12} >
+              <form className="d-flex align-items-center">
+                <Form.Control
+                  placeholder="Search"
+                  id="queryInput"
+                  onChange={(e) => setQuery(e.target.value)}
+                />
+                <Button
+                  variant="success"
+                  type="submit"
+                  onClick={(e) => handleSearch(e)}
+                >
+                  <Search size={15} />
+                </Button>
+                <Button
+                  variant="secondary"
+                  className="d-flex align-items-center mx-3"
+                  onClick={() => {
+                    document.getElementById("datepicker1").value = null;
+                    document.getElementById("datepicker2").value = null;
+                    document.getElementById("queryInput").value = null;
+                    setTs1(null);
+                    setTs2(null);
+                    setQuery(null);
+                    setSearchTrigger(searchTrigger + 1);
+                  }}
+                >
+                  Clear
+                </Button>
+              </form>
             </Col>
           </Row>
           {itemsNumber !== 10 && (
@@ -114,8 +123,19 @@ const TxHistory = () => {
                 return (
                   <tr key={`line-${e.ts}`}>
                     <td key={`date-${e.ts}`}>{new Date(e.ts).toUTCString()}</td>
-                    <td key={`tx-${e.ts}`}>{JSON.stringify(e.tx)}</td>
-                    <td key={`desc-${e.ts}`}>{e.desc}</td>
+                    <td key={`tx-${e.ts}`}>
+                      <Highlighter
+                        searchWords={[query]}
+                        textToHighlight={JSON.stringify(e.tx)}
+                      />
+                    </td>
+                    <td key={`desc-${e.ts}`}>
+                      {" "}
+                      <Highlighter
+                        searchWords={[query]}
+                        textToHighlight={e.desc}
+                      />
+                    </td>
                   </tr>
                 );
               })}

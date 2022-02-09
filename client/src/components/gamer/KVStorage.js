@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { useAppContext } from "../../context/app-context";
 import { getUserKVStore } from "../../services/user";
 
-const KVStorage = () => {
+const KVStorage = ({refresh}) => {
   const { game, domain } = useAppContext();
   const [KVStorage, setKVStorage] = useState([]);
   const { userId } = useParams();
@@ -16,7 +16,7 @@ const KVStorage = () => {
         if (KVStorage) setKVStorage(KVStorage);
       }
     })();
-  }, [game, domain, userId]);
+  }, [game, domain, userId, refresh]);
   return (
     <Container className="p-0">
       {KVStorage && (
