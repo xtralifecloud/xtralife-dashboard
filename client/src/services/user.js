@@ -67,6 +67,9 @@ export const sendMessage = async (game, domain, user_id, eventObject) => {
       `/game/${game}/user/${user_id}/message/${domain}`,
       JSON.stringify(eventObject)
     );
+    if (res.status === 200) {
+      toast.success("Message sent successfully");
+    }
     return res.data;
   } catch (err) {
     toast.error("Error while sending messages. See console for more details");
@@ -77,6 +80,9 @@ export const sendMessage = async (game, domain, user_id, eventObject) => {
 export const deleteUser = async (game, user_id) => {
   try {
     const res = await axios.delete(`/game/${game}/user/${user_id}`);
+    if (res.status === 200) {
+      toast.success("User deleted successfully");
+    }
     return res.data;
   } catch (err) {
     toast.error("Error while deleting users. See console for more details");
@@ -103,6 +109,9 @@ export const updateUserProfile = async (game, userId, profile) => {
       `/game/${game}/user/${userId}/profile`,
       profile
     );
+    if (res.status === 200) {
+      toast.success("Profile updated successfully");
+    }
     return res.data;
   } catch (err) {
     toast.error(
@@ -133,6 +142,9 @@ export const updateUserStorage = async (game, domain, user_id, storage) => {
       `/game/${game}/user/${user_id}/storage/${domain}`,
       storage
     );
+    if (res.status === 200) {
+      toast.success("User storage updated successfully");
+    }
     return res.data;
   } catch (err) {
     toast.error(
@@ -247,6 +259,9 @@ export const newTransaction = async (game, domain, user_id, tx) => {
       `/game/${game}/user/${user_id}/transaction/${domain}`,
       { tx, description: "Dashboard transaction" }
     );
+    if (res.status === 200) {
+      toast.success("Transaction created successfully");
+    }
     return res.data;
   } catch (err) {
     toast.error(
@@ -276,6 +291,9 @@ export const deleteScore = async (game, domain, user_id, lb) => {
     const res = await axios.delete(
       `/${game}/user/${user_id}/domain/${domain}/${lb}`
     );
+    if (res.status === 200) {
+      toast.success("Score delete successfully");
+    }
     return res.data;
   } catch (err) {
     toast.error("Error while deleting score. See console for more details");
@@ -310,6 +328,9 @@ export const updateUserProperties = async (
       `/game/${game}/user/${user_id}/domain/${domain}/properties`,
       properties
     );
+    if (res.status === 200) {
+      toast.success("Properties updated successfully");
+    }
     return res;
   } catch (err) {
     toast.error(

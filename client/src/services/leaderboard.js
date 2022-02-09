@@ -38,6 +38,9 @@ export const deleteLeaderboard = async (
     const res = await axios.delete(
       `/game/${game}/domain/${domain}/leaderboard/${leaderboard}`
     );
+    if (res.status === 200) {
+      toast.success("Leaderboard deleted successfully");
+    }
     return res.data;
   } catch (err) {
     toast.error("Error while deleting leaderboard. See console for more details")

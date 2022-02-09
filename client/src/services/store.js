@@ -14,6 +14,9 @@ export const getProducts = async (game) => {
 export const postProduct = async (game, product) => {
   try {
     const res = await axios.post(`/game/${game}/store/products`, product);
+    if (res.status === 200) {
+      toast.success("Product created successfully");
+    }
     return res.data;
   } catch (err) {
     toast.error("Error while creating products. See console for more details");
@@ -27,6 +30,9 @@ export const updateProduct = async (game, product) => {
       `/game/${game}/store/products/${product.productId}`,
       product
     );
+    if (res.status === 200) {
+      toast.success("Product updated successfully");
+    }
     return res.data;
   } catch (err) {
     toast.error("Error while updating products. See console for more details");
@@ -37,6 +43,9 @@ export const updateProduct = async (game, product) => {
 export const deleteProduct = async (game, productId) => {
   try {
     const res = await axios.delete(`/game/${game}/store/products/${productId}`);
+    if (res.status === 200) {
+      toast.success("Product deleted successfully");
+    }
     return res.data;
   } catch (err) {
     toast.error("Error while deleting products. See console for more details");

@@ -13,10 +13,12 @@ import Score from "../components/gamer/Score";
 import Balance from "../components/gamer/Balance";
 import Properties from "../components/gamer/Properties";
 import KVStorage from "../components/gamer/KVStorage";
+import RefreshButton from "../components/RefreshButton";
 
 const Gamer = () => {
   const { game } = useAppContext();
   const [gamer, setGamer] = useState();
+  const [refresh, setRefresh] = useState(0);
   const { userId } = useParams();
 
   useEffect(() => {
@@ -24,42 +26,45 @@ const Gamer = () => {
       const user = await getUserProfile(game.name, userId);
       setGamer(user);
     })();
-  }, [game, userId]);
+  }, [game, userId, refresh]);
 
   return (
     <Container className="d-flex flex-column">
       {gamer && (
-        <div className="d-flex align-items-center justify-content-center mt-4">
-          <Person className="mx-1" size={40} />
-          <h2 className="m-0 mx-1">{gamer.displayName}</h2>
+        <div className="d-flex align-items-center justify-content-around mt-4">
+          <div className="d-flex align-items-center">
+            <Person className="mx-1" size={40} />
+            <h2 className="m-0 mx-1">{gamer.displayName}</h2>
+          </div>
+          <RefreshButton setRefresh={setRefresh} />
         </div>
       )}
       <Tabs
         defaultActiveKey="profile"
         id="gamer-tab"
-        className="mt-4 mb-4 d-flex justify-content-center"
+        className="mt-5 mb-4 d-flex justify-content-center"
         variant="pills"
       >
         <Tab eventKey="profile" title="Profile">
           <Profile gamer={gamer} setGamer={setGamer} />
         </Tab>
         <Tab eventKey="contact" title="Properties">
-          <Properties />
+          <Properties refresh={refresh} />
         </Tab>
         <Tab eventKey="storage" title="Storage">
-          <Storage />
+          <Storage refresh={refresh} />
         </Tab>
         <Tab eventKey="kvstorage" title="KV Storage">
-          <KVStorage />
+          <KVStorage refresh={refresh} />
         </Tab>
         <Tab eventKey="balance" title="Balance">
-          <Balance />
+          <Balance refresh={refresh} />
         </Tab>
         <Tab eventKey="txhistory" title="Tx History">
-          <TxHistory />
+          <TxHistory refresh={refresh} />
         </Tab>
         <Tab eventKey="scores" title="Scores">
-          <Score />
+          <Score refresh={refresh} />
         </Tab>
         <Tab eventKey="friends" title="Friends">
           Friends
@@ -68,7 +73,7 @@ const Gamer = () => {
           Godchildren
         </Tab>
         <Tab eventKey="raw" title="Raw">
-          <Raw />
+          <Raw refresh={refresh} />
         </Tab>
       </Tabs>
     </Container>
