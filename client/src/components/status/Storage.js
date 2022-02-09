@@ -35,15 +35,24 @@ const Storage = () => {
   const [confirmation, setConfirmation] = useState(false);
   const [newKey, setNewKey] = useState("");
 
+
   useEffect(() => {
+    let isCancelled = false;
+
     (async () => {
       if (game.name && domain) {
         setLoadingStorage(true);
         const storage = await getGameStorage(game.name, domain);
-        if(storage) setStorage(storage);
-        setLoadingStorage(false);
+        if (!isCancelled) {
+          if(storage) setStorage(storage);
+          setLoadingStorage(false);
+        }
       }
     })();
+
+    return () => {
+      isCancelled = true;
+    };
   }, [game, domain]);
 
   useEffect(() => {
@@ -53,6 +62,11 @@ const Storage = () => {
       setButtonDisabled(true);
     }
   }, [selectedKVs]);
+
+  const cbSetStorage = (value) => {
+    setLoadingStorage(false);
+    setStorage(value);
+  }
 
   const handleSelection = (e, index) => {
     if (e.target.checked) {
@@ -151,7 +165,8 @@ const Storage = () => {
                   expectedDomain={domain}
                   expectedType="gamekv"
                   gameName={game.name}
-                  cb={setStorage}
+                  loading={setLoadingStorage}
+                  cb={cbSetStorage}
                 />
               </Col>
             ) : (

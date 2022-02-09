@@ -43,34 +43,53 @@ const Users = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    let isCancelled = false;
+
     const skip = (page - 1) * itemsNumber;
     if (game.name && !search) {
       (async (skip, limit) => {
         if (tableRef.current) tableRef.current.classList.add("grayout");
         const users = await getUsers(game.name, skip, limit);
-        if (users) setUsers(users);
-        if (tableRef.current) tableRef.current.classList.remove("grayout");
-        setLoading(false);
+        if (!isCancelled) {
+          if (users) setUsers(users);
+          if (tableRef.current) tableRef.current.classList.remove("grayout");
+          setLoading(false);
+        }
       })(skip, itemsNumber);
       (async () => {
         const count = await getUsersCount(game.name);
-        if (count) setCount(count.total);
-        setLoading(false);
+        if (!isCancelled) {
+          if (count) setCount(count.total);
+          setLoading(false);
+        }
       })();
     }
+
+    return () => {
+      isCancelled = true;
+    };
   }, [game, itemsNumber, page, tableRef, search]);
 
   useEffect(() => {
+    let isCancelled = false;
+
     if (game.name && search) {
       (async () => {
         const skip = (page - 1) * itemsNumber;
         const users = await searchUsers(game.name, skip, itemsNumber, search);
-        setUsers(users);
+        if (!isCancelled) {
+          setUsers(users);
+        }
         const count = await searchUsersCount(game.name, search);
-        setCount(count.total);
-        setLoading(false);
+        if (!isCancelled) {
+          setCount(count.total);
+          setLoading(false);
+        }
       })();
     }
+    return () => {
+      isCancelled = true;
+    };
     /* eslint-disable */
   }, [itemsNumber, page]);
 

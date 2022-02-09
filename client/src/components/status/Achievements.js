@@ -33,14 +33,22 @@ const Achievements = () => {
   const [buttonDisabled, setButtonDisabled] = useState(true);
 
   useEffect(() => {
+    let isCancelled = false;
+
     (async () => {
       if (game.name && domain) {
         setLoading(true);
         const achievements = await getGameAchievements(game.name, domain);
-        if (achievements) setAchievements(achievements);
-        setLoading(false);
+        if (!isCancelled) {
+          if (achievements) setAchievements(achievements);
+          setLoading(false);
+        }
       }
     })();
+
+    return () => {
+      isCancelled = true;
+    };
   }, [game, domain]);
 
   useEffect(() => {
@@ -50,6 +58,11 @@ const Achievements = () => {
       setButtonDisabled(true);
     }
   }, [selected]);
+
+  const cbSetAchievements = (value) => {
+    setLoading(false);
+    setAchievements(value);
+  }
 
   const save = () => {
     updateGameAchievements(game.name, domain, achievements);
@@ -63,7 +76,7 @@ const Achievements = () => {
       }
     }
 
-    if(newKey === "" || newKey === null){
+    if (newKey === "" || newKey === null) {
       toast.warning(`Cannot add empty key`);
       return;
     }
@@ -130,7 +143,9 @@ const Achievements = () => {
                   </Button>
                   {Object.keys(achievements).length !== 0 && (
                     <Button
-                      onClick={() => exportJson(env, domain, achievements, "achievements")}
+                      onClick={() =>
+                        exportJson(env, domain, achievements, "achievements")
+                      }
                       variant="primary"
                     >
                       Export
@@ -141,7 +156,8 @@ const Achievements = () => {
                   expectedDomain={domain}
                   expectedType="achievements"
                   gameName={game.name}
-                  cb={setAchievements}
+                  cb={cbSetAchievements}
+                  loading={setLoading}
                 />
               </Col>
             ) : (
@@ -245,8 +261,7 @@ const Achievements = () => {
                 className="d-flex align-items-center my-2"
               >
                 <Trash size={20} className="mr-2" /> Delete {selected.length}{" "}
-                {selected.length=== 1 ? "achievement": "achievements"}
-
+                {selected.length === 1 ? "achievement" : "achievements"}
               </Button>
               <Button variant="success" className="my-2" onClick={() => save()}>
                 Save

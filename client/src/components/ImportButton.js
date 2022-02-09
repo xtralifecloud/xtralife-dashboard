@@ -29,13 +29,8 @@ const ImportButton = (props) => {
       if (result.state === "error") {
         return;
       }
-      if (result.state === "unexpectedDomain") {
-        <ConfirmationModal
-          body={`Are you sure you want to import into ${result.domain} your configuration from ${result.expectedDomain} ?`}
-        />;
-      }
-      if (result.state === "unexpectedDomain") {
-        props = {
+      if (result.state === "unexpectedDomain") {  
+        const modalProps = {
           title: "Unexpected Domain",
           body: `Are you sure you want to import into ${props.expectedDomain} your configuration from ${result.domain} ?`,
           cb: props.cb,
@@ -45,7 +40,7 @@ const ImportButton = (props) => {
           },
           action: () => importData(files[0], props.cb),
         };
-        setConfirmationProps(props);
+        setConfirmationProps(modalProps);
         setShowConfirmation(true);
       }
       if (result.state === "success") {
@@ -59,6 +54,7 @@ const ImportButton = (props) => {
   };
 
   const importData = async (file, cb) => {
+    props.loading(true)
     setShowConfirmation(false);
     setConfirmationProps({});
     if(props.expectedType === "gamekv"){
