@@ -223,8 +223,8 @@ route.get("/game/:game/users", function (req, res, next) {
 	const domain = `${req.game.appid}.${req.game.apisecret}`;
 
 	return xtralife.api.user.list({
-		skip: parseInt(req.query.skip),
-		limit: parseInt(req.query.limit),
+		skip: parseInt(req.query.skip) || 0,
+		limit: parseInt(req.query.limit) || 0,
 		game: req.game.appid
 	}
 		, function (err, count, data) {
@@ -251,8 +251,8 @@ route.get("/game/:game/users/find/:user_id", function (req, res, next) {
 	}
 
 	const options = {
-		skip: parseInt(req.query.skip),
-		limit: parseInt(req.query.limit),
+		skip: parseInt(req.query.skip) || 0,
+		limit: parseInt(req.query.limit) || 0,
 		game: req.game.appid
 	};
 
