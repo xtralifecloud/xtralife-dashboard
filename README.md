@@ -18,10 +18,18 @@ With the same database containers as xtralife-server :
 	
 #User Guide
 
-Install first
+First install server
 
-	npm install
+    npm install
+
+Then install client
+
+    cd client && npm install
+
+Then build client
+
+    cd client && npm run build
 
 Finally run with
 
-	npm start
+    npm start

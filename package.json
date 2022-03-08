@@ -2,8 +2,8 @@
   "name": "xtralife-dashboard",
   "version": "4.0.8",
   "scripts": {
-    "compile": "browserify src/app.js > ./public/js/bundle.js",
-    "start": "browserify src/app.js > ./public/js/bundle.js && node ./server/dashboard.js",
+    "build": "cd client && npm run build",
+    "start": "node ./server/dashboard.js",
     "test": "mocha test/tests*.js"
   },
   "keywords": [
@@ -38,7 +38,7 @@
     "speakeasy": "^2.0.0",
     "underscore": "^1.13.1",
     "winston": "^3.3.3",
-    "xtralife-api": "4.0.2",
+    "xtralife-api": "^4.1.0",
     "xtralife-env": "^4.0.0"
   },
   "devDependencies": {

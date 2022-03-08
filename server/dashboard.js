@@ -144,6 +144,10 @@ passport.use(new BasicStrategy(checkauth));
 const app = express();
 const ready = Q.defer();
 
+if(env != "production"){
+	app.use(cors({origin:"http://localhost:8080"}))
+}
+
 // all environments
 app.set("port", process.env.PORT || 3000);
 
@@ -174,7 +178,6 @@ app.use(passport.session()); // Add passport initialization
 
 //==================================================================
 // routes
-app.use(express.static(path.join(__dirname, "../public")));
 
 app.get("/*", function (req, res, next) {
 	res.set({
@@ -225,6 +228,15 @@ app.use('/api', cors(xlenv.http.cors), passport.authenticate("basic", { session:
 app.use('/api/:version', routes);
 
 app.use(middleware.errorHandler);
+
+app.use(express.static(path.join(__dirname, "../client/build")));
+app.get('/login', (req, res) => res.sendFile(path.resolve('client', 'build', 'index.html')));
+app.get('/status', (req, res) => res.sendFile(path.resolve('client', 'build', 'index.html')));
+app.get('/store', (req, res) => res.sendFile(path.resolve('client', 'build', 'index.html')));
+app.get('/users', (req, res) => res.sendFile(path.resolve('client', 'build', 'index.html')));
+app.get('/leaderboards', (req, res) => res.sendFile(path.resolve('client', 'build', 'index.html')));
+app.get('/matches', (req, res) => res.sendFile(path.resolve('client', 'build', 'index.html')));
+app.get('/gamer/*', (req, res) => res.sendFile(path.resolve('client', 'build', 'index.html')));
 
 //==================================================================
 
