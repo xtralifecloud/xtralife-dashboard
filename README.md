@@ -22,6 +22,10 @@ Install first
 
 	npm install
 
+Then build
+
+	npm run build
+
 Finally run with
 
 	npm start
