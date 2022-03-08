@@ -1,6 +1,5 @@
-FROM node:12
+FROM node:16.14.0
 
-RUN npm install -g browserify
 RUN mkdir -p /server
 WORKDIR /server
 

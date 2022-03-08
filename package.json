@@ -2,9 +2,8 @@
   "name": "xtralife-dashboard",
   "version": "4.0.3",
   "scripts": {
-    "compile": "browserify src/app.js > ./public/js/bundle.js",
-    "start-angular": "browserify src/app.js > ./public/js/bundle.js && node ./server/dashboard-angular.js",
-    "start-react": "cd client && npm run build && cd .. && node ./server/dashboard-react.js",
+    "build": "cd client && npm run build",
+    "start": "node ./server/dashboard.js",
     "test": "mocha test/tests*.js"
   },
   "keywords": [
@@ -39,7 +38,7 @@
     "speakeasy": "^2.0.0",
     "underscore": "^1.13.1",
     "winston": "^3.3.3",
-    "xtralife-api": "^4.0.0",
+    "xtralife-api": "^4.1.0",
     "xtralife-env": "^4.0.0"
   },
   "devDependencies": {
