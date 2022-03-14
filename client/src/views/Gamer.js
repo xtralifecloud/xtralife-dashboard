@@ -3,7 +3,7 @@ import { useAppContext } from "../context/app-context";
 import { getUserProfile } from "../services/user";
 import { useParams } from "react-router-dom";
 import { Tabs, Tab, Container } from "react-bootstrap";
-import { Person } from "react-bootstrap-icons";
+import { Person, ArrowLeft } from "react-bootstrap-icons";
 import "./../styles/gamer.scss";
 import Storage from "../components/gamer/Storage";
 import Profile from "../components/gamer/Profile";
@@ -14,12 +14,14 @@ import Balance from "../components/gamer/Balance";
 import Properties from "../components/gamer/Properties";
 import KVStorage from "../components/gamer/KVStorage";
 import RefreshButton from "../components/RefreshButton";
+import { useNavigate } from "react-router-dom";
 
 const Gamer = () => {
   const { game } = useAppContext();
   const [gamer, setGamer] = useState();
   const [refresh, setRefresh] = useState(0);
   const { userId } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     (async () => {
@@ -31,12 +33,20 @@ const Gamer = () => {
   return (
     <Container className="d-flex flex-column">
       {gamer && (
-        <div className="d-flex align-items-center justify-content-around mt-4">
-          <div className="d-flex align-items-center">
-            <Person className="mx-1" size={40} />
-            <h2 className="m-0 mx-1">{gamer.displayName}</h2>
+        <div className="position-relative">
+          <div className="d-flex align-items-center justify-content-around mt-4">
+            <div
+              style={{ position: "absolute", left: "0" }}
+              onClick={() => navigate(`/users`)}
+            >
+              <ArrowLeft size={30} className="arrow-back clickable" />
+            </div>
+            <div className="d-flex align-items-center">
+              <Person className="mx-1" size={40} />
+              <h2 className="m-0 mx-1">{gamer.displayName}</h2>
+            </div>
+            <RefreshButton setRefresh={setRefresh} />
           </div>
-          <RefreshButton setRefresh={setRefresh} />
         </div>
       )}
       <Tabs

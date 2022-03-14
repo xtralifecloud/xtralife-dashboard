@@ -11,19 +11,23 @@ import {
   Modal,
   FormCheck,
 } from "react-bootstrap";
-import { Trash, PencilSquare, Plus } from "react-bootstrap-icons";
+import { Trash, Clipboard, Plus } from "react-bootstrap-icons";
 import { useAppContext } from "./../../context/app-context.js";
 import { getGameStorage, updateGameStorage } from "../../services/status";
 import { exportJson } from "./../../utils/exportJson";
 import { JsonEditor } from "jsoneditor-react";
-import ImportButton from "./../../components/ImportButton";
+import ImportButton from "./../ImportButton";
+import UploadBinaryButton from "./../UploadBinaryButton";
 import "jsoneditor-react/es/editor.min.css";
-import ConfirmationModal from "../../components/modals/ConfirmationModal";
+import ConfirmationModal from "../modals/ConfirmationModal";
 import { toast } from "react-toastify";
+import { copyToClipboard } from "../../utils/copyToClipboard.js";
+import ace from "brace";
+import "brace/mode/json";
+import "brace/theme/dracula";
 
 const Storage = () => {
   const { game, domain, env } = useAppContext();
-
   const [storage, setStorage] = useState([]);
   const [tempValue, setTempValue] = useState(null);
   const [selectedKV, setSelectedKV] = useState(null);
@@ -35,7 +39,6 @@ const Storage = () => {
   const [confirmation, setConfirmation] = useState(false);
   const [newKey, setNewKey] = useState("");
 
-
   useEffect(() => {
     let isCancelled = false;
 
@@ -44,7 +47,7 @@ const Storage = () => {
         setLoadingStorage(true);
         const storage = await getGameStorage(game.name, domain);
         if (!isCancelled) {
-          if(storage) setStorage(storage);
+          if (storage) setStorage(storage);
           setLoadingStorage(false);
         }
       }
@@ -66,7 +69,7 @@ const Storage = () => {
   const cbSetStorage = (value) => {
     setLoadingStorage(false);
     setStorage(value);
-  }
+  };
 
   const handleSelection = (e, index) => {
     if (e.target.checked) {
@@ -93,7 +96,7 @@ const Storage = () => {
       }
     }
 
-    if(newKey === "" || newKey === null){
+    if (newKey === "" || newKey === null) {
       toast.warning(`Cannot add empty key`);
       return;
     }
@@ -113,7 +116,7 @@ const Storage = () => {
     } else {
       setModalKV(false);
       setSelectedKV(null);
-      if(storage[selectedKV].fsvalue !== tempValue){
+      if (storage[selectedKV].fsvalue !== tempValue) {
         storage[selectedKV].fsvalue = JSON.stringify(tempValue);
       }
       setStorage([...storage]);
@@ -212,16 +215,15 @@ const Storage = () => {
                   <thead>
                     <tr>
                       <th style={{ width: "3%" }}></th>
-                      <th style={{ width: "34%" }}>Key</th>
-                      <th style={{ width: "60%" }}>Value</th>
-                      <th style={{ width: "3%" }}></th>
+                      <th style={{ width: "35%" }}>Key</th>
+                      <th>Value</th>
                     </tr>
                   </thead>
                   <tbody>
                     {storage.map((item, i) => {
                       return (
                         <tr key={`tr-${item.fskey}`}>
-                          <td style={{ width: "3%" }}>
+                          <td style={{ width: "3%" }} className="align-middle">
                             <div className="d-flex align-items-center justify-content-center">
                               <FormCheck.Input
                                 type="checkbox"
@@ -231,29 +233,64 @@ const Storage = () => {
                             </div>
                           </td>
                           <td
-                            style={{ width: "34%" }}
+                            className="td-overflow align-middle"
+                            style={{ width: "35%" }}
                             key={`key-${item.fskey}`}
                           >
-                            {item.fskey}
+                            <div className="d-flex align-items-center justify-content-between">
+                              <p
+                                className="m-0"
+                                style={{
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                }}
+                              >
+                                {item.fskey}
+                              </p>
+                              <UploadBinaryButton
+                                domain={domain}
+                                fsKey={item.fskey}
+                                gameName={game.name}
+                                storage={storage}
+                                selectedKV={i}
+                                cb={cbSetStorage}
+                                user_id={null}
+                              />
+                            </div>
                           </td>
                           <td
-                            className="td-overflow"
-                            style={{ width: "60%" }}
+                            className="td-overflow clickable align-middle"
                             key={`value-${item.fskey}`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              e.preventDefault();
+                              setSelectedKV(i);
+                              setTempValue(item.fsvalue);
+                              setModalKV(true);
+                            }}
                           >
-                            {item.fsvalue}
-                          </td>
-                          <td style={{ width: "3%" }}>
-                            <button
-                              onClick={() => {
-                                setSelectedKV(i);
-                                setTempValue(item.fsvalue)
-                                setModalKV(true);
-                              }}
-                              className="remove-btn-css mr-2 d-flex algin-items-center"
-                            >
-                              <PencilSquare size={20} />
-                            </button>
+                            <div className="d-flex align-items-center justify-content-between h-100">
+                              <p
+                                className="m-0"
+                                style={{
+                                  width: "95%",
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                }}
+                              >
+                                {item.fsvalue}
+                              </p>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  e.preventDefault();
+                                  copyToClipboard(item.fsvalue);
+                                }}
+                                className="remove-btn-css mr-2 d-flex algin-items-center"
+                              >
+                                <Clipboard size={20} color="#4c9be8" />
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       );
@@ -288,10 +325,10 @@ const Storage = () => {
       >
         <Modal.Header closeButton>
           <Modal.Title id="kv-modal">
-            {selectedKV !== null && storage[selectedKV].fskey}
+            Key: {selectedKV !== null && storage[selectedKV].fskey}
           </Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body className="p-0">
           {selectedKV !== null && (
             <JsonEditor
               language="en"
@@ -304,9 +341,15 @@ const Storage = () => {
               enableSort={false}
               history={true}
               allowedModes={["form", "code"]}
-              StatusBar={true}
               search={true}
-              htmlElementProps={{ style: { height: 600, border: "none" } }}
+              ace={ace}
+              theme="ace/theme/dracula"
+              htmlElementProps={{
+                style: {
+                  height: 600,
+                  border: "none",
+                },
+              }}
             />
           )}
         </Modal.Body>

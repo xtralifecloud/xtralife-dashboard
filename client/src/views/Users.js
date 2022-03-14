@@ -219,6 +219,7 @@ const Users = () => {
         )
       ) : (
         <div>
+          <p className="m-1">Note : click on a user's Id cell to see his data</p>
           <Table ref={tableRef} size="sm" bordered hover borderless responsive>
             <thead>
               <tr>
@@ -245,15 +246,11 @@ const Users = () => {
                     </td>
                     <td
                       key={`id-${user._id}`}
-                      className="d-flex justify-content-between"
+                      className="d-flex justify-content-between clickable"
+                      onClick={() => navigate(`/gamer/${user._id}`)}
                     >
                       {user._id}
-                      <button
-                        onClick={() => navigate(`/gamer/${user._id}`)}
-                        className="remove-btn-css mr-2 d-flex algin-items-center"
-                      >
-                        <PencilSquare size={20} />
-                      </button>
+                      
                     </td>
                     <td key={`name-${user._id}`}>{user.profile.displayName}</td>
                     <td key={`email-${user._id}`}>{user.profile.email}</td>

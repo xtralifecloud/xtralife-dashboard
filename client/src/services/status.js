@@ -63,3 +63,17 @@ export const updateGameAchievements = async (game, domain, achievements, cb = nu
   }
 };
 
+
+export const getSignedUrl = async (game, domain, key) => {
+  try {
+    const res = await axios.get(`/game/${game}/signedurl/${domain}/${key}`);
+    return res.data;
+  } catch (err) {
+    if(err.response.status === 400){
+      toast.error(err.response.data.message)
+    }else{
+      toast.error("Error while loading signed aws url. See console for more details")
+    }
+    return console.log(err);
+  }
+};

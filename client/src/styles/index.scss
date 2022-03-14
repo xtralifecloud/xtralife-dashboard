@@ -2,7 +2,6 @@
 @import "~bootstrap/scss/bootstrap";
 @import "~bootswatch/dist/superhero/bootswatch";
 
-
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
@@ -38,22 +37,27 @@ code {
   width: 20px;
 }
 
-img, svg{
+img,
+svg {
   vertical-align: baseline;
 }
 
-.mr-2{ 
+.arrow-back {
+  vertical-align: middle !important;
+}
+
+.mr-2 {
   margin-right: 0.5rem !important;
 }
 
-.remove-btn-css{
+.remove-btn-css {
   background: none;
-	color: inherit;
-	border: none;
-	padding: 0;
-	font: inherit;
-	cursor: pointer;
-	outline: inherit;
+  color: inherit;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  outline: inherit;
 }
 
 .grayout {
@@ -61,8 +65,53 @@ img, svg{
   filter: alpha(opacity = 100); /* MSIE */
 }
 
-.score-bubble{
+.score-bubble {
   font-size: 15px;
   font-weight: 500;
   margin-right: 15px;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.p-0-important {
+  padding: 0 !important;
+}
+
+.jsoneditor {
+  border: none;
+}
+
+.jsoneditor-menu,
+.jsoneditor-statusbar {
+  border: none;
+  background-color: inherit;
+  color: #ececec;
+}
+
+.jsoneditor-tree {
+  background-color: #282a36 !important;
+}
+.jsoneditor-poweredBy {
+  display: none;
+}
+
+div.jsoneditor-field,
+div.jsoneditor-value,
+div.jsoneditor td,
+div.jsoneditor th,
+div.jsoneditor textarea,
+pre.jsoneditor-preview,
+.jsoneditor-schema-error,
+.jsoneditor-popover {
+  color: #ececec;
+}
+
+div.jsoneditor-value.jsoneditor-string {
+  color: #f1fa8c;
+}
+
+div.jsoneditor-value.jsoneditor-number {
+  color: #bd93f9;
 }

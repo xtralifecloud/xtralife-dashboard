@@ -117,6 +117,19 @@ route.route("/game/:game/signedurl/:domain/:key").get((req, res) =>
 );
 
 route
+  .route("/game/:game/user/:userid/signedurl/:domain/:key")
+  .get((req, res) => {
+    return xtralife.api.virtualfs
+      .createSignedURL(req.dom, req.user_id, req.key)
+      .then(([signedURL, getURL], err) => {
+        if (err != null) {
+          return res.status(400).json(err).end();
+        }
+        return res.json({ signedURL, getURL }).end();
+      });
+  });
+
+route
   .route("/game/:game/storage/:domain")
   .get(downloadable("gamekv"), (req, res) =>
     xtralife.api.gamevfs.read(req.dom, null, function (err, data) {

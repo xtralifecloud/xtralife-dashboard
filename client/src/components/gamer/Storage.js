@@ -5,8 +5,13 @@ import { useAppContext } from "../../context/app-context";
 import { getUserStorage, updateUserStorage } from "../../services/user";
 import { JsonEditor } from "jsoneditor-react";
 import "jsoneditor-react/es/editor.min.css";
-import { Plus, Trash } from "react-bootstrap-icons";
+import { Plus, Trash, Clipboard } from "react-bootstrap-icons";
 import { toast } from "react-toastify";
+import UploadBinaryButton from "../UploadBinaryButton";
+import { copyToClipboard } from "./../../utils/copyToClipboard";
+import ace from "brace";
+import "brace/mode/json";
+import "brace/theme/dracula";
 
 const Storage = ({ refresh }) => {
   const { game, domain } = useAppContext();
@@ -19,7 +24,7 @@ const Storage = ({ refresh }) => {
   const [selectedKeys, setSelectedKeys] = useState([]);
 
   useEffect(() => {
-    getStorageData(game, domain, userId)
+    getStorageData(game, domain, userId);
   }, [game, domain, userId, refresh]);
 
   const getStorageData = async (game, domain, userId) => {
@@ -27,10 +32,14 @@ const Storage = ({ refresh }) => {
       const storage = await getUserStorage(game.name, domain, userId);
       if (storage) setStorage(storage);
     }
-  }
+  };
+
+  const cbSetStorage = (value) => {
+    setStorage(value);
+  };
 
   const addKV = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     for (const el of storage) {
       if (Object.values(el).includes(newKey)) {
         toast.warning(`Duplicate key: "${newKey}"`);
@@ -42,15 +51,14 @@ const Storage = ({ refresh }) => {
       return;
     }
 
-    
     const updatedStorage = storage;
     updatedStorage.push({
       fskey: newKey,
       fsvalue: JSON.stringify({ edit: "me" }),
     });
 
-    await updateUserStorage(game.name, domain, userId, updatedStorage)
-    getStorageData(game, domain, userId)
+    await updateUserStorage(game.name, domain, userId, updatedStorage);
+    getStorageData(game, domain, userId);
   };
 
   const handleSelection = (e, i) => {
@@ -114,15 +122,19 @@ const Storage = ({ refresh }) => {
               <thead>
                 <tr>
                   <th style={{ width: "3%" }}></th>
-                  <th style={{ width: "22%" }}>Key</th>
-                  <th style={{ width: "75%" }}>Value</th>
+                  <th style={{ width: "35%" }}>Key</th>
+                  <th>Value</th>
                 </tr>
               </thead>
               <tbody>
-                {storage.map((e, i) => {
+                {storage.map((item, i) => {
                   return (
-                    <tr key={`line-${e.fskey}`}>
-                      <td key={`checkbox-${e.fskey}`} style={{ width: "3%" }}>
+                    <tr key={`line-${item.fskey}`}>
+                      <td
+                        key={`checkbox-${item.fskey}`}
+                        style={{ width: "3%" }}
+                        className="align-middle"
+                      >
                         <div className="d-flex align-items-center justify-content-center">
                           <FormCheck.Input
                             type="checkbox"
@@ -131,26 +143,63 @@ const Storage = ({ refresh }) => {
                         </div>
                       </td>
                       <td
-                        key={`fskey-${e.fskey}`}
-                        className="td-overflow"
-                        style={{ width: "22%" }}
-                        onClick={() => {
-                          setSelectedKV(i);
-                          setShowModal(true);
-                        }}
+                        key={`fskey-${item.fskey}`}
+                        className="td-overflow align-middle"
+                        style={{ width: "35%" }}
                       >
-                        {e.fskey}
+                        <div className="d-flex align-items-center justify-content-between">
+                          <p
+                            className="m-0"
+                            style={{
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                            }}
+                          >
+                            {item.fskey}
+                          </p>
+                          <UploadBinaryButton
+                            domain={domain}
+                            fsKey={item.fskey}
+                            gameName={game.name}
+                            storage={storage}
+                            selectedKV={i}
+                            cb={cbSetStorage}
+                            user_id={userId}
+                          />
+                        </div>
                       </td>
                       <td
-                        key={`fsvalue-${e.fskey}`}
-                        className="td-overflow"
-                        style={{ width: "75%" }}
-                        onClick={() => {
+                        key={`fsvalue-${item.fskey}`}
+                        className="td-overflow align-middle clickable"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          e.preventDefault();
                           setSelectedKV(i);
                           setShowModal(true);
                         }}
                       >
-                        {e.fsvalue}
+                        <div className="d-flex align-items-center justify-content-between h-100">
+                          <p
+                            className="m-0"
+                            style={{
+                              width: "95%",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                            }}
+                          >
+                            {item.fsvalue}
+                          </p>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              e.preventDefault();
+                              copyToClipboard(item.fsvalue);
+                            }}
+                            className="remove-btn-css mr-2 d-flex algin-items-center"
+                          >
+                            <Clipboard size={20} color="#4c9be8" />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   );
@@ -176,13 +225,14 @@ const Storage = ({ refresh }) => {
             }}
             aria-labelledby="kv-modal"
             centered
+            className="p-0"
           >
             <Modal.Header closeButton>
               <Modal.Title id="kv-modal">
-                {selectedKV !== null && storage[selectedKV].fskey}
+                Key: {selectedKV !== null && storage[selectedKV].fskey}
               </Modal.Title>
             </Modal.Header>
-            <Modal.Body>
+            <Modal.Body className="p-0">
               {selectedKV !== null && (
                 <JsonEditor
                   language="en"
@@ -196,6 +246,8 @@ const Storage = ({ refresh }) => {
                   history={true}
                   allowedModes={["form", "code"]}
                   search={true}
+                  ace={ace}
+                  theme="ace/theme/dracula"
                   htmlElementProps={{ style: { height: 600, border: "none" } }}
                 />
               )}

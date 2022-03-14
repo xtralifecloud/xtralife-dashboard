@@ -136,7 +136,7 @@ export const getUserStorage = async (game, domain, user_id) => {
   }
 };
 
-export const updateUserStorage = async (game, domain, user_id, storage) => {
+export const updateUserStorage = async (game, domain, user_id, storage, cb = null) => {
   try {
     const res = await axios.post(
       `/game/${game}/user/${user_id}/storage/${domain}`,
@@ -144,6 +144,10 @@ export const updateUserStorage = async (game, domain, user_id, storage) => {
     );
     if (res.status === 200) {
       toast.success("User storage updated successfully");
+    }
+    if (cb){
+      const updatedStorage = await getUserStorage(game, domain, user_id)
+      return cb(updatedStorage)
     }
     return res.data;
   } catch (err) {
@@ -336,6 +340,20 @@ export const updateUserProperties = async (
     toast.error(
       "Error while updating user properties. See console for more details"
     );
+    return console.log(err);
+  }
+};
+
+export const getSignedUrlGamer = async (game, user_id, domain, key) => {
+  try {
+    const res = await axios.get(`/game/${game}/user/${user_id}/signedurl/${domain}/${key}`);
+    return res.data;
+  } catch (err) {
+    if(err.response.status === 400){
+      toast.error(err.response.data.message)
+    }else{
+      toast.error("Error while loading signed aws url. See console for more details")
+    }
     return console.log(err);
   }
 };

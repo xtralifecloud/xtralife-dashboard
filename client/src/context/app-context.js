@@ -16,6 +16,7 @@ const AppContextProvider = ({ children }) => {
   const [options, setOptions] = useState({});
   const [page, setPage] = useState(1);
   const [itemsNumber, setItemsNumber] = useState(10);
+  const [loaded, setLoaded] = useState(0);
 
   useEffect(() => {
     if(user && isPresent([game])) sessionStorage.setItem("game", JSON.stringify(game));
@@ -42,6 +43,8 @@ const AppContextProvider = ({ children }) => {
     setPage,
     itemsNumber,
     setItemsNumber,
+    loaded,
+    setLoaded
   };
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };

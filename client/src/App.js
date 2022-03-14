@@ -29,7 +29,7 @@ function App() {
         <Navigation />
         {user && game && domain && <GameAndDomainSelector />}
         <AppRoutes />
-        <ToastContainer theme="dark" position="bottom-right"/>
+        <ToastContainer theme="dark" position="bottom-right" closeButton={false}/>
       </BrowserRouter>
     </div>
   );
