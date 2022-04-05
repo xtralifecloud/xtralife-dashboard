@@ -8,13 +8,12 @@ import {
   FormCheck,
   Form,
 } from "react-bootstrap";
-import {
-  People,
-  Trash,
-  Chat,
-  Search,
-  PencilSquare,
-} from "react-bootstrap-icons";
+import logoFacebook from "../assets/facebook.png";
+import logoGoogle from "../assets/google.png";
+import logoSteam from "../assets/steam.png";
+import logoFirebase from "../assets/firebase.png";
+import incognito from "../assets/incognito.png";
+import { People, Trash, Chat, Search, Envelope } from "react-bootstrap-icons";
 import { useAppContext } from "../context/app-context";
 import {
   deleteUser,
@@ -39,6 +38,7 @@ const Users = () => {
   const [search, setSearch] = useState(null);
   const tableRef = useRef();
   const paginateRef = useRef();
+  const [refresh, setRefresh] = useState(0);
 
   const navigate = useNavigate();
 
@@ -68,7 +68,7 @@ const Users = () => {
     return () => {
       isCancelled = true;
     };
-  }, [game, itemsNumber, page, tableRef, search]);
+  }, [game, itemsNumber, page, tableRef, search, refresh]);
 
   useEffect(() => {
     let isCancelled = false;
@@ -109,10 +109,12 @@ const Users = () => {
     }
   };
 
-  const bulkDeleteUser = () => {
+  const bulkDeleteUser = async () => {
     for (const user_id of selectedUsers) {
-      deleteUser(game.name, user_id);
+       await deleteUser(game.name, user_id);
     }
+    setSelectedUsers([]);
+    setRefresh(refresh => refresh + 1);
   };
 
   const bulkMessageUser = () => {
@@ -143,6 +145,47 @@ const Users = () => {
       const count = await searchUsersCount(game.name, search);
       setCount(count.total);
       if (paginateRef.current) paginateRef.current.classList.remove("grayout");
+    }
+  };
+
+  const renderNetworkIcon = (network) => {
+    switch (network) {
+      case "facebook":
+        return (
+          <img
+            src={logoFacebook}
+            alt="logo Facebook"
+            style={{ width: "28px" }}
+          />
+        );
+      case "google":
+        return (
+          <img src={logoGoogle} alt="logo Google" style={{ width: "28px" }} />
+        );
+      case "firebase":
+        return (
+          <img
+            src={logoFirebase}
+            alt="logo Firebase"
+            style={{ width: "32px" }}
+          />
+        );
+      case "steam":
+        return (
+          <img src={logoSteam} alt="logo steam" style={{ width: "28px" }} />
+        );
+      case "email":
+        return (
+          <Envelope size={25} /> 
+        );
+      case "anonymous":
+        return (
+          <div className="white-circle">
+            <img src={incognito} alt="incognito" style={{ width: "20px" }} />
+          </div>
+        );
+      default:
+        return;
     }
   };
 
@@ -219,7 +262,20 @@ const Users = () => {
         )
       ) : (
         <div>
-          <p className="m-1">Note : click on a user's Id cell to see his data</p>
+          <p className="m-1">
+            Note : click on a user's Id cell to see his data
+          </p>
+          <div ref={paginateRef}>
+            {itemsNumber !== 10 && (
+              <Paginate
+                page={page}
+                setPage={setPage}
+                itemsNumber={itemsNumber}
+                setItemsNumber={setItemsNumber}
+                totalItems={count}
+              />
+            )}
+          </div>
           <Table ref={tableRef} size="sm" bordered hover borderless responsive>
             <thead>
               <tr>
@@ -236,10 +292,11 @@ const Users = () => {
               {users.list.map((user, i) => {
                 return (
                   <tr id={`line-${i}`} key={`line-${user._id}`}>
-                    <td>
+                    <td className="align-middle">
                       <div className="d-flex align-items-center justify-content-center">
                         <FormCheck.Input
                           type="checkbox"
+                          className="m-0"
                           onClick={(e) => handleSelection(e, user._id)}
                         />
                       </div>
@@ -249,14 +306,25 @@ const Users = () => {
                       className="d-flex justify-content-between clickable"
                       onClick={() => navigate(`/gamer/${user._id}`)}
                     >
-                      {user._id}
-                      
+                      <div className=" w-100 d-flex justify-content-between align-items-center">
+                        <p className="m-0">{user._id}</p>
+                        {renderNetworkIcon(user.network)}
+                      </div>
                     </td>
-                    <td key={`name-${user._id}`}>{user.profile.displayName}</td>
-                    <td key={`email-${user._id}`}>{user.profile.email}</td>
-                    <td key={`lang-${user._id}`}>{user.profile.lang}</td>
-                    <td key={`linkedto-${user._id}`}></td>
-                    <td key={`events-${user._id}`}>
+                    <td className="align-middle" key={`name-${user._id}`}>
+                      {user.profile.displayName}
+                    </td>
+                    <td className="align-middle" key={`email-${user._id}`}>
+                      {user.profile.email}
+                    </td>
+                    <td className="align-middle" key={`lang-${user._id}`}>
+                      {user.profile.lang}
+                    </td>
+                    <td
+                      className="align-middle"
+                      key={`linkedto-${user._id}`}
+                    ></td>
+                    <td className="align-middle" key={`events-${user._id}`}>
                       {user.mqPending}/{user.mqTimedout}
                     </td>
                   </tr>

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import { CloudUpload } from "react-bootstrap-icons";
 import ConfirmationModal from "./modals/ConfirmationModal";
 import { updateGameStorage, getSignedUrl } from "./../services/status";

@@ -1,22 +1,22 @@
 FROM node:16.14.0
 
-RUN mkdir -p /server
-WORKDIR /server
+RUN mkdir -p /dashboard
+WORKDIR /dashboard
 
-COPY package*.json /server/
+COPY package*.json /dashboard/
 RUN npm ci
 
-COPY . /server
+COPY . /dashboard
 
-WORKDIR /server/client
+WORKDIR /dashboard/client
 RUN npm ci
 RUN npm run build
 
-WORKDIR /server
+WORKDIR /dashboard
 
 EXPOSE 3000
 EXPOSE 10254
 
-VOLUME ["/server/configDashboard", "/server/logs"]
+VOLUME ["/dashboard/configDashboard", "/dashboard/logs"]
 
 CMD [ "npm", "start" ]

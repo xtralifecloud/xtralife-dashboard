@@ -115,3 +115,13 @@ div.jsoneditor-value.jsoneditor-string {
 div.jsoneditor-value.jsoneditor-number {
   color: #bd93f9;
 }
+
+.white-circle{
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
