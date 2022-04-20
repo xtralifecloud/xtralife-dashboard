@@ -75,6 +75,16 @@ svg {
   cursor: pointer;
 }
 
+.btn-link {
+  background: none !important;
+  border: none;
+  padding: 0 !important;
+  /*input has OS specific font-family*/
+  color: #069;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 .p-0-important {
   padding: 0 !important;
 }
@@ -125,3 +135,8 @@ div.jsoneditor-value.jsoneditor-number {
   justify-content: center;
   align-items: center;
 }
+
+.ace_selection {
+  background: rgb(191, 197, 255, 0.3) !important;
+}
+

@@ -357,3 +357,48 @@ export const getSignedUrlGamer = async (game, user_id, domain, key) => {
     return console.log(err);
   }
 };
+
+//Friends
+
+export const getFriends = async (game, domain, user_id) => {
+  try {
+    const res = await axios.get(
+      `/game/${game}/user/${user_id}/friends/${domain}`
+    );
+    return res.data;
+  } catch (err) {
+    toast.error(
+      "Error while loading user friends. See console for more details"
+    );
+    return console.log(err);
+  }
+}
+
+export const deleteFriend = async (game, domain, user_id, friend_id) => {
+  try {
+    const res = await axios.delete(
+      `/game/${game}/user/${user_id}/friend/${domain}/${friend_id}`
+    );
+    if (res.status === 200) {
+      toast.success("Friend deleted successfully");
+    }
+    return res.data;
+  } catch (err) {
+    toast.error("Error while deleting friend. See console for more details");
+    return console.log(err);
+  }
+}
+
+export const getSponsorship = async (game, domain, user_id) => {
+  try {
+    const res = await axios.get(
+      `/game/${game}/user/${user_id}/friends/${domain}/sponsorship`
+    );
+    return res.data;
+  } catch (err) {
+    toast.error(
+      "Error while loading user sponsorship. See console for more details"
+    );
+    return console.log(err);
+  }
+}

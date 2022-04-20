@@ -15,6 +15,8 @@ import Properties from "../components/gamer/Properties";
 import KVStorage from "../components/gamer/KVStorage";
 import RefreshButton from "../components/RefreshButton";
 import { useNavigate } from "react-router-dom";
+import Friend from "../components/gamer/Friends";
+import Sponsorship from "../components/gamer/Sponsorship";
 
 const Gamer = () => {
   const { game } = useAppContext();
@@ -37,7 +39,7 @@ const Gamer = () => {
           <div className="d-flex align-items-center justify-content-around mt-4">
             <div
               style={{ position: "absolute", left: "0" }}
-              onClick={() => navigate(`/users`)}
+              onClick={() => navigate(-1)}
             >
               <ArrowLeft size={30} className="arrow-back clickable" />
             </div>
@@ -77,10 +79,10 @@ const Gamer = () => {
           <Score refresh={refresh} />
         </Tab>
         <Tab eventKey="friends" title="Friends">
-          Friends
+          <Friend refresh={refresh} />
         </Tab>
-        <Tab eventKey="godchildren" title="Godchildren">
-          Godchildren
+        <Tab eventKey="sponsorship" title="Sponsorship">
+          <Sponsorship refresh={refresh}/>
         </Tab>
         <Tab eventKey="raw" title="Raw">
           <Raw refresh={refresh} />

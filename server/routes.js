@@ -428,18 +428,27 @@ route.delete("/game/:game/user/:userid/friend/:domain/:friendid", (req, res) =>
   )
 );
 
-route.get("/game/:game/user/:userid/friends/:domain/god", (req, res) =>
+route.get("/game/:game/user/:userid/friends/:domain/sponsorship", (req, res) =>
   xtralife.api.social.getGodfather(
     req.context,
     req.dom,
     req.user_id,
-    (err, godfather) =>
-      xtralife.api.social.getGodchildren(
+    (err, referral) => {
+      if (err != null) {
+        return res.json(400, err);
+      }
+      return xtralife.api.social.getGodchildren(
         req.context,
         req.dom,
         req.user_id,
-        (err, godchildren) => res.json({ godfather, godchildren }).end()
-      )
+        (err, referrers) => {
+          if (err != null) {
+            return res.json(400, err);
+          }
+          return res.json({ referral, referrers }).end();
+        }
+      );
+    }
   )
 );
 

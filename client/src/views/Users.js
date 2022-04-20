@@ -13,7 +13,15 @@ import logoGoogle from "../assets/google.png";
 import logoSteam from "../assets/steam.png";
 import logoFirebase from "../assets/firebase.png";
 import incognito from "../assets/incognito.png";
-import { People, Trash, Chat, Search, Envelope } from "react-bootstrap-icons";
+import logoGameCenter from "../assets/gamecenter.png";
+import {
+  People,
+  Trash,
+  Chat,
+  Search,
+  Envelope,
+  Apple,
+} from "react-bootstrap-icons";
 import { useAppContext } from "../context/app-context";
 import {
   deleteUser,
@@ -111,10 +119,10 @@ const Users = () => {
 
   const bulkDeleteUser = async () => {
     for (const user_id of selectedUsers) {
-       await deleteUser(game.name, user_id);
+      await deleteUser(game.name, user_id);
     }
     setSelectedUsers([]);
-    setRefresh(refresh => refresh + 1);
+    setRefresh((refresh) => refresh + 1);
   };
 
   const bulkMessageUser = () => {
@@ -175,9 +183,11 @@ const Users = () => {
           <img src={logoSteam} alt="logo steam" style={{ width: "28px" }} />
         );
       case "email":
-        return (
-          <Envelope size={25} /> 
-        );
+        return <Envelope size={25} />;
+      case "apple":
+        return <Apple size={25} />;
+      case "gamecenter":
+        return <img src={logoGameCenter} alt="logo game center" style={{ width: "28px" }} />
       case "anonymous":
         return (
           <div className="white-circle">
