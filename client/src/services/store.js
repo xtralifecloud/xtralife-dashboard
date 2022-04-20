@@ -24,7 +24,24 @@ export const postProduct = async (game, product) => {
   }
 };
 
-export const updateProduct = async (game, product) => {
+export const putProducts = async (game, products, cb = null) => {
+  try {
+    const res = await axios.put(`/game/${game}/store/products`, products);
+    if (res.status === 200) {
+      toast.success("Products updated successfully");
+    }
+    if (cb) {
+      const products = await getProducts(game);
+      return cb(products);
+    }
+    return res.data;
+  } catch (err) {
+    toast.error("Error while creating products. See console for more details");
+    return console.log(err);
+  }
+};
+
+export const updateProduct = async (game, product, cb = null) => {
   try {
     const res = await axios.put(
       `/game/${game}/store/products/${product.productId}`,

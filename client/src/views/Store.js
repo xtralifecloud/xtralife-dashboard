@@ -12,29 +12,38 @@ import { AddEditProductModal } from "../components/modals/store/AddEditProductMo
 import { useAppContext } from "../context/app-context";
 import { getProducts, deleteProduct } from "../services/store";
 import { isPresent } from "../utils/isPresent";
+import { exportJson } from "../utils/exportJson";
+import ImportButton from "../components/ImportButton";
 
 const Store = () => {
-  const { game, domain } = useAppContext();
+  const { env, game, domain } = useAppContext();
   const [products, setProducts] = useState({});
   const [showAddEditProduct, setShowAddEditProduct] = useState(false);
   const [showDeleteProduct, setShowDeleteProduct] = useState(false);
   const [loading, setLoading] = useState(true);
   const [selectedProductIndex, setSelectedProductIndex] = useState(null);
-  const [selectedProduct, setSelectedProduct] = useState({reward: {}});
+  const [selectedProduct, setSelectedProduct] = useState({ reward: {} });
   const [editDisabled, setEditDisabled] = useState(true);
   const [deleteDisabled, setDeleteDisabled] = useState(true);
-  const [modalAction, setModalAction] = useState('');
+  const [modalAction, setModalAction] = useState("");
 
   useEffect(() => {
-    (async () => {
-      if (game.name && domain) {
-        setLoading(true);
-        const products = await getProducts(game.name);
-        if(products) setProducts(products);
-        setLoading(false);
-      }
-    })();
+    getStoreAsync(game.name, domain);
   }, [game, domain]);
+
+  const getStoreAsync = async (game, domain) => {
+    if (game && domain) {
+      setLoading(true);
+      const products = await getProducts(game);
+      if (products) setProducts(products);
+      setLoading(false);
+    }
+  }
+
+  const cbSetStore = (products) => {
+    setProducts(products);
+    setLoading(false);
+  };
 
   useEffect(() => {
     if (selectedProductIndex !== null) {
@@ -56,20 +65,22 @@ const Store = () => {
   };
 
   const handleAddProduct = () => {
-    setModalAction('add')
+    setModalAction("add");
     setShowAddEditProduct(true);
   };
 
   const handleEditProduct = () => {
-    setModalAction('edit')
-    setSelectedProduct(products.list[selectedProductIndex])
+    setModalAction("edit");
+    setSelectedProduct(products.list[selectedProductIndex]);
     setShowAddEditProduct(true);
   };
 
   const handleDeleteProduct = () => {
     setShowDeleteProduct(false);
     const productId = products.list[selectedProductIndex].productId;
-    products["list"] = products.list.filter((_, i) => i !== selectedProductIndex);
+    products["list"] = products.list.filter(
+      (_, i) => i !== selectedProductIndex
+    );
     setProducts(products);
     document
       .getElementById(`line-${selectedProductIndex}`)
@@ -106,8 +117,19 @@ const Store = () => {
           </Button>
         </ButtonGroup>
         <ButtonGroup aria-label="import-export">
-          <Button variant="outline-primary">Export</Button>
-          <Button variant="outline-success">Import</Button>
+          <Button
+            variant="primary"
+            onClick={() => exportJson(env, game.name, products, "inapp")}
+          >
+            Export
+          </Button>
+          <ImportButton
+            expectedDomain={game.name}
+            expectedType="inapp"
+            gameName={game.name}
+            loading={setLoading}
+            cb={cbSetStore}
+          />
         </ButtonGroup>
       </div>
       {isPresent([products]) &&

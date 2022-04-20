@@ -2,21 +2,25 @@ import React, { useState, useRef, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import { checkFileName, readFileAsJson } from "../utils/importJson";
 import ConfirmationModal from "./modals/ConfirmationModal";
-import { updateGameStorage, updateGameAchievements } from "./../services/status";
+import {
+  updateGameStorage,
+  updateGameAchievements,
+} from "./../services/status";
+import { putProducts } from "../services/store";
 
 const ImportButton = (props) => {
   const inputFile = useRef(null);
-  const [gameName, setGameName] = useState()
-  const [domain, setDomain] = useState()
+  const [gameName, setGameName] = useState();
+  const [domain, setDomain] = useState();
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [confirmationProps, setConfirmationProps] = useState({});
 
   useEffect(() => {
-    if(props){
-      setGameName(props.gameName)
-      setDomain(props.expectedDomain)
+    if (props) {
+      setGameName(props.gameName);
+      setDomain(props.expectedDomain);
     }
-  }, [props])
+  }, [props]);
 
   const handleFileUpload = (e) => {
     const { files } = e.target;
@@ -29,7 +33,7 @@ const ImportButton = (props) => {
       if (result.state === "error") {
         return;
       }
-      if (result.state === "unexpectedDomain") {  
+      if (result.state === "unexpectedDomain") {
         const modalProps = {
           title: "Unexpected Domain",
           body: `Are you sure you want to import into ${props.expectedDomain} your configuration from ${result.domain} ?`,
@@ -54,14 +58,24 @@ const ImportButton = (props) => {
   };
 
   const importData = async (file, cb) => {
-    props.loading(true)
+    props.loading(true);
     setShowConfirmation(false);
     setConfirmationProps({});
-    if(props.expectedType === "gamekv"){
-      readFileAsJson(file, jsonContents => updateGameStorage(gameName, domain, jsonContents, cb))
+    if (props.expectedType === "gamekv") {
+      readFileAsJson(file, (jsonContents) =>
+        updateGameStorage(gameName, domain, jsonContents, cb)
+      );
     }
-    if(props.expectedType === "achievements"){
-      readFileAsJson(file, jsonContents => updateGameAchievements(gameName, domain, jsonContents, cb))
+    if (props.expectedType === "achievements") {
+      readFileAsJson(file, (jsonContents) =>
+        updateGameAchievements(gameName, domain, jsonContents, cb)
+      );
+    }
+    if (props.expectedType === "inapp") {
+      readFileAsJson(file, (jsonContents) => {
+        console.log("jsonContents:", jsonContents);
+        putProducts(gameName, jsonContents.list, cb);
+      });
     }
   };
 
