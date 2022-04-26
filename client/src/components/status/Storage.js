@@ -1,16 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  Container,
-  Card,
-  Spinner,
-  Table,
-  Button,
-  Row,
-  Col,
-  Collapse,
-  Modal,
-  FormCheck,
-} from "react-bootstrap";
+import { Container, Card, Spinner, Table, Button, Row, Col, Collapse, Modal, FormCheck } from "react-bootstrap";
 import { Trash, Clipboard, Plus } from "react-bootstrap-icons";
 import { useAppContext } from "./../../context/app-context.js";
 import { getGameStorage, updateGameStorage } from "../../services/status";
@@ -133,44 +122,26 @@ const Storage = () => {
             <Col>
               <Card.Title>Key/Value storage</Card.Title>
               {storage.length === 0
-                ? !loadingStorage && (
-                    <Card.Text>
-                      Your game is not using Key/Value storage in domain{" "}
-                      {domain}
-                    </Card.Text>
-                  )
+                ? !loadingStorage && <Card.Text>Your game is not using Key/Value storage in domain {domain}</Card.Text>
                 : !loadingStorage && (
                     <Card.Text>
-                      Your game is using {storage.length} keys in domain{" "}
-                      {domain}
+                      Your game is using {storage.length} keys in domain {domain}
                     </Card.Text>
                   )}
             </Col>
             {!loadingStorage ? (
               <Col className="d-flex justify-content-end align-items-center">
                 <div className="d-flex justify-content-end align-items-center">
-                  <Button
-                    onClick={() => setToggleKV(!toggleKV)}
-                    variant="secondary"
-                  >
+                  <Button onClick={() => setToggleKV(!toggleKV)} variant="secondary">
                     Edit
                   </Button>
                   {storage.length !== 0 && (
-                    <Button
-                      onClick={() => exportJson(env, domain, storage, "gamekv")}
-                      variant="primary"
-                    >
+                    <Button onClick={() => exportJson(env, domain, storage, "gamekv")} variant="primary">
                       Export
                     </Button>
                   )}
                 </div>
-                <ImportButton
-                  expectedDomain={domain}
-                  expectedType="gamekv"
-                  gameName={game.name}
-                  loading={setLoadingStorage}
-                  cb={cbSetStorage}
-                />
+                <ImportButton expectedDomain={domain} expectedType="gamekv" gameName={game.name} loading={setLoadingStorage} cb={cbSetStorage} />
               </Col>
             ) : (
               <Col className="d-flex justify-content-end align-items-center">
@@ -191,11 +162,7 @@ const Storage = () => {
                 onChange={(e) => setNewKey(e.target.value)}
               />
               <div className="input-group-append">
-                <Button
-                  variant="success"
-                  onClick={() => addKV()}
-                  className="d-flex align-items-center"
-                >
+                <Button variant="success" onClick={() => addKV()} className="d-flex align-items-center">
                   <Plus size={25} className="mr-2" /> Add new key
                 </Button>
               </div>
@@ -203,15 +170,7 @@ const Storage = () => {
 
             <Collapse in={toggleKV}>
               <div className="table-wrapper">
-                <Table
-                  size="sm"
-                  bordered
-                  striped
-                  hover
-                  borderless
-                  responsive
-                  className="table-fixed-storage"
-                >
+                <Table size="sm" bordered striped hover borderless responsive className="table-fixed-storage">
                   <thead>
                     <tr>
                       <th style={{ width: "3%" }}></th>
@@ -225,18 +184,10 @@ const Storage = () => {
                         <tr key={`tr-${item.fskey}`}>
                           <td style={{ width: "3%" }} className="align-middle">
                             <div className="d-flex align-items-center justify-content-center">
-                              <FormCheck.Input
-                                type="checkbox"
-                                name="keyValueCheckBox"
-                                onClick={(e) => handleSelection(e, i)}
-                              />
+                              <FormCheck.Input type="checkbox" name="keyValueCheckBox" onClick={(e) => handleSelection(e, i)} />
                             </div>
                           </td>
-                          <td
-                            className="td-overflow align-middle"
-                            style={{ width: "35%" }}
-                            key={`key-${item.fskey}`}
-                          >
+                          <td className="td-overflow align-middle" style={{ width: "35%" }} key={`key-${item.fskey}`}>
                             <div className="d-flex align-items-center justify-content-between">
                               <p
                                 className="m-0"
@@ -299,14 +250,8 @@ const Storage = () => {
                 </Table>
               </div>
             </Collapse>
-            <Button
-              variant="danger"
-              disabled={buttonDisabled}
-              onClick={() => setConfirmation(true)}
-              className="d-flex align-items-center mt-2"
-            >
-              <Trash size={20} className="mr-2" /> Delete {selectedKVs.length}{" "}
-              key/value
+            <Button variant="danger" disabled={buttonDisabled} onClick={() => setConfirmation(true)} className="d-flex align-items-center mt-2">
+              <Trash size={20} className="mr-2" /> Delete {selectedKVs.length} key/value
             </Button>
           </Card.Body>
         )}
@@ -324,9 +269,7 @@ const Storage = () => {
         centered
       >
         <Modal.Header closeButton>
-          <Modal.Title id="kv-modal">
-            Key: {selectedKV !== null && storage[selectedKV].fskey}
-          </Modal.Title>
+          <Modal.Title id="kv-modal">Key: {selectedKV !== null && storage[selectedKV].fskey}</Modal.Title>
         </Modal.Header>
         <Modal.Body className="p-0">
           {selectedKV !== null && (

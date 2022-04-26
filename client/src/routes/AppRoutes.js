@@ -7,6 +7,7 @@ import Users from "../views/Users";
 import Leaderboards from "../views/Leaderboards";
 import Matches from "../views/Matches";
 import Gamer from "../views/Gamer";
+import Match from "../views/Match";
 import PrivateRoute from "./PrivateRoute";
 
 const AppRoutes = () => {
@@ -19,6 +20,7 @@ const AppRoutes = () => {
       <Route path="/gamer/:userId" element={<PrivateRoute><Gamer /></PrivateRoute>} />
       <Route path="/leaderboards" element={<PrivateRoute><Leaderboards /></PrivateRoute>} />
       <Route path="/matches" element={<PrivateRoute><Matches /></PrivateRoute>} />
+      <Route path="/matches/:matchId" element={<PrivateRoute><Match /></PrivateRoute>} />
       <Route
         path="*"
         element={

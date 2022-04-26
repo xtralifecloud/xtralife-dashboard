@@ -735,7 +735,20 @@ route.get("/game/:game/matches/domain/:domain", (req, res, next) =>
       req.query.gamerId,
       req.query.customProperties
     )
-    .spread((count, data) => res.json({ list: data, total: count }))
+    .spread( data => res.json({ list: data}))
+    .catch(next)
+    .done()
+);
+
+route.get("/game/:game/matches/domain/:domain/count", (req, res, next) =>
+  xtralife.api.match
+    .count(
+      req.dom,
+      req.query.hideFinished || false,
+      req.query.gamerId,
+      req.query.customProperties
+    )
+    .then( count => res.json({ total: count}))
     .catch(next)
     .done()
 );

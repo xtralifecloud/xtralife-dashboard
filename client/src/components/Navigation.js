@@ -50,9 +50,9 @@ const Navigation = () => {
                   <Link className="deco-none" to="/leaderboards">
                     <NavDropdown.Item as="div">Leaderboards</NavDropdown.Item>
                   </Link>
-                  {/* <Link className="deco-none" to="/matches">
-                <NavDropdown.Item as="div">Matches</NavDropdown.Item>{" "}
-              </Link> */}
+                  <Link className="deco-none" to="/matches">
+                    <NavDropdown.Item as="div">Matches</NavDropdown.Item>
+                  </Link>
                 </NavDropdown>
               </React.Fragment>
             )}

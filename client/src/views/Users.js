@@ -37,7 +37,7 @@ import { useNavigate } from "react-router-dom";
 
 const Users = () => {
   const { game, page, setPage, itemsNumber, setItemsNumber } = useAppContext();
-  const [users, setUsers] = useState({ list: [] });
+  const [users, setUsers] = useState({list: []});
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [buttonDisabled, setButtonDisabled] = useState(true);
@@ -145,7 +145,6 @@ const Users = () => {
       setLoading(false);
     } else {
       const skip = (page - 1) * itemsNumber;
-      setCount(0);
       const users = await searchUsers(game.name, skip, itemsNumber, search);
       setUsers(users);
       setLoading(false);
@@ -264,9 +263,9 @@ const Users = () => {
 
       {loading ? (
         <Spinner animation="border" variant="outline-primary" />
-      ) : isPresent([users]) && users.total === 0 ? (
+      ) : count === 0 ? (
         search ? (
-          <p>No users found with username "{search}"</p>
+          <p>No users found with {searchType === "userId" ? "userID" : "name/email including"} "{search}"</p>
         ) : (
           <p>You don't have any user yet</p>
         )
@@ -286,7 +285,7 @@ const Users = () => {
               />
             )}
           </div>
-          <Table ref={tableRef} size="sm" bordered hover borderless responsive>
+          <Table ref={tableRef} size="sm" bordered hover borderless responsive className="my-3">
             <thead>
               <tr>
                 <th></th>
@@ -294,7 +293,6 @@ const Users = () => {
                 <th>Name</th>
                 <th>Email</th>
                 <th>Language</th>
-                <th>Linked to</th>
                 <th>Events</th>
               </tr>
             </thead>
@@ -330,10 +328,6 @@ const Users = () => {
                     <td className="align-middle" key={`lang-${user._id}`}>
                       {user.profile.lang}
                     </td>
-                    <td
-                      className="align-middle"
-                      key={`linkedto-${user._id}`}
-                    ></td>
                     <td className="align-middle" key={`events-${user._id}`}>
                       {user.mqPending}/{user.mqTimedout}
                     </td>

@@ -11,7 +11,7 @@ import Raw from "../components/gamer/Raw";
 import TxHistory from "../components/gamer/TxHistory";
 import Score from "../components/gamer/Score";
 import Balance from "../components/gamer/Balance";
-import Properties from "../components/gamer/Properties";
+//import Properties from "../components/gamer/Properties";
 import KVStorage from "../components/gamer/KVStorage";
 import RefreshButton from "../components/RefreshButton";
 import { useNavigate } from "react-router-dom";
@@ -60,9 +60,9 @@ const Gamer = () => {
         <Tab eventKey="profile" title="Profile">
           <Profile gamer={gamer} setGamer={setGamer} />
         </Tab>
-        <Tab eventKey="contact" title="Properties">
+        {/* <Tab eventKey="contact" title="Properties">
           <Properties refresh={refresh} />
-        </Tab>
+        </Tab> */}
         <Tab eventKey="storage" title="Storage">
           <Storage refresh={refresh} />
         </Tab>
