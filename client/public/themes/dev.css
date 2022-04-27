@@ -1,0 +1,13 @@
+body {
+  background-color: #261C2C !important;
+}
+
+.card,
+.dropdown-menu,
+.modal-content {
+  background-color: #3E2C41 !important;
+}
+
+.navbar > .container {
+  border-bottom: 1px solid #3E2C41 !important;
+}

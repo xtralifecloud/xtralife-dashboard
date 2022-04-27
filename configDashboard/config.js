@@ -68,11 +68,15 @@ module.exports = {
 
 
 	options: {
-		notifyUserOnBrokerTimeout: false,
+		//notifyUserOnBrokerTimeout: false,
 		// should we allow removing a user ?
 		removeUser: true,
 		removeLeaderboard : true,
-		showHookLog : true
+		//showHookLog : true
+		identifiers: { 
+			title: 'Xtralife Dahsboard',
+			theme: ''
+		}
 	},
 
 	elastic(cb){
@@ -96,9 +100,9 @@ module.exports = {
 	dashboard: {
 		users: {},
 		session: {
-			name : 'dashboard.xtralife',
+			name : 'dashboard.xtralife-react',
 			secret : 'configure key'
-		}
+		},
 	},
 
 	AWS: {

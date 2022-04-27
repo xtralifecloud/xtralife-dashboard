@@ -126,6 +126,7 @@ const Store = () => {
           <ImportButton
             expectedDomain={game.name}
             expectedType="inapp"
+            expectedEnv={env}
             gameName={game.name}
             loading={setLoading}
             cb={cbSetStore}

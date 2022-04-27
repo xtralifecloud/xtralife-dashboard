@@ -1,43 +1,21 @@
 import React, { useState, useEffect, useRef } from "react";
-import {
-  Container,
-  ButtonGroup,
-  Button,
-  Spinner,
-  Table,
-  FormCheck,
-  Form,
-} from "react-bootstrap";
+import { Container, ButtonGroup, Button, Spinner, Table, FormCheck, Form } from "react-bootstrap";
 import logoFacebook from "../assets/facebook.png";
 import logoGoogle from "../assets/google.png";
 import logoSteam from "../assets/steam.png";
 import logoFirebase from "../assets/firebase.png";
 import incognito from "../assets/incognito.png";
 import logoGameCenter from "../assets/gamecenter.png";
-import {
-  People,
-  Trash,
-  Chat,
-  Search,
-  Envelope,
-  Apple,
-} from "react-bootstrap-icons";
+import { People, Trash, Chat, Search, Envelope, Apple, Clipboard } from "react-bootstrap-icons";
 import { useAppContext } from "../context/app-context";
-import {
-  deleteUser,
-  getUsers,
-  searchUsers,
-  findUser,
-  getUsersCount,
-  searchUsersCount,
-} from "../services/user";
-import { isPresent } from "../utils/isPresent";
+import { deleteUser, getUsers, searchUsers, findUser, getUsersCount, searchUsersCount } from "../services/user";
 import Paginate from "../components/Paginate";
 import { useNavigate } from "react-router-dom";
+import { copyToClipboard } from "./../utils/copyToClipboard.js";
 
 const Users = () => {
-  const { game, page, setPage, itemsNumber, setItemsNumber } = useAppContext();
-  const [users, setUsers] = useState({list: []});
+  const { game, page, setPage, itemsNumber, setItemsNumber, options } = useAppContext();
+  const [users, setUsers] = useState({ list: [] });
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [buttonDisabled, setButtonDisabled] = useState(true);
@@ -141,7 +119,9 @@ const Users = () => {
       setLoading(false);
     } else if (searchType === "userId") {
       const user = await findUser(game.name, search);
-      setUsers(user);
+      if (user) setUsers(user);
+      if (user.list.length === 0) setCount(0);
+      else setCount(1);
       setLoading(false);
     } else {
       const skip = (page - 1) * itemsNumber;
@@ -158,35 +138,19 @@ const Users = () => {
   const renderNetworkIcon = (network) => {
     switch (network) {
       case "facebook":
-        return (
-          <img
-            src={logoFacebook}
-            alt="logo Facebook"
-            style={{ width: "28px" }}
-          />
-        );
+        return <img src={logoFacebook} alt="logo Facebook" style={{ width: "28px" }} />;
       case "google":
-        return (
-          <img src={logoGoogle} alt="logo Google" style={{ width: "28px" }} />
-        );
+        return <img src={logoGoogle} alt="logo Google" style={{ width: "28px" }} />;
       case "firebase":
-        return (
-          <img
-            src={logoFirebase}
-            alt="logo Firebase"
-            style={{ width: "32px" }}
-          />
-        );
+        return <img src={logoFirebase} alt="logo Firebase" style={{ width: "32px" }} />;
       case "steam":
-        return (
-          <img src={logoSteam} alt="logo steam" style={{ width: "28px" }} />
-        );
+        return <img src={logoSteam} alt="logo steam" style={{ width: "28px" }} />;
       case "email":
         return <Envelope size={25} />;
       case "apple":
         return <Apple size={25} />;
       case "gamecenter":
-        return <img src={logoGameCenter} alt="logo game center" style={{ width: "28px" }} />
+        return <img src={logoGameCenter} alt="logo game center" style={{ width: "28px" }} />;
       case "anonymous":
         return (
           <div className="white-circle">
@@ -207,23 +171,13 @@ const Users = () => {
 
       <div className="d-flex justify-content-between my-5">
         <ButtonGroup aria-label="import-export">
-          <Button
-            variant="danger"
-            disabled={buttonDisabled}
-            onClick={() => bulkDeleteUser()}
-            className="d-flex align-items-center"
-          >
-            <Trash size={20} className="mr-2" /> Delete {selectedUsers.length}{" "}
-            {selectedUsers.length === 1 ? "user" : "users"}
-          </Button>
-          <Button
-            variant="secondary"
-            disabled={buttonDisabled}
-            className="d-flex align-items-center"
-            onClick={() => bulkMessageUser()}
-          >
-            <Chat size={20} className="mr-2" /> Message {selectedUsers.length}{" "}
-            {selectedUsers.length === 1 ? "user" : "users"}
+          {options.removeUser && (
+            <Button variant="danger" disabled={buttonDisabled} onClick={() => bulkDeleteUser()} className="d-flex align-items-center">
+              <Trash size={20} className="mr-2" /> Delete {selectedUsers.length} {selectedUsers.length === 1 ? "user" : "users"}
+            </Button>
+          )}
+          <Button variant="secondary" disabled={buttonDisabled} className="d-flex align-items-center" onClick={() => bulkMessageUser()}>
+            <Chat size={20} className="mr-2" /> Message {selectedUsers.length} {selectedUsers.length === 1 ? "user" : "users"}
           </Button>
         </ButtonGroup>
         <div className="d-flex">
@@ -246,15 +200,8 @@ const Users = () => {
               onClick={() => setSearchType("name")}
             />
 
-            <Form.Control
-              placeholder="Search"
-              onChange={(e) => setSearch(e.target.value)}
-            />
-            <Button
-              variant="secondary"
-              type="submit"
-              onClick={(e) => handleSearch(e)}
-            >
+            <Form.Control placeholder="Search" onChange={(e) => setSearch(e.target.value)} />
+            <Button variant="secondary" type="submit" onClick={(e) => handleSearch(e)}>
               <Search size={15} />
             </Button>
           </Form>
@@ -265,24 +212,18 @@ const Users = () => {
         <Spinner animation="border" variant="outline-primary" />
       ) : count === 0 ? (
         search ? (
-          <p>No users found with {searchType === "userId" ? "userID" : "name/email including"} "{search}"</p>
+          <p>
+            No users found with {searchType === "userId" ? "userID" : "name/email including"} "{search}"
+          </p>
         ) : (
           <p>You don't have any user yet</p>
         )
       ) : (
         <div>
-          <p className="m-1">
-            Note : click on a user's Id cell to see his data
-          </p>
+          <p className="m-1">Note : click on a user's Id cell to see his data</p>
           <div ref={paginateRef}>
             {itemsNumber !== 10 && (
-              <Paginate
-                page={page}
-                setPage={setPage}
-                itemsNumber={itemsNumber}
-                setItemsNumber={setItemsNumber}
-                totalItems={count}
-              />
+              <Paginate page={page} setPage={setPage} itemsNumber={itemsNumber} setItemsNumber={setItemsNumber} totalItems={count} />
             )}
           </div>
           <Table ref={tableRef} size="sm" bordered hover borderless responsive className="my-3">
@@ -302,20 +243,25 @@ const Users = () => {
                   <tr id={`line-${i}`} key={`line-${user._id}`}>
                     <td className="align-middle">
                       <div className="d-flex align-items-center justify-content-center">
-                        <FormCheck.Input
-                          type="checkbox"
-                          className="m-0"
-                          onClick={(e) => handleSelection(e, user._id)}
-                        />
+                        <FormCheck.Input type="checkbox" className="m-0" onClick={(e) => handleSelection(e, user._id)} />
                       </div>
                     </td>
-                    <td
-                      key={`id-${user._id}`}
-                      className="d-flex justify-content-between clickable"
-                      onClick={() => navigate(`/gamer/${user._id}`)}
-                    >
-                      <div className=" w-100 d-flex justify-content-between align-items-center">
-                        <p className="m-0">{user._id}</p>
+                    <td key={`id-${user._id}`} className="d-flex justify-content-between clickable" onClick={() => navigate(`/gamer/${user._id}`)}>
+                      <div className="w-100 d-flex justify-content-between align-items-center">
+                        <div className="d-flex justify-content-between">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              e.preventDefault();
+                              copyToClipboard(user._id);
+                            }}
+                            className="remove-btn-css mr-2 d-flex algin-items-center"
+                          >
+                            <Clipboard size={20} color="#4c9be8" />
+                          </button>
+                          <p className="m-0 mr-2">{user._id}</p>
+                        </div>
+
                         {renderNetworkIcon(user.network)}
                       </div>
                     </td>
@@ -337,13 +283,7 @@ const Users = () => {
             </tbody>
           </Table>
           <div ref={paginateRef}>
-            <Paginate
-              page={page}
-              setPage={setPage}
-              itemsNumber={itemsNumber}
-              setItemsNumber={setItemsNumber}
-              totalItems={count}
-            />
+            <Paginate page={page} setPage={setPage} itemsNumber={itemsNumber} setItemsNumber={setItemsNumber} totalItems={count} />
           </div>
         </div>
       )}

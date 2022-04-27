@@ -99,7 +99,14 @@ module.exports = {
 				games:["com.clanofthecloud.cloudbuilder","com.clanofthecloud.testgame"]
 			}
 		}
-	},	
+	},
+
+	options: {
+		identifiers: {
+			title: "",
+			theme: "", // values: ["prod", "staging"]
+		}
+	},
 
 	mailer: {
 		transport: "sendgrid",

@@ -18,7 +18,7 @@ export const checkFileName = (filename, expectedType, expectedDomain, action) =>
     }
 
     if (domain !== expectedDomain) {
-        return {state: "unexpectedDomain", domain: domain, expectedDomain: expectedDomain}
+        return {state: "unexpectedDomain", domain: domain, expectedDomain: expectedDomain, env: env}
     }
 
     return {state: "success", action: action, env: env}

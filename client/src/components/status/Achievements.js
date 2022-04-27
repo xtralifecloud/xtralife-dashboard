@@ -155,6 +155,7 @@ const Achievements = () => {
                 <ImportButton
                   expectedDomain={domain}
                   expectedType="achievements"
+                  expectedEnv={env}
                   gameName={game.name}
                   cb={cbSetAchievements}
                   loading={setLoading}

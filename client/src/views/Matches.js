@@ -24,7 +24,6 @@ const Matches = () => {
 
   const navigate = useNavigate();
 
-
   useEffect(() => {
     const skip = (page - 1) * itemsNumber;
     try {
@@ -109,7 +108,7 @@ const Matches = () => {
             <p className="mx-1 my-0">Note : click on a matchId cell to see his data</p>
             <FormCheck type="checkbox" label="Hide finished matches" defaultChecked={hideFinished} onClick={() => setHideFinished(!hideFinished)} />
           </div>
-          <div>
+          <div className="mt-3">
             {itemsNumber !== 10 && (
               <Paginate page={page} setPage={setPage} itemsNumber={itemsNumber} setItemsNumber={setItemsNumber} totalItems={count} />
             )}
@@ -132,8 +131,7 @@ const Matches = () => {
                       <FormCheck.Input type="checkbox" className="m-0" onClick={(e) => handleSelection(e, match._id)} />
                     </div>
                   </td>
-                  <td className="align-middle clickable" key={`id-${match._id}`} 
-                      onClick={() => navigate(`/matches/${match._id}`)}>
+                  <td className="align-middle clickable" key={`id-${match._id}`} onClick={() => navigate(`/matches/${match._id}`)}>
                     {match._id}
                   </td>
                   <td className="align-middle" key={`desc-${match._id}`}>

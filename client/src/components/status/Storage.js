@@ -141,7 +141,14 @@ const Storage = () => {
                     </Button>
                   )}
                 </div>
-                <ImportButton expectedDomain={domain} expectedType="gamekv" gameName={game.name} loading={setLoadingStorage} cb={cbSetStorage} />
+                <ImportButton
+                  expectedDomain={domain}
+                  expectedType="gamekv"
+                  expectedEnv={env}
+                  gameName={game.name}
+                  loading={setLoadingStorage}
+                  cb={cbSetStorage}
+                />
               </Col>
             ) : (
               <Col className="d-flex justify-content-end align-items-center">

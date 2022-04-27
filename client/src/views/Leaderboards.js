@@ -7,7 +7,7 @@ import Paginate from "../components/Paginate";
 import HighScoresModal from "../components/modals/leaderboard/HighScoresModal";
 
 const Leaderboards = () => {
-  const { game, domain } = useAppContext();
+  const { game, domain, options } = useAppContext();
   const [leaderboards, setLeaderboards] = useState();
   const [selectedLeaderboard, setSelectedLeaderboard] = useState();
   const [leaderboard, setLeaderboard] = useState();
@@ -93,13 +93,13 @@ const Leaderboards = () => {
           </div>
           <div className="mt-3">
             <ButtonGroup aria-label="import-export">
-              <Button
+              { options.removeLeaderboard && <Button
                 variant="danger"
                 onClick={() => deleteLB()}
                 className="d-flex align-items-center"
               >
                 <Trash size={20} className="mr-2" /> Delete leaderboard
-              </Button>
+              </Button>}
               <Button
                 variant="secondary"
                 onClick={() => rebuildLB()}

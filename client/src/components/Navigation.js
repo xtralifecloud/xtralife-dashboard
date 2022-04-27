@@ -19,9 +19,7 @@ const Navigation = () => {
             <Link className="deco-none d-flex align-items-center" to="/">
               <img src={logo} alt="logo" />
             </Link>
-            <p style={{ marginTop: "1rem", marginLeft: "1rem" }}>
-              {env + "-" + version}
-            </p>
+            <p style={{ marginTop: "1rem", marginLeft: "1rem" }}>{env + "-" + version}</p>
           </div>
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
@@ -39,11 +37,7 @@ const Navigation = () => {
                     <NavDropdown.Item as="div">Store</NavDropdown.Item>
                   </Link>
                 </NavDropdown>
-                <NavDropdown
-                  title="Community"
-                  id="collasible-nav-dropdown"
-                  className="mx-3"
-                >
+                <NavDropdown title="Community" id="collasible-nav-dropdown" className="mx-3">
                   <Link className="deco-none" to="/users">
                     <NavDropdown.Item as="div">Users</NavDropdown.Item>
                   </Link>
@@ -57,20 +51,10 @@ const Navigation = () => {
               </React.Fragment>
             )}
             <NavDropdown title="Resources" id="collasible-nav-dropdown">
-              <a
-                className="deco-none"
-                href="https://github.com/xtralifecloud/"
-                target="_blank"
-                rel="noreferrer"
-              >
+              <a className="deco-none" href="https://github.com/xtralifecloud/" target="_blank" rel="noreferrer">
                 <NavDropdown.Item as="div">SDK</NavDropdown.Item>
               </a>
-              <a
-                className="deco-none"
-                href="https://xtralife.cloud"
-                target="_blank"
-                rel="noreferrer"
-              >
+              <a className="deco-none" href="https://xtralife.cloud" target="_blank" rel="noreferrer">
                 <NavDropdown.Item as="div">Blog</NavDropdown.Item>
               </a>
             </NavDropdown>

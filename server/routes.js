@@ -309,7 +309,7 @@ route.get("/game/:game/users/find/:user_id", function (req, res, next) {
   try {
     id = new ObjectId(req.params.user_id);
   } catch (error) {
-    id = null;
+    return res.json({ errorName: "InvalidUserId", message: error.message });
   }
 
   const options = {
@@ -321,7 +321,7 @@ route.get("/game/:game/users/find/:user_id", function (req, res, next) {
   if (id != null) {
     options.id = id;
   }
-
+  
   return xtralife.api.user.list(options, function (err, data) {
     if (err != null) {
       console.log(err);

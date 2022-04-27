@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Modal, Button } from "react-bootstrap";
 import ace from "brace";
 import "brace/mode/json";

@@ -45,7 +45,6 @@ const UploadBinaryButton = (props) => {
     let urls = [];
 
     if (props.user_id) {
-      console.log('props.user_id:', props.user_id)
       urls = await getSignedUrlGamer(props.gameName, props.user_id, props.domain, props.fsKey);
     } else {
       urls = await getSignedUrl(props.gameName, props.domain, props.fsKey);

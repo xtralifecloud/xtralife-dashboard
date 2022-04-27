@@ -193,7 +193,7 @@ app.get("/env", function (req, res) {
 	const options = {
 		removeUser: xlenv.options.removeUser,
 		removeLeaderboard: xlenv.options.removeLeaderboard,
-		showHookLog: xlenv.options.showHookLog
+		identifiers: xlenv.options.identifiers
 	};
 
 	return res.send({ env, version, options });
