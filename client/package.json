@@ -17,13 +17,13 @@
     "react-bootstrap": "^2.0.2",
     "react-bootstrap-icons": "^1.6.1",
     "react-contenteditable": "^3.3.6",
-    "react-css-theme-switcher": "^0.3.0",
     "react-dom": "^17.0.2",
     "react-highlight-words": "^0.17.0",
     "react-router-dom": "^6.0.2",
     "react-scripts": "^5.0.0",
     "react-toastify": "^8.1.0",
     "sass": "^1.43.5",
+    "shade-blend-color": "^1.0.0",
     "web-vitals": "^1.1.2"
   },
   "scripts": {

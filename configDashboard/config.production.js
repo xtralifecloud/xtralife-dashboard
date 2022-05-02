@@ -102,10 +102,8 @@ module.exports = {
 	},
 
 	options: {
-		identifiers: {
-			title: "",
-			theme: "", // values: ["prod", "staging"]
-		}
+		title: "",
+		themeColor: "", // Hexadecimal values, examples : #131f8f #194320 #570530 #191919 #2D2424
 	},
 
 	mailer: {

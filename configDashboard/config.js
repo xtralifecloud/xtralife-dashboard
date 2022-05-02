@@ -73,10 +73,8 @@ module.exports = {
 		removeUser: true,
 		removeLeaderboard : true,
 		//showHookLog : true
-		identifiers: { 
-			title: 'Xtralife Dahsboard',
-			theme: ''
-		}
+		title: 'Xtralife Dahsboard',
+		themeColor: "",	// Hexadecimal values, examples : #131f8f #194320 #570530 #191919 #2D2424
 	},
 
 	elastic(cb){

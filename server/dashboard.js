@@ -193,7 +193,9 @@ app.get("/env", function (req, res) {
 	const options = {
 		removeUser: xlenv.options.removeUser,
 		removeLeaderboard: xlenv.options.removeLeaderboard,
-		identifiers: xlenv.options.identifiers
+		title: xlenv.options.title,
+		themeColor: xlenv.options.themeColor,
+		themeColorSecondary: xlenv.options.themeColorSecondary,
 	};
 
 	return res.send({ env, version, options });

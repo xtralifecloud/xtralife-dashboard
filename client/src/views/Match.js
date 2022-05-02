@@ -62,7 +62,9 @@ const Match = () => {
             <p className="m-3 text-end" style={{ width: "35%" }}>
               Description
             </p>
-            <Form.Control type="text" defaultValue={description} placeholder="Description" />
+            <Form.Control type="text" defaultValue={description} onChange={(e) => {
+                  setDescription(e.target.value);
+                }}placeholder="Description" />
           </div>
           <div className=" d-flex align-items-center" style={{ width: "80%" }}>
             <p className="m-3 text-end" style={{ width: "35%" }}>
