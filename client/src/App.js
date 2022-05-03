@@ -25,12 +25,10 @@ function App() {
         setOptions(options);
       }
 
-      if (env === "prod") {
+      if (env === "production") {
         document.documentElement.style.setProperty("--theme-color", "#6a1717");
         document.documentElement.style.setProperty("--theme-color-secondary", "#901f1f");
       }
-
-      console.log('options:', options)
 
       if (options.title) {
         document.title = options.title;
