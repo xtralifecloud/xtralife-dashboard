@@ -158,7 +158,7 @@ app.get('/v1/ping', (req, res, next) => {
 		.end());
 });
 
-app.use(bodyParser.json({ strict: false, limit: 4096000 }));
+app.use(bodyParser.json({ strict: false, limit: xlenv.http.bodySizeLimit || '1000kb' }));
 
 const redisForSessionStore = xlenv.redisClientSync();
 
@@ -195,7 +195,6 @@ app.get("/env", function (req, res) {
 		removeLeaderboard: xlenv.options.removeLeaderboard,
 		title: xlenv.options.title,
 		themeColor: xlenv.options.themeColor,
-		themeColorSecondary: xlenv.options.themeColorSecondary,
 	};
 
 	return res.send({ env, version, options });

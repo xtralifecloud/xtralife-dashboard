@@ -53,9 +53,9 @@ module.exports = {
 							key: ''
 						}
 					},
-					socialSettings: {
+/* 					socialSettings: {
 						facebookAppToken : ''
-					}
+					} */
 				}
 			},
 
@@ -83,9 +83,9 @@ module.exports = {
 							key:''
 						}
 					},
-					socialSettings: {
+/* 					socialSettings: {
 						facebookAppToken : ''
-					}
+					} */
 				}
 			}
 		}
@@ -123,7 +123,7 @@ module.exports = {
 		}
 	},
 
-	hooks: {
+/* 	hooks: {
 		recursionLimit: 5,
 		definitions: {
 			"com.clanofthecloud.cloudbuilder.m3Nsd85GNQd3": { // needed for unit tests
@@ -151,6 +151,6 @@ return {fs: fs, balance: balance}; \
 		},
 
 		functions: {}
-	}
+	} */
 };
 

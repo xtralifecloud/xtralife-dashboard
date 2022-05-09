@@ -28,13 +28,13 @@ module.exports = {
 		return client.info(err => cb(err, client));
 	},
 
-	redisStats(cb){
+/* 	redisStats(cb){
 		const client = require('redis').createClient(xlenv.redis.port, xlenv.redis.host);
 		return client.info(function(err){
 			client.select(10);
 			return cb(err, client);
 		});
-	},
+	}, */
 
 	mongodb: {
 		dbname: 'xtralife',
@@ -52,6 +52,7 @@ module.exports = {
 	},
 
 	http: {
+		bodySizeLimit: '1000kb',
 		cors: {
 			origin: true, // TODO replace with a function to check against game allowed origins
 			credentials: true,
@@ -68,11 +69,9 @@ module.exports = {
 
 
 	options: {
-		//notifyUserOnBrokerTimeout: false,
-		// should we allow removing a user ?
+		notifyUserOnBrokerTimeout: false,
 		removeUser: true,
 		removeLeaderboard : true,
-		//showHookLog : true
 		title: 'Xtralife Dahsboard',
 		themeColor: "",	// Hexadecimal values, examples : #131f8f #194320 #570530 #191919 #2D2424
 	},
@@ -114,7 +113,7 @@ module.exports = {
 		}
 	},
 
-	hooks: {
+/* 	hooks: {
 		notifyOnSlack : false,
 		hookNames: [
 			"common",
@@ -156,5 +155,5 @@ module.exports = {
 		recursionLimit: 5,
 		definitions: {},
 		functions: {}
-	}
+	} */
 };
