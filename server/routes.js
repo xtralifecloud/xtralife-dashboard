@@ -114,7 +114,14 @@ route.route("/game/:game/signedurl/:domain/:key").get((req, res) =>
       return res.json({ signedURL, getURL }).end();
     }
   )
-);
+).delete((req, res) => {
+  xtralife.api.gamevfs.deleteURL(req.dom, req.key, function (err, result) {
+    if (err != null) {
+      return res.status(400).json(err).end();
+    }
+    return res.json({ done: 1 }).end();
+  })
+});
 
 route
   .route("/game/:game/user/:userid/signedurl/:domain/:key")
@@ -321,7 +328,7 @@ route.get("/game/:game/users/find/:user_id", function (req, res, next) {
   if (id != null) {
     options.id = id;
   }
-  
+
   return xtralife.api.user.list(options, function (err, data) {
     if (err != null) {
       console.log(err);
@@ -735,7 +742,7 @@ route.get("/game/:game/matches/domain/:domain", (req, res, next) =>
       req.query.gamerId,
       req.query.customProperties
     )
-    .spread( data => res.json({ list: data}))
+    .spread(data => res.json({ list: data }))
     .catch(next)
     .done()
 );
@@ -748,7 +755,7 @@ route.get("/game/:game/matches/domain/:domain/count", (req, res, next) =>
       req.query.gamerId,
       req.query.customProperties
     )
-    .then( count => res.json({ total: count}))
+    .then(count => res.json({ total: count }))
     .catch(next)
     .done()
 );
