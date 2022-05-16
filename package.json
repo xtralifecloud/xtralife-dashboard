@@ -38,7 +38,7 @@
     "speakeasy": "^2.0.0",
     "underscore": "^1.13.1",
     "winston": "^3.3.3",
-    "xtralife-api": "^4.1.0",
+    "xtralife-api": "^4.2.5",
     "xtralife-env": "^4.0.0"
   },
   "devDependencies": {

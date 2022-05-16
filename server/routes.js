@@ -108,6 +108,7 @@ route.route("/game/:game/signedurl/:domain/:key").get((req, res) =>
     req.dom,
     req.key,
     function (err, signedURL, getURL) {
+      console.log("err", err);
       if (err != null) {
         return res.status(400).json(err).end();
       }
@@ -115,12 +116,13 @@ route.route("/game/:game/signedurl/:domain/:key").get((req, res) =>
     }
   )
 ).delete((req, res) => {
-  xtralife.api.gamevfs.deleteURL(req.dom, req.key, function (err, result) {
-    if (err != null) {
+  xtralife.api.gamevfs.deleteURL(req.dom, req.key)
+    .then((result) => {
+      return res.json({ done: 1 }).end();
+    })
+    .catch((err) => {
       return res.status(400).json(err).end();
-    }
-    return res.json({ done: 1 }).end();
-  })
+    })
 });
 
 route
@@ -134,14 +136,22 @@ route
         }
         return res.json({ signedURL, getURL }).end();
       });
-  });
+  }).delete((req, res) => {
+  xtralife.api.virtualfs.deleteURL(req.dom, req.user_id, req.key)
+    .then((result) => {
+      return res.json({ done: 1 }).end();
+    })
+    .catch((err) => {
+      return res.status(400).json(err).end();
+    })
+});
 
 route
   .route("/game/:game/storage/:domain")
   .get(downloadable("gamekv"), (req, res) =>
     xtralife.api.gamevfs.read(req.dom, null, function (err, data) {
       if (err != null) {
-        return res.status(400).json(err).end();
+        return res.sendStatus(400).json(err).end();
       }
 
       return res
@@ -166,12 +176,12 @@ route
       }
       return xtralife.api.gamevfs.write(req.dom, null, obj, function (err) {
         if (err != null) {
-          return res.send(500).end();
+          return res.sendStatus(500).end();
         }
-        return res.send(200).end();
+        return res.sendStatus(200).end();
       });
     } catch (ex) {
-      return res.status(400).json(ex.stack.split("\n")[0]).end();
+      return res.sendStatus(400).json(ex.stack.split("\n")[0]).end();
     }
   });
 

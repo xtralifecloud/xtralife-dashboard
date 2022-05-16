@@ -103,42 +103,42 @@ module.exports = {
 	AWS: {
 		S3: {
 			bucket: 'CONFIGURE',
+			region: '',
 			credentials: {
-				region: '',
 				accessKeyId: '',
 				secretAccessKey: ''
 			}
 		}
 	},
 
-/* 	hooks: {
-		recursionLimit: 5,
+	hooks: {
+		// recursionLimit: 5,
 		definitions: {
-			"com.clanofthecloud.cloudbuilder.m3Nsd85GNQd3": { // needed for unit tests
-				'before-gamervfs-write': "return 'before';",
-				'after-gamervfs-write':  `  if (customData != 'before') { throw new Error('Hook context lost'); }; \
-return this.virtualfs.read('com.clanofthecloud.cloudbuilder.m3Nsd85GNQd3', params.user_id, null) \
-.then(function(allkeys) \
-{return 'DONE!';});`
-			},
-			"com.clanofthecloud.cloudbuilder.azerty": { // needed for unit tests
-				'social-addprofile' : "return this.virtualfs.readmulti(params.domain, params.userids, ['key1', 'key2'], ['properties','balance']);",
-				'before-transaction': "console.log('Before transaction');",
-				'after-transaction': "console.log('After transaction');",
-				'before-balance': "return null;",
-				'__test1': "return {input: params.request.input, domain: this.game.getPrivateDomain()};",
-				'__test2': "return {userFound: params.user_id};",
-				'__test3': `var domain = this.game.getPrivateDomain(); \
-return mod.Q.all( \
-[this.virtualfs.read(domain, params.user_id, null), \
-this.tx.balance(domain, params.user_id)] \
-).spread(function (fs, balance) { \
-return {fs: fs, balance: balance}; \
-});`
-			}
+// 			"com.clanofthecloud.cloudbuilder.m3Nsd85GNQd3": { // needed for unit tests
+// 				'before-gamervfs-write': "return 'before';",
+// 				'after-gamervfs-write':  `  if (customData != 'before') { throw new Error('Hook context lost'); }; \
+// return this.virtualfs.read('com.clanofthecloud.cloudbuilder.m3Nsd85GNQd3', params.user_id, null) \
+// .then(function(allkeys) \
+// {return 'DONE!';});`
+// 			},
+// 			"com.clanofthecloud.cloudbuilder.azerty": { // needed for unit tests
+// 				'social-addprofile' : "return this.virtualfs.readmulti(params.domain, params.userids, ['key1', 'key2'], ['properties','balance']);",
+// 				'before-transaction': "console.log('Before transaction');",
+// 				'after-transaction': "console.log('After transaction');",
+// 				'before-balance': "return null;",
+// 				'__test1': "return {input: params.request.input, domain: this.game.getPrivateDomain()};",
+// 				'__test2': "return {userFound: params.user_id};",
+// 				'__test3': `var domain = this.game.getPrivateDomain(); \
+// return mod.Q.all( \
+// [this.virtualfs.read(domain, params.user_id, null), \
+// this.tx.balance(domain, params.user_id)] \
+// ).spread(function (fs, balance) { \
+// return {fs: fs, balance: balance}; \
+// });`
+// 			}
 		},
 
 		functions: {}
-	} */
+	}
 };
 
