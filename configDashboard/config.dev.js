@@ -102,11 +102,11 @@ module.exports = {
 
 	AWS: {
 		S3: {
-			bucket: 'CONFIGURE',
-			region: '',
+			bucket: "CHANGE ME",
+			region: "CHANGE ME",
 			credentials: {
-				accessKeyId: '',
-				secretAccessKey: ''
+				accessKeyId: "CHANGE ME",
+				secretAccessKey: "CHANGE ME"
 			}
 		}
 	},
