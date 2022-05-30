@@ -1,10 +1,10 @@
-import React, { useState } from "react";
-import { Modal, Button } from "react-bootstrap";
+import React, {useState} from "react";
+import {Modal, Button} from "react-bootstrap";
 import ace from "brace";
 import "brace/mode/json";
 import "brace/theme/dracula";
 import "jsoneditor-react/es/editor.min.css";
-import { JsonEditor } from "jsoneditor-react";
+import {JsonEditor} from "jsoneditor-react";
 
 const JSONEditorModal = (props) => {
   const [modifiedValue, setModifiedValue] = useState(null);
@@ -58,10 +58,11 @@ const JSONEditorModal = (props) => {
           variant="success"
           onClick={() => {
             props.setShow(false);
-            if(modifiedValue) props.setValue(modifiedValue);
+            if (modifiedValue) props.setValue(modifiedValue);
+            if (props.onSave) props.onSave(modifiedValue);
           }}
         >
-          Save
+          {props.customSaveString ? props.customSaveString : "Save"}
         </Button>
       </Modal.Footer>
     </Modal>

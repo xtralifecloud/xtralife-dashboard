@@ -38,7 +38,7 @@ const Match = () => {
 
   const updateMatch = async () => {
     const updatedMatch = await putMatch(game.name, matchId, { description, customProperties, globalState });
-    if (updatedMatch) getMatchAsync(game.name, matchId);
+    if (updatedMatch) await getMatchAsync(game.name, matchId);
   };
 
   return (
@@ -64,7 +64,7 @@ const Match = () => {
             </p>
             <Form.Control type="text" defaultValue={description} onChange={(e) => {
                   setDescription(e.target.value);
-                }}placeholder="Description" />
+                }} placeholder="Description" />
           </div>
           <div className=" d-flex align-items-center" style={{ width: "80%" }}>
             <p className="m-3 text-end" style={{ width: "35%" }}>
@@ -172,7 +172,7 @@ const Match = () => {
         setShow={setShowGlobalStateEditor}
         value={globalState}
         setValue={setGlobalState}
-        title="Properties"
+        title="Global State"
       />
     </Container>
   );

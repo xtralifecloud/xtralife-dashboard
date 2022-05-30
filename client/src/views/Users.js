@@ -11,7 +11,9 @@ import { useAppContext } from "../context/app-context";
 import { deleteUser, getUsers, searchUsers, findUser, getUsersCount, searchUsersCount } from "../services/user";
 import Paginate from "../components/Paginate";
 import { useNavigate } from "react-router-dom";
-import { copyToClipboard } from "./../utils/copyToClipboard.js";
+import { copyToClipboard } from "../utils/copyToClipboard.js";
+import MessageModal from "../components/modals/MessageModal";
+
 
 const Users = () => {
   const { game, page, setPage, itemsNumber, setItemsNumber, options } = useAppContext();
@@ -20,8 +22,10 @@ const Users = () => {
   const [loading, setLoading] = useState(true);
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const [selectedUsers, setSelectedUsers] = useState([]);
+  console.log("--> selectedUsers", selectedUsers);
   const [searchType, setSearchType] = useState("userId");
   const [search, setSearch] = useState(null);
+  const [showMessageModal, setShowMessageModal] = useState(false)
   const tableRef = useRef();
   const paginateRef = useRef();
   const [refresh, setRefresh] = useState(0);
@@ -73,6 +77,8 @@ const Users = () => {
         }
       })();
     }
+    setSelectedUsers([]);
+    document.getElementById("main-checkbox").checked = false
     return () => {
       isCancelled = true;
     };
@@ -95,18 +101,29 @@ const Users = () => {
     }
   };
 
+  const handleSelectAll = (e) => {
+    if (e.target.checked) {
+      setSelectedUsers(users.list.map((user) => user._id));
+      //check all checkboxes with id user._id
+      users.list.map(user => {
+        const checkbox = document.getElementById(user._id);
+        checkbox.checked = true;
+      });
+    } else {
+      setSelectedUsers([]);
+      users.list.map(user => {
+        const checkbox = document.getElementById(user._id);
+        checkbox.checked = false;
+      });
+    }
+  }
+
   const bulkDeleteUser = async () => {
     for (const user_id of selectedUsers) {
       await deleteUser(game.name, user_id);
     }
     setSelectedUsers([]);
     setRefresh((refresh) => refresh + 1);
-  };
-
-  const bulkMessageUser = () => {
-    /* for (const user_id of selectedUsers) {
-      sendMessage(game.name, user_id);
-    } */
   };
 
   const handleSearch = async (e) => {
@@ -176,7 +193,7 @@ const Users = () => {
               <Trash size={20} className="mr-2" /> Delete {selectedUsers.length} {selectedUsers.length === 1 ? "user" : "users"}
             </Button>
           )}
-          <Button variant="secondary" disabled={buttonDisabled} className="d-flex align-items-center" onClick={() => bulkMessageUser()}>
+          <Button variant="secondary" disabled={buttonDisabled} className="d-flex align-items-center" onClick={() => setShowMessageModal(true)}>
             <Chat size={20} className="mr-2" /> Message {selectedUsers.length} {selectedUsers.length === 1 ? "user" : "users"}
           </Button>
         </ButtonGroup>
@@ -229,7 +246,11 @@ const Users = () => {
           <Table ref={tableRef} size="sm" bordered hover borderless responsive className="my-3">
             <thead>
               <tr>
-                <th></th>
+                <th className="align-middle">
+                  <div className="d-flex align-items-center justify-content-center">
+                    <FormCheck.Input id="main-checkbox" type="checkbox" className="m-0" onClick={(e) => handleSelectAll(e)} />
+                  </div>
+                </th>
                 <th>UserID</th>
                 <th>Name</th>
                 <th>Email</th>
@@ -243,7 +264,7 @@ const Users = () => {
                   <tr id={`line-${i}`} key={`line-${user._id}`}>
                     <td className="align-middle">
                       <div className="d-flex align-items-center justify-content-center">
-                        <FormCheck.Input type="checkbox" className="m-0" onClick={(e) => handleSelection(e, user._id)} />
+                        <FormCheck.Input id={`${user._id}`} type="checkbox" className="m-0" onClick={(e) => handleSelection(e, user._id)} />
                       </div>
                     </td>
                     <td key={`id-${user._id}`} className="d-flex justify-content-between clickable" onClick={() => navigate(`/gamer/${user._id}`)}>
@@ -255,7 +276,7 @@ const Users = () => {
                               e.preventDefault();
                               copyToClipboard(user._id);
                             }}
-                            className="remove-btn-css mr-2 d-flex algin-items-center"
+                            className="remove-btn-css mr-2 d-flex align-items-center"
                           >
                             <Clipboard size={20} color="#4c9be8" />
                           </button>
@@ -287,6 +308,12 @@ const Users = () => {
           </div>
         </div>
       )}
+
+      {selectedUsers && <MessageModal
+        show={showMessageModal}
+        setShow={setShowMessageModal}
+        user_ids={selectedUsers}
+      />}
     </Container>
   );
 };

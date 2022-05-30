@@ -57,7 +57,7 @@ export const findUser = async (game, user_id) => {
 
 export const sendMessage = async (game, domain, user_id, eventObject) => {
   try {
-    const res = await axios.post(`/game/${game}/user/${user_id}/message/${domain}`, JSON.stringify(eventObject));
+    const res = await axios.post(`/game/${game}/user/${user_id}/message/${domain}`, eventObject);
     if (res.status === 200) {
       toast.success("Message sent successfully");
     }
