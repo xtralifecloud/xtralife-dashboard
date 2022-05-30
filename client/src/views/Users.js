@@ -78,7 +78,8 @@ const Users = () => {
       })();
     }
     setSelectedUsers([]);
-    document.getElementById("main-checkbox").checked = false
+    const mainCheckbox = document.getElementById("main-checkbox")
+    if (mainCheckbox) mainCheckbox.checked = false;
     return () => {
       isCancelled = true;
     };
