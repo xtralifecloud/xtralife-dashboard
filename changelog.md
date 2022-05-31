@@ -50,6 +50,7 @@ xtralife-env : 4.0.1 </br>
 - add network icons
 - fix pagination
 - fix display after delete user
+- change docker container directory from **/server** to **/dashboard** 
 
 ## 4.1.1
 xtralife-api: 4.1.1 </br>
