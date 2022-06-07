@@ -7,6 +7,7 @@ const GameAndDomainSelector = () => {
   const { user, game, domain, setGame, setDomain } = useAppContext();
 
   const handleChangeGame = (e) => {
+    e.preventDefault();
     const newGame = JSON.parse(e.target.value);
     if (!newGame.domains.includes(domain)) {
       setDomain(newGame.domains[0]);
@@ -24,7 +25,7 @@ const GameAndDomainSelector = () => {
                 <Col md={6} xs={12} className="d-flex align-items-center my-1">
                   <Form.Label className="my-0 mx-3">Game:</Form.Label>
                   <Form.Select
-                    defaultValue={JSON.stringify(game)}
+                    value={JSON.stringify(game)}
                     onChange={(e) => handleChangeGame(e)}
                   >
                     {user.games.map((game, i) => {
@@ -40,7 +41,7 @@ const GameAndDomainSelector = () => {
                 <Col md={6} xs={12} className="d-flex align-items-center my-1">
                   <Form.Label className="my-0 mx-3">Domain:</Form.Label>
                   <Form.Select
-                    defaultValue={domain}
+                    value={domain}
                     onChange={(e) => setDomain(e.target.value)}
                   >
                     {game.domains.map((domain, i) => {

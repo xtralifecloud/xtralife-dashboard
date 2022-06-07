@@ -5,3 +5,4 @@ build
 public/js/bundle.js
 npm-debug.log
 .vscode
+dashboard.sh
