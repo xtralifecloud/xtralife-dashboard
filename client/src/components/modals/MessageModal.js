@@ -7,28 +7,23 @@ const MessageModal = (props) => {
   const { game, domain } = useAppContext();
 
   const [message, setMessage] = useState({
-    "key": "value",
-    "key2": "value2",
+    "event": {
+      "key": "value",
+      "key2": "value2",
+    },
     "osn": {
       "en": {
-        "notification": {
           "title": "Example push title !",
           "body": "Example push body",
         },
-      }
+      "data": {}
     }
   });
 
   const send = async (message) => {
-    const osn = message.osn;
-    delete message.osn;
-    const payload = {
-      event: message,
-      osn: osn,
-      type: "backoffice"
-    }
+    message.type = "backoffice";
     for (const user_id of props.user_ids) {
-      await sendMessage(game.name, domain, user_id, payload);
+      await sendMessage(game.name, domain, user_id, message);
     }
   }
 

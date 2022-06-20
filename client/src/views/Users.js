@@ -22,7 +22,6 @@ const Users = () => {
   const [loading, setLoading] = useState(true);
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const [selectedUsers, setSelectedUsers] = useState([]);
-  console.log("--> selectedUsers", selectedUsers);
   const [searchType, setSearchType] = useState("userId");
   const [search, setSearch] = useState(null);
   const [showMessageModal, setShowMessageModal] = useState(false)

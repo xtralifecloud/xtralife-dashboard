@@ -34,43 +34,24 @@ const sendbulk = function (domain, users, message) {
 	return app = xtralife.api.game.getAppsWithDomain(domain, function (err, app) {
 		if (err != null) { return logger.error(err.message, { stack: err.stack }); }
 
-		return (() => {
-			const result = [];
-			for (var os in usersByOs) {
-				usersByOs[os] = _.groupBy(usersByOs[os], "lang");
-				result.push((() => {
-					const result1 = [];
-					for (let lang in usersByOs[os]) {
+		for(const os in usersByOs) {
+			usersByOs[os] = _.groupBy(usersByOs[os], "lang");
+			for(const lang in usersByOs[os]) {
+				const alert = {
+					message: message[lang] || message.en,
+					user: "backoffice",
+					data: message.data
+				};
 
-						var alert = {
-							message: message[lang] || message.en,
-							user: "backoffice",
-							data: message.data
-						};
-
-						if (alert.message != null) {
-							var tokens = _.map(usersByOs[os][lang], 'token');
-							console.log(tokens);
-
-							result1.push((() => {
-								const result2 = [];
-								while (tokens.length) {
-									const ts = tokens.splice(0, 1000);
-									console.log(ts);
-									const task = { app, domain, os, tokens: ts, alert };
-									result2.push(cargo.push(task));
-								}
-								return result2;
-							})());
-						} else {
-							result1.push(undefined);
-						}
-					}
-					return result1;
-				})());
+				if(alert.message) {
+					const tokens = _.map(usersByOs[os][lang], "token");
+					tokens.forEach(token => {
+						const task = { app, domain, os, tokens: token, alert };
+						cargo.push(task);
+					})
+				}
 			}
-			return result;
-		})();
+		}
 	});
 };
 
