@@ -1,13 +1,8 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 const Q = require('bluebird');
 Q.promisifyAll(require('redis'));
 
-
 module.exports = {
+	context: "dashboard",
 
 	redis: {
 		port : 6379,
@@ -23,19 +18,6 @@ module.exports = {
 		return client.info(err => cb(err, client));
 	},
 
-	redisChannel(cb){
-		const client = require('redis').createClient(xlenv.redis.port, xlenv.redis.host);
-		return client.info(err => cb(err, client));
-	},
-
-/* 	redisStats(cb){
-		const client = require('redis').createClient(xlenv.redis.port, xlenv.redis.host);
-		return client.info(function(err){
-			client.select(10);
-			return cb(err, client);
-		});
-	}, */
-
 	mongodb: {
 		dbname: 'xtralife',
 		options: { // see http://mongodb.github.io/node-mongodb-native/driver-articles/mongoclient.html
@@ -43,7 +25,6 @@ module.exports = {
 			useNewUrlParser: true,
 			useUnifiedTopology: true,
 			readPreference: "primaryPreferred",
-			promiseLibrary: require('bluebird')
 		}
 	},
 
@@ -69,17 +50,11 @@ module.exports = {
 
 
 	options: {
-		notifyUserOnBrokerTimeout: false,
+		notifyUserOnBrokerTimeout: true,
 		removeUser: true,
 		removeLeaderboard : true,
-		title: 'Xtralife Dahsboard',
+		title: 'Xtralife Dashboard',
 		themeColor: "",	// Hexadecimal values, examples : #131f8f #194320 #570530 #191919 #2D2424
-	},
-
-	elastic(cb){
-		const elastic = require("elasticsearch");
-		const client = new elastic.Client();
-		return cb(null, client);
 	},
 
 	logs: {
@@ -97,63 +72,19 @@ module.exports = {
 	dashboard: {
 		users: {},
 		session: {
-			name : 'dashboard.xtralife-react',
+			name : 'dashboard.xtralife',
 			secret : 'configure key'
 		},
 	},
 
 	AWS: {
 		S3: {
-			bucket: "CHANGE ME",
-			region: "CHANGE ME",
+			bucket: "",
+			region: "",
 			credentials: {
-				accessKeyId: "CHANGE ME",
-				secretAccessKey: "CHANGE ME"
+				accessKeyId: "",
+				secretAccessKey: ""
 			}
 		}
 	},
-
-/* 	hooks: {
-		notifyOnSlack : false,
-		hookNames: [
-			"common",
-			"before-gamervfs-write",
-			"after-gamervfs-write",
-			"before-gamervfs-delete",
-			"after-gamervfs-delete",
-			"before-balance",
-			"after-balance",
-			"before-transaction",
-			"after-transaction",
-			"before-properties-write",
-			"after-properties-write",
-			"before-properties-delete",
-			"after-properties-delete",
-			"social-addprofile",
-			"setGodfather-override-reward",
-			'after-achievement-triggered',
-			'after-achievement-userdata-modified',
-			'before-match-create',
-			'after-match-create',
-			'before-match-delete',
-			'after-match-delete',
-			'after-match-dismissinvitation',
-			'before-match-drawfromshoe',
-			'after-match-drawfromshoe',
-			'before-match-finish',
-			'after-match-finish',
-			'before-match-invite',
-			'after-match-invite',
-			'before-match-join',
-			'after-match-join',
-			'before-match-leave',
-			'after-match-leave',
-			'before-match-join',
-			'before-match-postmove',
-			'after-match-postmove'
-		],
-		recursionLimit: 5,
-		definitions: {},
-		functions: {}
-	} */
 };
