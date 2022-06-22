@@ -1,10 +1,14 @@
 #xtralife dashboard changelog
 
-## 4.1.9-beta
-xtralife-api: 4.2.6-beta </br>
+## 4.1.9
+xtralife-api: 4.2.6 </br>
 xtralife-env : 4.0.1 </br>
+xtralife-msg : 4.0.1 </br>
 
 - add send event feature
+- improve json editor
+- fix bulk push notification route
+- fix game/domain selector
 
 ## 4.1.8
 xtralife-api: 4.2.5 </br>
