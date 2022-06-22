@@ -1,17 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Container, Modal, Button, Table, FormCheck } from "react-bootstrap";
+import { Container, Button, Table, FormCheck } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import { useAppContext } from "../../context/app-context";
 import { getUserStorage, updateUserStorage } from "../../services/user";
-import { JsonEditor } from "jsoneditor-react";
-import "jsoneditor-react/es/editor.min.css";
 import { Plus, Trash, Clipboard } from "react-bootstrap-icons";
 import { toast } from "react-toastify";
 import UploadBinaryButton from "../UploadBinaryButton";
-import { copyToClipboard } from "./../../utils/copyToClipboard";
-import ace from "brace";
-import "brace/mode/json";
-import "brace/theme/dracula";
+import { copyToClipboard } from "../../utils/copyToClipboard";
+import JSONEditorModal from "../modals/JSONEditorModal";
 
 const Storage = ({ refresh }) => {
   const { game, domain } = useAppContext();
@@ -22,6 +18,7 @@ const Storage = ({ refresh }) => {
   const [newKey, setNewKey] = useState(null);
   const [deleteDisabled, setDeleteDisabled] = useState(true);
   const [selectedKeys, setSelectedKeys] = useState([]);
+  const [tempValue, setTempValue] = useState(null)
 
   useEffect(() => {
     getStorageData(game, domain, userId);
@@ -58,7 +55,7 @@ const Storage = ({ refresh }) => {
     });
 
     await updateUserStorage(game.name, domain, userId, updatedStorage);
-    getStorageData(game, domain, userId);
+    await getStorageData(game, domain, userId);
   };
 
   const handleSelection = (e, i) => {
@@ -69,13 +66,13 @@ const Storage = ({ refresh }) => {
     }
   };
 
-  const bulkDeleteUser = () => {
+  const bulkDeleteKV = async () => {
     const filteredStorage = storage.filter(
       (_, index) => !selectedKeys.includes(index)
     );
     setStorage(filteredStorage);
     setSelectedKeys([]);
-    updateUserStorage(game.name, domain, userId, filteredStorage);
+    await updateUserStorage(game.name, domain, userId, filteredStorage);
   };
 
   useEffect(() => {
@@ -85,6 +82,16 @@ const Storage = ({ refresh }) => {
       setDeleteDisabled(false);
     }
   }, [selectedKeys]);
+
+  const saveKV = async (modifiedValue) => {
+    if (storage[selectedKV].fsvalue !== modifiedValue) {
+      storage[selectedKV].fsvalue = JSON.stringify(modifiedValue);
+    }
+    setStorage([...storage]);
+    setTempValue(null);
+    await updateUserStorage(game.name, domain, userId, storage);
+    await getStorageData(game, domain, userId);
+  }
 
   return (
     <Container className="p-0">
@@ -175,6 +182,7 @@ const Storage = ({ refresh }) => {
                           e.stopPropagation();
                           e.preventDefault();
                           setSelectedKV(i);
+                          setTempValue(JSON.parse(item.fsvalue))
                           setShowModal(true);
                         }}
                       >
@@ -210,72 +218,26 @@ const Storage = ({ refresh }) => {
           <Button
             variant="danger"
             disabled={deleteDisabled}
-            onClick={() => bulkDeleteUser()}
+            onClick={() => bulkDeleteKV()}
             className="mt-3"
           >
             <Trash size={20} /> Delete {selectedKeys.length}{" "}
             {selectedKeys.length === 1 ? "key" : "keys"}
           </Button>
 
-          <Modal
-            size="lg"
+          <JSONEditorModal
             show={showModal}
+            setShow={setShowModal}
             onHide={() => {
-              setShowModal(false);
+              setSelectedKV(null);
+              setTempValue(null);
             }}
-            aria-labelledby="kv-modal"
-            centered
-            className="p-0"
-          >
-            <Modal.Header closeButton>
-              <Modal.Title id="kv-modal">
-                Key: {selectedKV !== null && storage[selectedKV].fskey}
-              </Modal.Title>
-            </Modal.Header>
-            <Modal.Body className="p-0">
-              {selectedKV !== null && (
-                <JsonEditor
-                  language="en"
-                  value={JSON.parse(storage[selectedKV].fsvalue)}
-                  mode="code"
-                  onChange={(json) => {
-                    storage[selectedKV].fsvalue = JSON.stringify(json);
-                  }}
-                  enableTransform={false}
-                  enableSort={false}
-                  history={true}
-                  allowedModes={["form", "code"]}
-                  search={true}
-                  ace={ace}
-                  theme="ace/theme/dracula"
-                  htmlElementProps={{ style: { height: 600, border: "none" } }}
-                />
-              )}
-            </Modal.Body>
-            <Modal.Footer>
-              <Button
-                variant="secondary"
-                onClick={() => {
-                  setShowModal(false);
-                  setSelectedKV(null);
-                }}
-                color="white"
-              >
-                Cancel
-              </Button>
-              <Button
-                variant="success"
-                onClick={() => {
-                  setShowModal(false);
-                  setSelectedKV(null);
-                  setStorage(storage);
-                  updateUserStorage(game.name, domain, userId, storage);
-                }}
-              >
-                Save
-              </Button>
-            </Modal.Footer>
-          </Modal>
+            value={tempValue}
+            onSave={async (json) => {
+              await saveKV(json);
+            }}
+            title={`Key: ${selectedKV !== null && storage[selectedKV].fskey}`}
+          />
         </div>
       )}
     </Container>

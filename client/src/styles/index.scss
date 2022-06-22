@@ -103,43 +103,6 @@ svg {
   padding: 0 !important;
 }
 
-.jsoneditor {
-  border: none;
-}
-
-.jsoneditor-menu,
-.jsoneditor-statusbar {
-  border: none;
-  background-color: inherit;
-  color: #ececec;
-}
-
-.jsoneditor-tree {
-  background-color: #282a36 !important;
-}
-.jsoneditor-poweredBy {
-  display: none;
-}
-
-div.jsoneditor-field,
-div.jsoneditor-value,
-div.jsoneditor td,
-div.jsoneditor th,
-div.jsoneditor textarea,
-pre.jsoneditor-preview,
-.jsoneditor-schema-error,
-.jsoneditor-popover {
-  color: #ececec;
-}
-
-div.jsoneditor-value.jsoneditor-string {
-  color: #f1fa8c;
-}
-
-div.jsoneditor-value.jsoneditor-number {
-  color: #bd93f9;
-}
-
 .white-circle {
   background-color: rgba(255, 255, 255, 0.8);
   border-radius: 50%;
@@ -148,8 +111,4 @@ div.jsoneditor-value.jsoneditor-number {
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-.ace_selection {
-  background: rgb(191, 197, 255, 0.3) !important;
 }

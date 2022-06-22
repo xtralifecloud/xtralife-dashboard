@@ -1,20 +1,24 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Modal, Button} from "react-bootstrap";
-import ace from "brace";
-import "brace/mode/json";
-import "brace/theme/dracula";
-import "jsoneditor-react/es/editor.min.css";
-import {JsonEditor} from "jsoneditor-react";
+import JSONEditor from "../JSONEditor";
+import { toast } from "react-toastify";
 
 const JSONEditorModal = (props) => {
-  const [modifiedValue, setModifiedValue] = useState(null);
+  const [content, setContent] = useState({});
+  const [saveDisabled, setSaveDisabled] = useState(true);
+
+  useEffect(() => {
+    setContent({ json: props.value })
+  }, [props])
 
   return (
     <Modal
-      size="lg"
+      size="xl"
       show={props.show}
       onHide={() => {
         props.setShow(false);
+        setSaveDisabled(true)
+        if(props.onHide) props.onHide();
       }}
       centered
     >
@@ -22,25 +26,17 @@ const JSONEditorModal = (props) => {
         <Modal.Title id="kv-modal">{props.title}</Modal.Title>
       </Modal.Header>
       <Modal.Body className="p-0">
-        <JsonEditor
-          language="en"
-          value={props.value}
+        <JSONEditor
           mode="code"
-          onChange={(json) => {
-            setModifiedValue(json);
-          }}
-          enableTransform={false}
-          enableSort={false}
-          history={true}
-          allowedModes={["form", "code"]}
-          search={true}
-          ace={ace}
-          theme="ace/theme/dracula"
-          htmlElementProps={{
-            style: {
-              height: 600,
-              border: "none",
-            },
+          content={content}
+          onChange={(res) => {
+            try {
+              JSON.parse(res.text);
+              setSaveDisabled(false);
+            } catch (e) {
+              setSaveDisabled(true);
+            }
+            setContent(res)
           }}
         />
       </Modal.Body>
@@ -49,17 +45,27 @@ const JSONEditorModal = (props) => {
           variant="secondary"
           onClick={() => {
             props.setShow(false);
+            setSaveDisabled(true)
+            if(props.onHide) props.onHide();
           }}
           color="white"
         >
           Cancel
         </Button>
         <Button
+          disabled={saveDisabled}
           variant="success"
           onClick={() => {
             props.setShow(false);
-            if (modifiedValue) props.setValue(modifiedValue);
-            if (props.onSave) props.onSave(modifiedValue);
+            setSaveDisabled(true)
+            try {
+              const json = JSON.parse(content.text)
+              if (json && props.setValue) props.setValue(json);
+              if (props.onSave) props.onSave(json);
+            } catch (e){
+              console.log(e);
+              toast.error("Error while saving json. See console for more details");
+            }
           }}
         >
           {props.customSaveString ? props.customSaveString : "Save"}

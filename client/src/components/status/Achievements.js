@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect} from "react";
 import {
   Container,
   Card,
@@ -10,17 +10,16 @@ import {
   Collapse,
   FormCheck,
 } from "react-bootstrap";
-import { Plus, Trash } from "react-bootstrap-icons";
-import { useAppContext } from "./../../context/app-context";
+import {Plus, Trash} from "react-bootstrap-icons";
+import {useAppContext} from "../../context/app-context";
 import {
   getGameAchievements,
   updateGameAchievements,
-} from "./../../services/status";
-import { exportJson } from "./../../utils/exportJson";
+} from "../../services/status";
+import {exportJson} from "../../utils/exportJson";
 import ImportButton from "./../ImportButton";
-import "jsoneditor-react/es/editor.min.css";
 import ContentEditable from "react-contenteditable";
-import { toast } from "react-toastify";
+import {toast} from "react-toastify";
 
 const Achievements = () => {
   const { game, domain, env } = useAppContext();
@@ -121,16 +120,16 @@ const Achievements = () => {
               <Card.Title>Achievements definition</Card.Title>
               {Object.keys(achievements).length === 0
                 ? !loading && (
-                    <Card.Text>
-                      You have not defined achievements in domain {domain} yet
-                    </Card.Text>
-                  )
+                <Card.Text>
+                  You have not defined achievements in domain {domain} yet
+                </Card.Text>
+              )
                 : !loading && (
-                    <Card.Text>
-                      You have {Object.keys(achievements).length} achievements
-                      defined in domain {domain}
-                    </Card.Text>
-                  )}
+                <Card.Text>
+                  You have {Object.keys(achievements).length} achievements
+                  defined in domain {domain}
+                </Card.Text>
+              )}
             </Col>
             {!loading ? (
               <Col className="d-flex justify-content-end align-items-center">
@@ -163,7 +162,7 @@ const Achievements = () => {
               </Col>
             ) : (
               <Col className="d-flex justify-content-end align-items-center">
-                <Spinner animation="border" variant="outline-primary" />
+                <Spinner animation="border" variant="outline-primary"/>
               </Col>
             )}
           </Row>
@@ -184,73 +183,73 @@ const Achievements = () => {
                   onClick={() => add()}
                   className="d-flex align-items-center"
                 >
-                  <Plus size={25} className="mr-2" /> Add new
+                  <Plus size={25} className="mr-2"/> Add new
                 </Button>
               </div>
             </div>
             <Collapse in={toggle}>
               <Table striped bordered hover size="sm" className="table-fixed">
                 <thead>
-                  <tr>
-                    <th style={{ width: "3%" }}></th>
-                    <th style={{ width: "32%" }}>Name</th>
-                    <th style={{ width: "32%" }}>Unit</th>
-                    <th style={{ width: "32%" }}>Trigger value</th>
-                  </tr>
+                <tr>
+                  <th style={{ width: "3%" }}></th>
+                  <th style={{ width: "32%" }}>Name</th>
+                  <th style={{ width: "32%" }}>Unit</th>
+                  <th style={{ width: "32%" }}>Trigger value</th>
+                </tr>
                 </thead>
                 <tbody>
-                  {Object.keys(achievements).map((key) => {
-                    return (
-                      <tr key={`tr-${key}`}>
-                        <td style={{ width: "3%" }}>
-                          <div className="d-flex align-items-center justify-content-center">
-                            <FormCheck.Input
-                              type="checkbox"
-                              name="keyValueCheckBox"
-                              onClick={(e) => handleSelection(e, key)}
-                            />
-                          </div>
-                        </td>
-                        <td key={`key-${key}`}>{key}</td>
-                        <td key={`unit-${key}`}>
-                          <ContentEditable
-                            html={achievements[key].config.unit.toString()}
-                            onChange={(e) => {
-                              setAchievements(
-                                Object.assign(achievements, {
-                                  [key]: {
-                                    type: achievements[key].type,
-                                    config: {
-                                      unit: e.target.value,
-                                      maxValue:
-                                        achievements[key].config.maxValue,
-                                    },
-                                  },
-                                })
-                              );
-                            }}
+                {Object.keys(achievements).map((key) => {
+                  return (
+                    <tr key={`tr-${key}`}>
+                      <td style={{ width: "3%" }}>
+                        <div className="d-flex align-items-center justify-content-center">
+                          <FormCheck.Input
+                            type="checkbox"
+                            name="keyValueCheckBox"
+                            onClick={(e) => handleSelection(e, key)}
                           />
-                        </td>
-                        <td key={`maxValue-${key}`}>
-                          <ContentEditable
-                            html={achievements[key].config.maxValue.toString()}
-                            onChange={(e) => {
-                              setAchievements(
-                                Object.assign(achievements, {
-                                  [key]: {
-                                    config: {
-                                      unit: achievements[key].config.unit,
-                                      maxValue: e.target.value,
-                                    },
+                        </div>
+                      </td>
+                      <td key={`key-${key}`}>{key}</td>
+                      <td key={`unit-${key}`}>
+                        <ContentEditable
+                          html={achievements[key].config.unit.toString()}
+                          onChange={(e) => {
+                            setAchievements(
+                              Object.assign(achievements, {
+                                [key]: {
+                                  type: achievements[key].type,
+                                  config: {
+                                    unit: e.target.value,
+                                    maxValue:
+                                    achievements[key].config.maxValue,
                                   },
-                                })
-                              );
-                            }}
-                          />
-                        </td>
-                      </tr>
-                    );
-                  })}
+                                },
+                              })
+                            );
+                          }}
+                        />
+                      </td>
+                      <td key={`maxValue-${key}`}>
+                        <ContentEditable
+                          html={achievements[key].config.maxValue.toString()}
+                          onChange={(e) => {
+                            setAchievements(
+                              Object.assign(achievements, {
+                                [key]: {
+                                  config: {
+                                    unit: achievements[key].config.unit,
+                                    maxValue: e.target.value,
+                                  },
+                                },
+                              })
+                            );
+                          }}
+                        />
+                      </td>
+                    </tr>
+                  );
+                })}
                 </tbody>
               </Table>
             </Collapse>
@@ -261,7 +260,7 @@ const Achievements = () => {
                 onClick={() => bulkDelete()}
                 className="d-flex align-items-center my-2"
               >
-                <Trash size={20} className="mr-2" /> Delete {selected.length}{" "}
+                <Trash size={20} className="mr-2"/> Delete {selected.length}{" "}
                 {selected.length === 1 ? "achievement" : "achievements"}
               </Button>
               <Button variant="success" className="my-2" onClick={() => save()}>

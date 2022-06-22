@@ -1,19 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Container, Card, Spinner, Table, Button, Row, Col, Collapse, Modal, FormCheck } from "react-bootstrap";
+import { Container, Card, Spinner, Table, Button, Row, Col, Collapse, FormCheck } from "react-bootstrap";
 import { Trash, Clipboard, Plus } from "react-bootstrap-icons";
-import { useAppContext } from "./../../context/app-context.js";
+import { useAppContext } from "../../context/app-context";
 import { getGameStorage, updateGameStorage } from "../../services/status";
-import { exportJson } from "./../../utils/exportJson";
-import { JsonEditor } from "jsoneditor-react";
+import { exportJson } from "../../utils/exportJson";
 import ImportButton from "./../ImportButton";
 import UploadBinaryButton from "./../UploadBinaryButton";
-import "jsoneditor-react/es/editor.min.css";
 import ConfirmationModal from "../modals/ConfirmationModal";
 import { toast } from "react-toastify";
 import { copyToClipboard } from "../../utils/copyToClipboard.js";
-import ace from "brace";
-import "brace/mode/json";
-import "brace/theme/dracula";
+import JSONEditorModal from "../modals/JSONEditorModal";
 
 const Storage = () => {
   const { game, domain, env } = useAppContext();
@@ -68,13 +64,13 @@ const Storage = () => {
     }
   };
 
-  const bulkDeleteKVs = () => {
+  const bulkDeleteKVs = async () => {
     setConfirmation(false);
     let tempStorage = storage.filter((_, i) => !selectedKVs.includes(i));
     setStorage(tempStorage);
     setSelectedKV(null);
     setSelectedKVs([]);
-    updateGameStorage(game.name, domain, tempStorage);
+    await updateGameStorage(game.name, domain, tempStorage);
   };
 
   const addKV = () => {
@@ -99,18 +95,18 @@ const Storage = () => {
     ]);
   };
 
-  const saveKV = () => {
-    if (tempValue === null) {
+  const saveKV = async (modifiedValue) => {
+    if (modifiedValue === null) {
       toast.warning("Invalid JSON");
     } else {
       setModalKV(false);
       setSelectedKV(null);
-      if (storage[selectedKV].fsvalue !== tempValue) {
-        storage[selectedKV].fsvalue = JSON.stringify(tempValue);
+      if (storage[selectedKV].fsvalue !== modifiedValue) {
+        storage[selectedKV].fsvalue = JSON.stringify(modifiedValue);
       }
       setStorage([...storage]);
       setTempValue(null);
-      updateGameStorage(game.name, domain, storage, setStorage);
+      return await updateGameStorage(game.name, domain, storage, setStorage);
     }
   };
 
@@ -223,7 +219,7 @@ const Storage = () => {
                               e.stopPropagation();
                               e.preventDefault();
                               setSelectedKV(i);
-                              setTempValue(item.fsvalue);
+                              setTempValue(JSON.parse(item.fsvalue));
                               setModalKV(true);
                             }}
                           >
@@ -264,67 +260,19 @@ const Storage = () => {
         )}
       </Card>
 
-      <Modal
-        size="lg"
+      <JSONEditorModal
         show={modalKV}
+        setShow={setModalKV}
         onHide={() => {
-          setModalKV(false);
           setSelectedKV(null);
           setTempValue(null);
         }}
-        aria-labelledby="kv-modal"
-        centered
-      >
-        <Modal.Header closeButton>
-          <Modal.Title id="kv-modal">Key: {selectedKV !== null && storage[selectedKV].fskey}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body className="p-0">
-          {selectedKV !== null && (
-            <JsonEditor
-              language="en"
-              value={JSON.parse(storage[selectedKV].fsvalue)}
-              mode="code"
-              onChange={(json) => {
-                setTempValue(json);
-              }}
-              enableTransform={false}
-              enableSort={false}
-              history={true}
-              allowedModes={["form", "code"]}
-              search={true}
-              ace={ace}
-              theme="ace/theme/dracula"
-              htmlElementProps={{
-                style: {
-                  height: 600,
-                  border: "none",
-                },
-              }}
-            />
-          )}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button
-            variant="secondary"
-            onClick={() => {
-              setModalKV(false);
-              setSelectedKV(null);
-              setTempValue(null);
-            }}
-            color="white"
-          >
-            Cancel
-          </Button>
-          <Button
-            variant="success"
-            onClick={() => {
-              saveKV();
-            }}
-          >
-            Save
-          </Button>
-        </Modal.Footer>
-      </Modal>
+        value={tempValue}
+        onSave={async (value) => {
+          await saveKV(value);
+        }}
+        title={`Key: ${selectedKV !== null && storage[selectedKV].fskey}`}
+      />
 
       <ConfirmationModal
         show={confirmation}
