@@ -24,6 +24,7 @@ module.exports = {
 			w: 1,
 			useNewUrlParser: true,
 			useUnifiedTopology: true,
+			promiseLibrary: require('bluebird'),
 			readPreference: "primaryPreferred",
 		}
 	},
