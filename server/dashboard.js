@@ -80,10 +80,6 @@ const _getGames = function (gameNames) {
 	return result;
 };
 
-// in xtralife/game.js, we replicate hooks configuration from cotc-rocket configuration...
-if ((xlenv.hooks != null ? xlenv.hooks.definitions : undefined) == null) { xlenv.hooks = { definitions: {} }; }
-
-
 global.logger = xlenv.createLogger(xlenv.logs);
 
 //==================================================================

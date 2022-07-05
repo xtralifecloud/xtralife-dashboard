@@ -1,5 +1,13 @@
 #xtralife dashboard changelog
 
+
+## 4.1.10
+xtralife-api: 4.2.7 </br>
+xtralife-env : 4.0.1 </br>
+xtralife-msg : 4.0.1 </br>
+
+- fix hooks checks
+
 ## 4.1.9
 xtralife-api: 4.2.6 </br>
 xtralife-env : 4.0.1 </br>
