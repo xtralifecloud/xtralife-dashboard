@@ -1,5 +1,11 @@
 #xtralife dashboard changelog
 
+## 4.1.11
+xtralife-api: 4.2.8 </br>
+xtralife-env : 4.0.1 </br>
+xtralife-msg : 4.0.1 </br>
+
+- fix delete user error due to undefined s3 bucket
 
 ## 4.1.10
 xtralife-api: 4.2.7 </br>
