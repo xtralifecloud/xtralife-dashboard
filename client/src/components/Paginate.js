@@ -23,7 +23,7 @@ const Paginate = ({
     let pageArr = [];
     if (totPages > 1) {
       if (totPages <= 9) {
-        var i = 1;
+        let i = 1;
         while (i <= totPages) {
           pageArr.push(i);
           i++;
@@ -97,7 +97,7 @@ const Paginate = ({
           return (
             <Button
               key={n}
-              active={itemsNumber.toString() === n ? true : false}
+              active={itemsNumber.toString() === n}
               variant="outline-secondary"
               onClick={() => {
                 setItemsNumber(parseInt(n));

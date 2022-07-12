@@ -62,12 +62,14 @@ const Users = () => {
   useEffect(() => {
     let isCancelled = false;
 
-    if (game.name && search) {
+    if (game.name && search && searchType === "name") {
       (async () => {
         const skip = (page - 1) * itemsNumber;
+        if (tableRef.current) tableRef.current.classList.add("grayout");
         const users = await searchUsers(game.name, skip, itemsNumber, search);
         if (!isCancelled) {
           setUsers(users);
+          if (tableRef.current) tableRef.current.classList.remove("grayout");
         }
         const count = await searchUsersCount(game.name, search);
         if (!isCancelled) {
@@ -129,9 +131,9 @@ const Users = () => {
   const handleSearch = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setPage(1)
     if (search === null || search === "") {
-      const skip = (page - 1) * itemsNumber;
-      const users = await getUsers(game.name, skip, itemsNumber);
+      const users = await getUsers(game.name, 0, itemsNumber);
       setUsers(users);
       setLoading(false);
     } else if (searchType === "userId") {
@@ -141,8 +143,7 @@ const Users = () => {
       else setCount(1);
       setLoading(false);
     } else {
-      const skip = (page - 1) * itemsNumber;
-      const users = await searchUsers(game.name, skip, itemsNumber, search);
+      const users = await searchUsers(game.name, 0, itemsNumber, search);
       setUsers(users);
       setLoading(false);
       if (paginateRef.current) paginateRef.current.classList.add("grayout");
@@ -227,7 +228,7 @@ const Users = () => {
 
       {loading ? (
         <Spinner animation="border" variant="outline-primary" />
-      ) : count === 0 ? (
+      ) : users.length === 0 ? (
         search ? (
           <p>
             No users found with {searchType === "userId" ? "userID" : "name/email including"} "{search}"
