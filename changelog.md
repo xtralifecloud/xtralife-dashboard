@@ -1,5 +1,12 @@
 #xtralife dashboard changelog
 
+## 4.1.12
+xtralife-api: 4.2.8 </br>
+xtralife-env : 4.0.1 </br>
+xtralife-msg : 4.0.1 </br>
+
+- improve users list display
+
 ## 4.1.11
 xtralife-api: 4.2.8 </br>
 xtralife-env : 4.0.1 </br>
