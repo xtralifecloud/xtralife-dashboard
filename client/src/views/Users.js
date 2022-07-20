@@ -103,6 +103,12 @@ const Users = () => {
     }
   };
 
+  const handleClick = (userId) => {
+    if (!tableRef.current.classList.contains("grayout")) {
+      navigate(`/gamer/${userId}`)
+    }
+  }
+
   const handleSelectAll = (e) => {
     if (e.target.checked) {
       setSelectedUsers(users.list.map((user) => user._id));
@@ -268,7 +274,7 @@ const Users = () => {
                         <FormCheck.Input id={`${user._id}`} type="checkbox" className="m-0" onClick={(e) => handleSelection(e, user._id)} />
                       </div>
                     </td>
-                    <td key={`id-${user._id}`} className="d-flex justify-content-between clickable" onClick={() => navigate(`/gamer/${user._id}`)}>
+                    <td key={`id-${user._id}`} className="d-flex justify-content-between clickable" onClick={() => handleClick(user._id)}>
                       <div className="w-100 d-flex justify-content-between align-items-center">
                         <div className="d-flex justify-content-between">
                           <button
