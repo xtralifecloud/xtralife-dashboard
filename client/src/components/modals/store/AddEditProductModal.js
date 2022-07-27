@@ -59,10 +59,10 @@ export const AddEditProductModal = (props) => {
         tx: tx,
       },
     };
+    if (!product.reward.domain){
+      product.reward.domain = game.domains[0];
+    }
     if (props.action === "add") {
-      if (!product.reward.domain){
-        product.reward.domain = game.domains[0];
-      }
       await postProduct(game.name, product);
     } else if (props.action === "edit") {
       await updateProduct(game.name, product)
