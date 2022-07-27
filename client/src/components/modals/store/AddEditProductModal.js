@@ -59,17 +59,17 @@ export const AddEditProductModal = (props) => {
         tx: tx,
       },
     };
-
-    clearStates()
-
     if (props.action === "add") {
+      if (!product.reward.domain){
+        product.reward.domain = game.domains[0];
+      }
       await postProduct(game.name, product);
     } else if (props.action === "edit") {
       await updateProduct(game.name, product)
     }
-    
     props.setProducts(await getProducts(game.name));
     props.setShow(false);
+    clearStates();
   };
 
   return (
@@ -77,6 +77,7 @@ export const AddEditProductModal = (props) => {
       show={props.show}
       size="lg"
       onHide={() => {
+        clearStates();
         props.setShow(false);
       }}
       aria-labelledby="add-product-modal"
@@ -97,7 +98,7 @@ export const AddEditProductModal = (props) => {
             >
               <Form.Control
                 type="text"
-                defaultValue={productId}
+                defaultValue={props.product.productId}
                 disabled={disableProductId}
                 placeholder="Used to identify the product in your app"
                 onChange={(e) => {
@@ -128,7 +129,7 @@ export const AddEditProductModal = (props) => {
             >
               <Form.Control
                 type="text"
-                defaultValue={appStoreId}
+                defaultValue={props.product.appStoreId}
                 placeholder="Equivalent product on the AppStore"
                 onChange={(e) => {
                   setAppStoreId(e.target.value);
@@ -147,7 +148,7 @@ export const AddEditProductModal = (props) => {
             >
               <Form.Control
                 type="text"
-                defaultValue={macStoreId}
+                defaultValue={props.product.macStoreId}
                 placeholder="Equivalent product on the Mac AppStore"
                 onChange={(e) => {
                   setMacStoreId(e.target.value);
@@ -166,7 +167,7 @@ export const AddEditProductModal = (props) => {
             >
               <Form.Control
                 type="text"
-                defaultValue={googlePlayId}
+                defaultValue={props.product.googlePlayId}
                 placeholder="Equivalent product on Google play"
                 onChange={(e) => {
                   setGooglePlayId(e.target.value);
@@ -182,7 +183,7 @@ export const AddEditProductModal = (props) => {
             <Col sm={10}>
               <Form.Control
                 as="textarea"
-                defaultValue={printTx(tx)}
+                defaultValue={printTx(props.product.reward.tx)}
                 placeholder="Example: gold: +50, silver: +100"
                 onChange={(e) => {
                   setTx(parseTx(e.target.value));
@@ -198,7 +199,7 @@ export const AddEditProductModal = (props) => {
             <Col sm={10}>
               {isPresent([game]) && (
                 <Form.Select
-                  defaultValue={txDomain}
+                  defaultValue={props.product.reward.domain? props.product.reward.domain : game.domains[0]}
                   onChange={(e) => setTxDomain(e.target.value)}
                 >
                   {game.domains.map((domain, i) => {
@@ -223,7 +224,7 @@ export const AddEditProductModal = (props) => {
             >
               <Form.Control
                 type="text"
-                defaultValue={description}
+                defaultValue={props.product.reward.description}
                 placeholder="Description for transaction executed upon purchase"
                 onChange={(e) => {
                   setDescription(e.target.value);
