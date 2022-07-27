@@ -194,7 +194,7 @@ export const AddEditProductModal = (props) => {
 
           <Form.Group as={Row} className="mb-3">
             <Form.Label column sm={2} style={{ fontWeight: "600" }}>
-              Transaction on success
+              Domain
             </Form.Label>
             <Col sm={10}>
               {isPresent([game]) && (
