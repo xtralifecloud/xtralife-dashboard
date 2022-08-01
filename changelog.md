@@ -1,5 +1,13 @@
 #xtralife dashboard changelog
 
+## 4.1.13
+xtralife-api: 4.2.8 </br>
+xtralife-env : 4.0.1 </br>
+xtralife-msg : 4.0.1 </br>
+
+- fix domain input on product transaction
+- prevent clicking on user while next page is loading
+
 ## 4.1.12
 xtralife-api: 4.2.8 </br>
 xtralife-env : 4.0.1 </br>
