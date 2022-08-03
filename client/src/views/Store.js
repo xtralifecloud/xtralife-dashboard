@@ -1,41 +1,47 @@
-import React, { useState, useEffect } from "react";
-import {
-  Container,
-  ButtonGroup,
-  Button,
-  Table,
-  Spinner,
-} from "react-bootstrap";
+/* eslint-disable */
+import React, { useState, useEffect, useRef } from "react";
+import { Container, ButtonGroup, Button, Spinner, Table, FormCheck }  from "react-bootstrap";
 import { Shop } from "react-bootstrap-icons";
-import ConfirmationModal from "../components/modals/ConfirmationModal";
 import { AddEditProductModal } from "../components/modals/store/AddEditProductModal";
+import { Trash} from "react-bootstrap-icons";
 import { useAppContext } from "../context/app-context";
 import { getProducts, deleteProduct } from "../services/store";
 import { isPresent } from "../utils/isPresent";
 import { exportJson } from "../utils/exportJson";
 import ImportButton from "../components/ImportButton";
 
+import Paginate from "../components/Paginate";
+
 const Store = () => {
-  const { env, game, domain } = useAppContext();
-  const [products, setProducts] = useState({});
+  const { env, game, domain, page, setPage, itemsNumber, setItemsNumber } = useAppContext();
+  const [products, setProducts] = useState({ list: [] });
+  const [count, setCount] = useState(0);
   const [showAddEditProduct, setShowAddEditProduct] = useState(false);
-  const [showDeleteProduct, setShowDeleteProduct] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [selectedProductIndex, setSelectedProductIndex] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState({ reward: {} });
-  const [editDisabled, setEditDisabled] = useState(true);
-  const [deleteDisabled, setDeleteDisabled] = useState(true);
+  const [selectedProducts, setSelectedProducts] = useState([]);
   const [modalAction, setModalAction] = useState("");
+  const [buttonDisabled, setButtonDisabled] = useState(true);
+  const [refresh, setRefresh] = useState(0);
+  const tableRef = useRef();
+  const paginateRef = useRef();
 
   useEffect(() => {
-    getStoreAsync(game.name, domain);
-  }, [game, domain]);
+    const skip = (page - 1) * itemsNumber;
+    (async (skip, itemsNumber) => {
+      await getStoreAsync(game.name, domain, skip, itemsNumber);
+    })(skip, itemsNumber);
+    setSelectedProducts([]);
+  }, [game, domain, refresh, itemsNumber, page, tableRef]);
 
-  const getStoreAsync = async (game, domain) => {
+  
+  const getStoreAsync = async (game, domain, skip, limit) => {
     if (game && domain) {
       setLoading(true);
-      const products = await getProducts(game);
+      const products = await getProducts(game, skip, limit);
+      const count = (products.total);
       if (products) setProducts(products);
+      if (count) setCount(count);
       setLoading(false);
     }
   }
@@ -46,22 +52,28 @@ const Store = () => {
   };
 
   useEffect(() => {
-    if (selectedProductIndex !== null) {
-      setEditDisabled(false);
-      setDeleteDisabled(false);
+    if (selectedProducts.length > 0) {
+      setButtonDisabled(false);
     } else {
-      setEditDisabled(true);
-      setDeleteDisabled(true);
+      setButtonDisabled(true);
     }
-  }, [selectedProductIndex]);
+  }, [selectedProducts]);
 
-  const handleSelect = (i) => {
-    if (selectedProductIndex !== null)
-      document
-        .getElementById(`line-${selectedProductIndex}`)
-        .classList.remove("active-row");
-    setSelectedProductIndex(i);
-    document.getElementById(`line-${i}`).classList.add("active-row");
+
+  const handleSelection = (e, productId) => {
+    if (e.target.checked) {
+      setSelectedProducts((selectedProducts) => [...selectedProducts, productId]);
+    } else {
+      setSelectedProducts(selectedProducts.filter((id) => id !== productId));
+    }
+  };
+
+  const bulkDeleteProducts = async () => {
+    for (const productId of selectedProducts) {
+      await deleteProduct(game.name, productId);
+    }
+    setSelectedProducts([]);
+    setRefresh((refresh) => refresh + 1);
   };
 
   const handleAddProduct = () => {
@@ -69,25 +81,28 @@ const Store = () => {
     setShowAddEditProduct(true);
   };
 
-  const handleEditProduct = () => {
+  const handleEditProduct = (product) => {
+    setSelectedProduct(product);
     setModalAction("edit");
-    setSelectedProduct(products.list[selectedProductIndex]);
     setShowAddEditProduct(true);
   };
 
-  const handleDeleteProduct = () => {
-    setShowDeleteProduct(false);
-    const productId = products.list[selectedProductIndex].productId;
-    products["list"] = products.list.filter(
-      (_, i) => i !== selectedProductIndex
-    );
-    setProducts(products);
-    document
-      .getElementById(`line-${selectedProductIndex}`)
-      .classList.remove("active-row");
-    setSelectedProductIndex(null);
-    deleteProduct(game.name, productId);
-  };
+  const handleSelectAll = (e) => {
+    if (e.target.checked) {
+      
+      setSelectedProducts(products.list.map((product) => product.productId));
+      products.list.map(product => {
+        const checkbox = document.getElementById(product.productId);
+        checkbox.checked = true;
+      });
+    } else {
+      setSelectedProducts([]);
+      products.list.map(product => {
+        const checkbox = document.getElementById(product.productId);
+        checkbox.checked = false;
+      });
+    }
+  }
 
   return (
     <Container>
@@ -101,20 +116,9 @@ const Store = () => {
           <Button variant="success" onClick={() => handleAddProduct()}>
             Add product
           </Button>
-          <Button
-            variant="secondary"
-            disabled={editDisabled}
-            onClick={() => handleEditProduct()}
-          >
-            Edit product
-          </Button>
-          <Button
-            variant="danger"
-            disabled={deleteDisabled}
-            onClick={() => setShowDeleteProduct(true)}
-          >
-            Delete product
-          </Button>
+          <Button variant="danger" disabled={buttonDisabled} onClick={() => bulkDeleteProducts()} className="d-flex align-items-center">
+              <Trash size={20} className="mr-2" /> Delete {selectedProducts.length} {selectedProducts.length <= 1 ? "product" : "products"}
+            </Button>
         </ButtonGroup>
         <ButtonGroup aria-label="import-export">
           <Button
@@ -139,9 +143,21 @@ const Store = () => {
         ) : products.total === 0 ? (
           <p>You don't have any product yet</p>
         ) : (
+          <div>
+          <p className="m-1">Note : click on a product's cell to edit his data</p>
+          <div ref={paginateRef}>
+            {itemsNumber !== 10 && (
+              <Paginate page={page} setPage={setPage} itemsNumber={itemsNumber} setItemsNumber={setItemsNumber} totalItems={count} />
+            )}
+          </div>
           <Table size="sm" bordered hover borderless>
             <thead>
               <tr>
+              <th className="align-middle">
+                  <div className="d-flex align-items-center justify-content-center">
+                    <FormCheck.Input id="main-checkbox" type="checkbox" className="m-0" onClick={(e) => handleSelectAll(e)} />
+                  </div>
+                </th>
                 <th>ID</th>
                 <th>Product ID (AppStore)</th>
                 <th>Product ID (Mac AppStore)</th>
@@ -152,11 +168,17 @@ const Store = () => {
               {products.list.map((product, i) => {
                 return (
                   <tr
-                    id={`line-${i}`}
-                    key={`line-${i}`}
-                    onClick={() => handleSelect(i)}
+                    key={`line-${product.productId}`}
+                    onClick={() => handleEditProduct(product)}
                   >
-                    <td key={`productId-${i}`}>{product.productId}</td>
+                  <td className="align-middle" onClick={(e) => e.stopPropagation()}>
+                  <div className="d-flex align-items-center justify-content-center">
+                      <FormCheck.Input id={`${product.productId}`} type="checkbox" className="m-0" onClick={(e) =>
+                      handleSelection(e, product.productId)} />
+                    </div>
+                    </td>
+                    <td key={`productId-${i}`}
+                    onClick={() => handleEditProduct(product)}>{product.productId}</td>
                     <td key={`appStoreId-${i}`}>{product.appStoreId}</td>
                     <td key={`macStoreId-${i}`}>{product.macStoreId}</td>
                     <td key={`googlePlayId-${i}`}>{product.googlePlayId}</td>
@@ -165,6 +187,10 @@ const Store = () => {
               })}
             </tbody>
           </Table>
+          <div ref={paginateRef}>
+            <Paginate page={page} setPage={setPage} itemsNumber={itemsNumber} setItemsNumber={setItemsNumber} totalItems={count} />
+          </div>
+          </div>
         ))}
 
       <AddEditProductModal
@@ -176,20 +202,6 @@ const Store = () => {
         action={modalAction}
         key={selectedProduct}
       />
-
-      {showDeleteProduct && (
-        <ConfirmationModal
-          show={showDeleteProduct}
-          onHide={() => setShowDeleteProduct(false)}
-          action={handleDeleteProduct}
-          body={`Are you sure you want to delete product ${
-            selectedProductIndex !== null
-              ? products.list[selectedProductIndex].productId
-              : ""
-          } ?`}
-          title="Product deletion"
-        />
-      )}
     </Container>
   );
 };

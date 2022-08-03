@@ -72,6 +72,8 @@ export const AddEditProductModal = (props) => {
     clearStates();
   };
 
+  const title = props.action === "add" ? 'Add product' : "Edit product";
+
   return (
     <Modal
       show={props.show}
@@ -84,7 +86,7 @@ export const AddEditProductModal = (props) => {
       centered
     >
       <Modal.Header>
-        <Modal.Title>Add product</Modal.Title>
+        <Modal.Title>{title}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form>

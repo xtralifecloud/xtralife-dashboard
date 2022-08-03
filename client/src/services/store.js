@@ -1,9 +1,9 @@
 import axios from "axios";
 import { toast } from "react-toastify";
 
-export const getProducts = async (game) => {
+export const getProducts = async (game, skip, limit) => {
   try {
-    const res = await axios.get(`/game/${game}/store/products`);
+    const res = await axios.get(`/game/${game}/store/products?skip=${skip}&limit=${limit}`);
     return res.data;
   } catch (err) {
     toast.error("Error while loading products. See console for more details");
