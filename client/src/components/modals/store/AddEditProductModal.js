@@ -6,7 +6,7 @@ import { useAppContext } from "../../../context/app-context";
 import { isPresent } from "../../../utils/isPresent";
 
 export const AddEditProductModal = (props) => {
-  const { game } = useAppContext();
+  const { game, page, itemsNumber } = useAppContext();
   const [productId, setProductId] = useState("");
   const [appStoreId, setAppStoreId] = useState("");
   const [macStoreId, setMacStoreId] = useState("");
@@ -48,6 +48,7 @@ export const AddEditProductModal = (props) => {
   };
 
   const handleSave = async () => {
+    const skip = (page - 1) * itemsNumber;
     const product = {
       productId: productId,
       appStoreId: appStoreId,
@@ -67,7 +68,9 @@ export const AddEditProductModal = (props) => {
     } else if (props.action === "edit") {
       await updateProduct(game.name, product)
     }
-    props.setProducts(await getProducts(game.name));
+    const products = await getProducts(game.name, skip, itemsNumber)
+    props.setProducts(products);
+    props.setCount(products.total);
     props.setShow(false);
     clearStates();
   };
