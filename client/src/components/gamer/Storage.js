@@ -67,6 +67,7 @@ const Storage = ({ refresh }) => {
   };
 
   const bulkDeleteKV = async () => {
+    setSelectedKV(null)
     const filteredStorage = storage.filter(
       (_, index) => !selectedKeys.includes(index)
     );
@@ -235,6 +236,7 @@ const Storage = ({ refresh }) => {
             value={tempValue}
             onSave={async (json) => {
               await saveKV(json);
+              setSelectedKV(null)
             }}
             title={`Key: ${selectedKV !== null && storage[selectedKV].fskey}`}
           />
