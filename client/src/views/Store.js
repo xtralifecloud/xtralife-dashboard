@@ -21,9 +21,12 @@ const Store = () => {
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [modalAction, setModalAction] = useState("");
   const [buttonDisabled, setButtonDisabled] = useState(true);
-  const [refresh, setRefresh] = useState(0);
-  const tableRef = useRef();
   const paginateRef = useRef();
+
+  useEffect(() => {
+    setPage(1);
+    setItemsNumber(10);
+  }, [game]);
 
   useEffect(() => {
     const skip = (page - 1) * itemsNumber;
@@ -31,7 +34,7 @@ const Store = () => {
       await getStoreAsync(game.name, domain, skip, itemsNumber);
     })(skip, itemsNumber);
     setSelectedProducts([]);
-  }, [game, domain, refresh, itemsNumber, page, tableRef]);
+  }, [game, domain, itemsNumber, page]);
 
 
   const getStoreAsync = async (game, domain, skip, limit) => {
@@ -52,9 +55,9 @@ const Store = () => {
   }
 }
 
-  const cbSetStore = (products) => {
+  const cbSetStore = async (products) => {
     setProducts(products);
-    getStoreAsync(game.name, domain, 0, itemsNumber);
+    await getStoreAsync(game.name, domain, 0, itemsNumber);
     setPage(1);
     setLoading(false);
   };
