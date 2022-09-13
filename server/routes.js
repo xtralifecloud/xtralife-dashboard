@@ -198,7 +198,7 @@ route
   })
   .put(function (req, res) {
     const { key } = req.params;
-    return xtralife.api.gamevfs.write(req.dom, key, req.body, function (err) {
+    return xtralife.api.gamevfs.write(req.dom, key, from_string(req.body.fsvalue), function (err) {
       if (err != null) {
         return res.send(500);
       }

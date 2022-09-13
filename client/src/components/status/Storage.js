@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Container, Card, Spinner, Table, Button, Row, Col, Collapse, FormCheck } from "react-bootstrap";
 import { Trash, Clipboard, Plus } from "react-bootstrap-icons";
 import { useAppContext } from "../../context/app-context";
-import { getGameStorage, updateGameStorage } from "../../services/status";
+import { getGameStorage, editGameStorage, deleteGameStorage } from "../../services/status";
 import { exportJson } from "../../utils/exportJson";
 import ImportButton from "./../ImportButton";
 import UploadBinaryButton from "./../UploadBinaryButton";
@@ -65,12 +65,18 @@ const Storage = () => {
   };
 
   const bulkDeleteKVs = async () => {
+    console.log(selectedKVs)
     setConfirmation(false);
-    let tempStorage = storage.filter((_, i) => !selectedKVs.includes(i));
+    let tempStorage = storage;
+    for (const key of selectedKVs) {
+      tempStorage = tempStorage.filter(function(tempStorage){ 
+        return tempStorage.fskey !== key.toString();
+        });
+      await deleteGameStorage(game.name, domain, key);
+    }
     setStorage(tempStorage);
     setSelectedKV(null);
     setSelectedKVs([]);
-    await updateGameStorage(game.name, domain, tempStorage);
   };
 
   const addKV = () => {
@@ -95,6 +101,7 @@ const Storage = () => {
     ]);
   };
 
+
   const saveKV = async (modifiedValue) => {
     if (modifiedValue === null) {
       toast.warning("Invalid JSON");
@@ -106,7 +113,7 @@ const Storage = () => {
       }
       setStorage([...storage]);
       setTempValue(null);
-      return await updateGameStorage(game.name, domain, storage, setStorage);
+      return await editGameStorage(game.name, domain, storage[selectedKV], setStorage);
     }
   };
 
@@ -187,7 +194,7 @@ const Storage = () => {
                         <tr key={`tr-${item.fskey}`}>
                           <td style={{ width: "3%" }} className="align-middle">
                             <div className="d-flex align-items-center justify-content-center">
-                              <FormCheck.Input type="checkbox" name="keyValueCheckBox" onClick={(e) => handleSelection(e, i)} />
+                              <FormCheck.Input type="checkbox" name="keyValueCheckBox" onClick={(e) => handleSelection(e, item.fskey)} />
                             </div>
                           </td>
                           <td className="td-overflow align-middle" style={{ width: "35%" }} key={`key-${item.fskey}`}>
