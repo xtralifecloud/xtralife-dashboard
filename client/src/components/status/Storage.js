@@ -65,7 +65,6 @@ const Storage = () => {
   };
 
   const bulkDeleteKVs = async () => {
-    console.log(selectedKVs)
     setConfirmation(false);
     let tempStorage = storage;
     for (const key of selectedKVs) {
