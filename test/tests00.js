@@ -11,7 +11,7 @@ const should = require("should");
 const util = require("util");
 
 let server = null;
-const serverPromise = require('../server/dashboard-angular.js');
+const serverPromise = require('../server/dashboard.js');
 
 // ------------------------------------------------
 // ------------------------------------------------
@@ -180,7 +180,7 @@ describe("BO API tests", function(){
 			return null;
 		});
 
-		return it("should wait", function(done){
+		return it.skip("should wait", function(done){
 			this.timeout(0);
 			setTimeout(() => done()
 			, 40000);

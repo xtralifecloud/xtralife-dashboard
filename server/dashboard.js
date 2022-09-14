@@ -15,8 +15,6 @@ const LocalStrategy = require("passport-local").Strategy;
 const { BasicStrategy } = require("passport-http");
 const _ = require("underscore");
 
-const async = require('async');
-
 const bodyParser = require('body-parser');
 //const cookieParser = require('cookie-parser');
 const session = require('express-session');
