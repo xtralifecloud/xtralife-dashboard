@@ -133,6 +133,40 @@ export const updateUserStorage = async (game, domain, user_id, storage, cb = nul
   }
 };
 
+export const editUserStorage = async (game, domain, user_id, storage, cb = null) => {
+  try {
+    const res = await axios.post(`/game/${game}/user/${user_id}/storage/${domain}/${storage.fskey}`, storage);
+    if (res.status === 200) {
+      toast.success(`Key ${storage.fskey} has been edited successfully`);
+    }
+    if (cb){
+      const updatedStorage = await getUserStorage(game, domain, user_id)
+      return cb(updatedStorage)
+    }
+    return res.data;
+  } catch (err) {
+    toast.error("Error while editing key. See console for more details")
+    return console.log(err);
+  }
+};
+
+export const deleteUserStorage = async (game, domain, user_id, key, cb = null) => {
+  try {
+    const res = await axios.delete(`/game/${game}/user/${user_id}/storage/${domain}/${key}`);
+    if (res.status === 200) {
+      toast.success(`Key ${key} deleted successfully`);
+    }
+    if (cb){
+      const updatedStorage = await getUserStorage(game, domain)
+      return cb(updatedStorage)
+    }
+    return res.data;
+  } catch (err) {
+    toast.error("Error while deleting key. See console for more details")
+    return console.log(err);
+  }
+};
+
 //KV Storage
 
 export const getUserKVStore = async (game, domain, user_id) => {
