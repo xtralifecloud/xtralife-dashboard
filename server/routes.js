@@ -198,7 +198,7 @@ route
   })
   .put(function (req, res) {
     const { key } = req.params;
-    return xtralife.api.gamevfs.write(req.dom, key, req.body, function (err) {
+    return xtralife.api.gamevfs.write(req.dom, key, from_string(req.body.fsvalue), function (err) {
       if (err != null) {
         return res.send(500);
       }
@@ -514,16 +514,25 @@ route
       .catch(next)
       .done()
   )
-  .post(function (req, res, next) {
-    const obj = {};
-    for (let each of Array.from(req.body)) {
-      obj[each.fskey] = from_string(each.fsvalue);
-    }
 
+  // Route for a specific VFS storage user's key
+  route
+  .route("/game/:game/user/:userid/storage/:domain/:key")
+
+  .post(function (req, res, next) {
+    const {key} = req.params;
     return xtralife.api.virtualfs
-      .write(req.context, req.dom, req.user_id, null, obj)
+      .write(req.context, req.dom, req.user_id, key, from_string(req.body.fsvalue))
       .then(() => res.status(200).end())
       .catch(next)
+      .done();
+  })
+
+  .delete(function (req, res) {
+    const { key } = req.params;
+    return xtralife.api.virtualfs
+      .delete(req.context, req.dom, req.user_id, key)
+      .then(() => res.status(200).end())
       .done();
   });
 
