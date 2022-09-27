@@ -66,7 +66,7 @@ const Storage = ({ refresh }) => {
   };
 
   const bulkDeleteKV = async () => {
-    setSelectedKV(null)
+    setSelectedKV(null);
     let tempStorage = storage;
     for (const key of selectedKeys) {
       tempStorage = tempStorage.filter(function(tempStorage){
