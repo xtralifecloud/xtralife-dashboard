@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Container, Button, Table, FormCheck } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import { useAppContext } from "../../context/app-context";
-import { getUserStorage, updateUserStorage } from "../../services/user";
+import { getUserStorage, deleteUserStorage, editUserStorage } from "../../services/user";
 import { Plus, Trash, Clipboard } from "react-bootstrap-icons";
 import { toast } from "react-toastify";
 import UploadBinaryButton from "../UploadBinaryButton";
@@ -48,14 +48,13 @@ const Storage = ({ refresh }) => {
       return;
     }
 
-    const updatedStorage = storage;
-    updatedStorage.push({
-      fskey: newKey,
-      fsvalue: JSON.stringify({ edit: "me" }),
-    });
-
-    await updateUserStorage(game.name, domain, userId, updatedStorage);
-    await getStorageData(game, domain, userId);
+    setStorage((previousStorage) => [
+      ...previousStorage,
+      {
+        fskey: newKey,
+        fsvalue: JSON.stringify({ edit: "me" }),
+      },
+    ]);
   };
 
   const handleSelection = (e, i) => {
@@ -67,13 +66,15 @@ const Storage = ({ refresh }) => {
   };
 
   const bulkDeleteKV = async () => {
-    setSelectedKV(null);
-    const filteredStorage = storage.filter(
-      (_, index) => !selectedKeys.includes(index)
-    );
-    setStorage(filteredStorage);
+    let tempStorage = storage;
+    for (const key of selectedKeys) {
+      tempStorage = tempStorage.filter(function(tempStorage){
+        return tempStorage.fskey !== key.toString();
+        });
+      await deleteUserStorage(game.name, domain, userId, key);
+    }
+    setStorage(tempStorage);
     setSelectedKeys([]);
-    await updateUserStorage(game.name, domain, userId, filteredStorage);
   };
 
   useEffect(() => {
@@ -85,13 +86,18 @@ const Storage = ({ refresh }) => {
   }, [selectedKeys]);
 
   const saveKV = async (modifiedValue) => {
+    if (modifiedValue === null) {
+      toast.warning("Invalid JSON");
+    } else {
+      setShowModal(false);
+      setSelectedKV(null);
     if (storage[selectedKV].fsvalue !== modifiedValue) {
       storage[selectedKV].fsvalue = JSON.stringify(modifiedValue);
     }
     setStorage([...storage]);
     setTempValue(null);
-    await updateUserStorage(game.name, domain, userId, storage);
-    await getStorageData(game, domain, userId);
+    return await editUserStorage(game.name, domain, userId, storage[selectedKV], setStorage);
+  }
   }
 
   return (
@@ -146,7 +152,7 @@ const Storage = ({ refresh }) => {
                         <div className="d-flex align-items-center justify-content-center">
                           <FormCheck.Input
                             type="checkbox"
-                            onClick={(e) => handleSelection(e, i)}
+                            onClick={(e) => handleSelection(e, item.fskey)}
                           />
                         </div>
                       </td>
@@ -236,7 +242,6 @@ const Storage = ({ refresh }) => {
             value={tempValue}
             onSave={async (json) => {
               await saveKV(json);
-              setSelectedKV(null);
             }}
             title={`Key: ${selectedKV !== null && storage[selectedKV].fskey}`}
           />
