@@ -1,5 +1,6 @@
 import axios from "axios";
 import { toast } from "react-toastify";
+const _ = require("underscore");
 
 //Storage
 export const getGameStorage = async (game, domain) => {
@@ -34,7 +35,14 @@ export const updateGameStorage = async (game, domain, storage, cb = null) => {
 
 export const editGameStorage = async (game, domain, storage, cb = null) => {
   try {
-    const res = await axios.put(`/game/${game}/storage/${domain}/${storage.fskey}`, storage);
+    const from_string = function (value) {
+      if (_.indexOf(value, '"') === 0) {
+        return (value = value.substring(1, value.lastIndexOf('"')));
+      } else {
+        return JSON.parse(value);
+      }
+    };
+    const res = await axios.put(`/game/${game}/storage/${domain}/${storage.fskey}`, from_string(storage.fsvalue));
     if (res.status === 200) {
       toast.success(`Key ${storage.fskey} has been edited successfully`);
     }
