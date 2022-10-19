@@ -305,7 +305,6 @@ route.get("/game/:game/users", function (req, res, next) {
       return addMQlength(domain, req.game.appid, data)
         .then(() => res.json({ list: data }).end())
         .catch(next)
-        .done();
     }
   );
 });
