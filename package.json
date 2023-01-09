@@ -1,6 +1,6 @@
 {
   "name": "xtralife-dashboard",
-  "version": "4.3.1",
+  "version": "4.3.2",
   "scripts": {
     "build": "cd client && npm run build",
     "start": "node ./server/dashboard.js",
