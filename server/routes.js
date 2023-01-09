@@ -350,8 +350,7 @@ route.get("/game/:game/users/find/:user_id", function (req, res, next) {
     }
     return addMQlength(domain, req.game.appid, data)
       .then(() => res.json({ list: data }).end())
-      .catch(next)
-      .done();
+      .catch(next);
   });
 });
 
