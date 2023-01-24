@@ -219,9 +219,22 @@ describe("BO API tests", function(){
 			return null;
 		});
 
-		return it("should read one key", function(done){
+		it("should read one key", function(done){
 			request(server)
 			.get(`/api/v1/game/${game}/storage/${domain}/key1`)
+			.auth(authapi.user, authapi.password)
+			.set('Content-Type', 'application/json')
+			.expect(200)
+			.end(function(err, res){
+				res.status.should.eql(200);
+				return done(err);
+			});
+			return null;
+		});
+
+		return it("should delete one key", function(done){
+			request(server)
+			.delete(`/api/v1/game/${game}/storage/${domain}/key1`)
 			.auth(authapi.user, authapi.password)
 			.set('Content-Type', 'application/json')
 			.expect(200)
