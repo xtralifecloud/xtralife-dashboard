@@ -4,7 +4,7 @@
   "scripts": {
     "build": "cd client && npm run build",
     "start": "node ./server/dashboard.js",
-    "test": "mocha test/tests*.js"
+    "test": "mocha test/tests*.js --exit"
   },
   "keywords": [
     "backend",
