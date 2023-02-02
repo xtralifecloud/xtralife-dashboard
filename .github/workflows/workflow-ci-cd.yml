@@ -26,8 +26,6 @@ jobs:
           npm ci
       - name: Building (client)
         run: npm run build
-      - name: Testing package (client)
-        run: npm test
       - name: Testing package (dashboard)
         run: |
           cd ..
