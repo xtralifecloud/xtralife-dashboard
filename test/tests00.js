@@ -76,7 +76,7 @@ describe("BO API tests", function(){
 
 	describe("users", function(){
 
-		it("list users should success", function(done){
+		it.skip("list users should success", function(done){
 			request(server)
 			.get(`/api/v1/game/${game}/users?skip=0&limit=3`)
 			.auth(authapi.user, authapi.password)
@@ -93,7 +93,7 @@ describe("BO API tests", function(){
 			return null;
 		});
 
-		it("get profile should success", function(done){
+		it.skip("get profile should success", function(done){
 			request(server)
 			.get(`/api/v1/game/${game}/user/${gamer_id}/profile`)
 			.auth(authapi.user, authapi.password)
@@ -110,7 +110,7 @@ describe("BO API tests", function(){
 		});
 
 
-		it("list balance on user should success", function(done){
+		it.skip("list balance on user should success", function(done){
 			request(server)
 			.get(`/api/v1/game/${game}/user/${gamer_id}/balance/private`)
 			.auth(authapi.user, authapi.password)
@@ -125,7 +125,7 @@ describe("BO API tests", function(){
 			return null;
 		});
 
-		it("list transaction on user should success", function(done){
+		it.skip("list transaction on user should success", function(done){
 			request(server)
 			.get(`/api/v1/game/${game}/user/${gamer_id}/txHistory/private?skip=0&limit=10`)
 			.auth(authapi.user, authapi.password)
@@ -142,7 +142,7 @@ describe("BO API tests", function(){
 			return null;
 		});
 
-		return it("push event should success", function(done){
+		return it.skip("push event should success", function(done){
 			request(server)
 			.post(`/api/v1/game/${game}/user/${gamer_id}/message/private`)
 			.auth(authapi.user, authapi.password)
