@@ -48,10 +48,8 @@ jobs:
       - name: Building (client)
         run: npm run build
       - name: Testing package (dashboard)
-        run: |
-          cd ..
-          npm test
-
+        run: npm test
+        
   npm_publish:
     name: Npm - Publish
     needs: npm_install_test
