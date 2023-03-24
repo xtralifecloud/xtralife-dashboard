@@ -18,7 +18,7 @@ const _ = require("underscore");
 const bodyParser = require('body-parser');
 //const cookieParser = require('cookie-parser');
 const session = require('express-session');
-const RedisStore = require('connect-redis')(session);
+const RedisStore = require('connect-redis').default;
 const speakeasy = require('speakeasy');
 
 const cors = require('cors');
@@ -203,9 +203,10 @@ app.post("/login", passport.authenticate("local"), (req, res) => res.send(req.us
 
 // route to log out
 app.post("/logout", function (req, res) {
-	req.logOut();
-	return res.status(200)
-		.end();
+	req.logout(function(err) {
+		if (err) { return next(err); }
+		return res.redirect('/');
+	  });
 });
 
 const {
