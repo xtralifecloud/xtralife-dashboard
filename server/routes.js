@@ -488,7 +488,6 @@ route
         return res.json(data).end();
       })
       .catch(next)
-      .done();
   })
   .post(function (req, res, next) {
     const obj = {};
@@ -516,7 +515,6 @@ route
           .end()
       )
       .catch(next)
-      .done()
   )
   .post(function (req, res, next) {
     const obj = {};
@@ -528,7 +526,6 @@ route
       .write(req.context, req.dom, req.user_id, null, obj)
       .then(() => res.status(200).end())
       .catch(next)
-      .done();
   });
 
 // Route for a specific VFS storage user's key
@@ -546,7 +543,6 @@ route
       )
       .then(() => res.status(200).end())
       .catch(next)
-      .done();
   })
 
   .delete(function (req, res) {
@@ -554,7 +550,6 @@ route
     return xtralife.api.virtualfs
       .delete(req.context, req.dom, req.user_id, key)
       .then(() => res.status(200).end())
-      .done();
   });
 
 // Route to delete a user
@@ -572,7 +567,6 @@ route.get("/game/:game/user/:userid/balance/:domain", (req, res, next) =>
     .balance(req.context, req.dom, req.user_id)
     .then((data) => res.json(data).end())
     .catch(next)
-    .done()
 );
 
 // Route to record a new transaction for a user
@@ -585,9 +579,8 @@ route.post("/game/:game/user/:userid/transaction/:domain", (req, res, next) =>
       req.body.tx,
       req.body.description
     )
-    .spread((data) => res.json(data).end())
+    .then(([data]) => res.json(data).end())
     .catch(next)
-    .done()
 );
 
 route.get("/game/:game/user/:userid/txHistory/:domain", (req, res) =>
@@ -716,14 +709,12 @@ route.get(
       .loadAchievementsDefinitions(req.dom)
       .then((definitions) => res.json(definitions).end())
       .catch(next)
-      .done()
 );
 route.post("/game/:game/achievements/:domain", (req, res, next) =>
   xtralife.api.achievement
     .saveAchievementsDefinitions(req.dom, req.body)
     .then((ach) => res.json(ach).end())
     .catch(next)
-    .done()
 );
 
 route.post(
@@ -782,9 +773,8 @@ route.get("/game/:game/matches/domain/:domain", (req, res, next) =>
       req.query.gamerId,
       req.query.customProperties
     )
-    .spread((data) => res.json({ list: data }))
+    .then(([data]) => res.json({ list: data }))
     .catch(next)
-    .done()
 );
 
 route.get("/game/:game/matches/domain/:domain/count", (req, res, next) =>
@@ -797,7 +787,6 @@ route.get("/game/:game/matches/domain/:domain/count", (req, res, next) =>
     )
     .then((count) => res.json({ total: count }))
     .catch(next)
-    .done()
 );
 
 route.get("/game/:game/matches/:matchid", (req, res, next) =>
@@ -805,7 +794,6 @@ route.get("/game/:game/matches/:matchid", (req, res, next) =>
     .getMatch(req.match_id)
     .then((data) => res.json(data))
     .catch(next)
-    .done()
 );
 
 route.delete("/game/:game/matches/:matchid", (req, res) =>
@@ -817,7 +805,6 @@ route.put("/game/:game/matches/:matchid", (req, res, next) =>
     .updateMatch(req.match_id, req.body)
     .then((match) => res.json(match))
     .catch(next)
-    .done()
 );
 
 // Store / products
