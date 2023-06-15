@@ -62,10 +62,13 @@ module.exports = {
 		}
 		const objids = _.map(usersids, id => new ObjectId(id));
 
-		return xtralife.api.collections.coll("users").find({ _id: { $in: objids }, 'games.appid': appid, 'tokens.domain': domain }, { "profile.lang": 1, tokens: 1 }).toArray((err, users) => {
-			if (err != null) { return cb(err); }
+		xtralife.api.collections.coll("users").find({ _id: { $in: objids }, 'games.appid': appid, 'tokens.domain': domain }, { "profile.lang": 1, tokens: 1 }).toArray()
+		.then(users => {
 			sendbulk(domain, users, message);
 			return cb(null, users.length);
+		})
+		.catch(err => {
+			return cb(err);
 		});
 	}
 };
