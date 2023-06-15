@@ -2,13 +2,13 @@ module.exports = {
 
 	redis: {
 		config :{
-		 port : 6378,
+		 port : 6379,
 		 host: 'localhost'
 		}
 	   },		// tunnel ssh port
 
 	mongodb: {
-		url: "mongodb://localhost:27018/?maxPoolSize=5"
+		url: "mongodb://localhost:27017/?maxPoolSize=5"
 	},
 
 	logs: {
