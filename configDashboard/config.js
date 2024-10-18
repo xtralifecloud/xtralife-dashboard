@@ -31,11 +31,11 @@ module.exports = {
 	},
 
 	mongoCx(cb) {
-		return require("mongodb").MongoClient.connect(xlenv.mongodb.url, xlenv.mongodb.options).then(client => {
-			cb(null, client);
-		}).catch(error => {
-			cb(error);
-		});
+		const { MongoClient } = require('mongodb');
+		const client = new MongoClient(xlenv.mongodb.url, xlenv.mongodb.options);
+		return client.connect()
+			.then(() => cb(null, client))
+			.catch(err => cb(err));
 	},
 
 	http: {

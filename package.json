@@ -17,7 +17,7 @@
   "author": "devteam <devteam@xtralife.cloud>",
   "license": "(C) Xtralife.cloud, 2015",
   "engines": {
-    "node": "^18.13.0"
+    "node": "^18.20.4"
   },
   "dependencies": {
     "async": "^3.2.6",
@@ -37,13 +37,13 @@
     "react-scripts": "^5.0.1",
     "speakeasy": "^2.0.0",
     "underscore": "^1.13.7",
-    "winston": "^3.14.2",
-    "xtralife-api": "^4.4.5",
-    "xtralife-env": "^4.4.2"
+    "winston": "^3.15.0",
+    "xtralife-api": "^4.4.6",
+    "xtralife-env": "^4.4.3"
   },
   "devDependencies": {
     "mocha": "^10.7.3",
-    "should": "*",
-    "supertest": "*"
+    "should": "^13.2.3",
+    "supertest": "^7.0.0"
   }
 }
